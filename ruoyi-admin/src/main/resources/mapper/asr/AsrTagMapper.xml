@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.asr.mapper.AsrTagMapper">
+
+    <resultMap type="AsrTag" id="AsrTagResult">
+        <result property="id"    column="id"    />
+        <result property="tagName"    column="tag_name"    />
+        <result property="isDeleted"    column="is_deleted"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createUser"    column="create_user"    />
+    </resultMap>
+
+    <sql id="selectAsrTagVo">
+        select id, tag_name, is_deleted, create_time, create_user from asr_tag
+    </sql>
+
+    <select id="selectAsrTagList" parameterType="AsrTag" resultMap="AsrTagResult">
+        <include refid="selectAsrTagVo"/>
+        <where>
+
+            <if test="tagName != null  and tagName != ''"> and tag_name like concat('%', #{tagName}, '%')</if>
+            <if test="isDeleted != null  and isDeleted != ''"> and is_deleted = #{isDeleted}</if>
+            <if test="createUser != null  and createUser != ''"> and create_user = #{createUser}</if>
+        </where>
+    </select>
+
+    <select id="selectAsrTagById" parameterType="Long" resultMap="AsrTagResult">
+        <include refid="selectAsrTagVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectCountByTagName" resultType="java.lang.Integer">
+        SELECT count(*) FROM `asr_tag` where tag_name = #{tagName}
+    </select>
+    <select id="selectTagByTagName" resultType="com.ruoyi.asr.domain.AsrTag">
+        <include refid="selectAsrTagVo"/>
+        where tag_name = #{tagName}
+    </select>
+
+
+    <insert id="insertAsrTag" parameterType="AsrTag" useGeneratedKeys="true" keyProperty="id">
+        insert into asr_tag
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+
+            <if test="tagName != null">tag_name,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createUser != null">create_user,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+
+            <if test="tagName != null">#{tagName},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createUser != null">#{createUser},</if>
+        </trim>
+    </insert>
+
+    <update id="updateAsrTag" parameterType="AsrTag">
+        update asr_tag
+        <trim prefix="SET" suffixOverrides=",">
+
+            <if test="tagName != null">tag_name = #{tagName},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createUser != null">create_user = #{createUser},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAsrTagById" parameterType="Long">
+        delete from asr_tag where id = #{id}
+    </delete>
+
+    <delete id="deleteAsrTagByIds" parameterType="String">
+        delete from asr_tag where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

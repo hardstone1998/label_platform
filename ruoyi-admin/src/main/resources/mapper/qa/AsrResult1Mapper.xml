@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.qa.mapper.AsrResult1Mapper">
+
+    <resultMap type="AsrResult1" id="AsrResult1Result">
+        <result property="id"    column="id"    />
+        <result property="audioPath"    column="audio_path"    />
+        <result property="result"    column="result"    />
+        <result property="cuda"    column="cuda"    />
+        <result property="audioTime"    column="audio_time"    />
+        <result property="execTime"    column="exec_time"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="qaExtract"    column="qa_extract"    />
+        <result property="qa1"    column="qa_1"    />
+        <result property="qa2"    column="qa_2"    />
+        <result property="qa3"    column="qa_3"    />
+        <result property="qa4"    column="qa_4"    />
+        <result property="qa5"    column="qa_5"    />
+        <result property="qaMark"    column="qa_mark"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="isDelete"    column="is_delete"    />
+        <result property="isMark"    column="is_mark"    />
+        <result property="qaSum"    column="qa_sum"    />
+        <result property="taskOwner"    column="task_owner"    />
+    </resultMap>
+
+    <sql id="selectAsrResult1Vo">
+        select id, audio_path, result, cuda, audio_time, exec_time, create_time, qa_extract, qa_mark, qa_1,qa_2,qa_3,qa_4,qa_5,qa_sum,update_time, is_delete,is_mark,task_owner from asr_result_1
+    </sql>
+
+    <select id="selectAsrResult1List" parameterType="AsrResult1" resultMap="AsrResult1Result">
+        <include refid="selectAsrResult1Vo"/>
+        <where>
+            <if test="audioPath != null  and audioPath != ''"> and audio_path = #{audioPath}</if>
+            <if test="result != null  and result != ''"> and result like concat('%', #{result}, '%')</if>
+            <if test="qaExtract != null  and qaExtract != ''"> and qa_extract = #{qaExtract}</if>
+            <if test="isDelete != null  and isDelete != ''"> and is_delete = #{isDelete}</if>
+            <if test="cuda != null  and cuda != ''"> and cuda = #{cuda}</if>
+        </where>
+    </select>
+
+    <select id="selectAsrResult1ById" parameterType="Long" resultMap="AsrResult1Result">
+        <include refid="selectAsrResult1Vo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectAsrResult1ListByOwner" parameterType="AsrResult1" resultMap="AsrResult1Result">
+        <include refid="selectAsrResult1Vo"/>
+        <where>
+            <if test="audioPath != null  and audioPath != ''"> and audio_path = #{audioPath}</if>
+            <if test="result != null  and result != ''"> and result like concat('%', #{result}, '%')</if>
+            <if test="taskOwner != null  and taskOwner != ''"> and task_owner = #{taskOwner}</if>
+            <if test="isDelete != null  and isDelete != '' and isDelete !='否'.toString" > and is_delete = #{isDelete}</if>
+        </where>
+
+    </select>
+    <select id="selectAsrResult1ListByJson" parameterType="AsrResult1" resultMap="AsrResult1Result">
+               select id, audio_path,  qa_1,qa_2,qa_3,qa_4,qa_5,task_owner from asr_result_1
+        where is_delete="否" and is_mark="是"
+
+    </select>
+
+    <insert id="insertAsrResult1" parameterType="AsrResult1" useGeneratedKeys="true" keyProperty="id">
+        insert into asr_result_1
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="audioPath != null">audio_path,</if>
+            <if test="result != null">result,</if>
+            <if test="cuda != null">cuda,</if>
+            <if test="audioTime != null">audio_time,</if>
+            <if test="execTime != null">exec_time,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="qaExtract != null">qa_extract,</if>
+            <if test="qaMark != null">qa_mark,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="taskOwner != null">task_owner,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="audioPath != null">#{audioPath},</if>
+            <if test="result != null">#{result},</if>
+            <if test="cuda != null">#{cuda},</if>
+            <if test="audioTime != null">#{audioTime},</if>
+            <if test="execTime != null">#{execTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="qaExtract != null">#{qaExtract},</if>
+            <if test="qaMark != null">#{qaMark},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="taskOwner != null">#{taskOwner},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAsrResult1" parameterType="AsrResult1">
+        update asr_result_1
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="audioPath != null">audio_path = #{audioPath},</if>
+            <if test="result != null">result = #{result},</if>
+            <if test="cuda != null">cuda = #{cuda},</if>
+            <if test="audioTime != null">audio_time = #{audioTime},</if>
+            <if test="execTime != null">exec_time = #{execTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="qa1 != null">qa_1 = #{qa1},</if>
+            <if test="qa2 != null">qa_2 = #{qa2},</if>
+            <if test="qa3 != null">qa_3 = #{qa3},</if>
+            <if test="qa4 != null">qa_4 = #{qa4},</if>
+            <if test="qa5 != null">qa_5 = #{qa5},</if>
+            <if test="isMark != null">is_mark = #{isMark},</if>
+            <if test="qaSum != null">qa_sum = #{qaSum},</if>
+
+            <if test="qaMark != null">qa_mark = #{qaMark},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="taskOwner != null">task_owner = #{taskOwner},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAsrResult1ById" parameterType="Long">
+        delete from asr_result_1 where id = #{id}
+    </delete>
+
+    <delete id="deleteAsrResult1ByIds" parameterType="String">
+        update  asr_result_1 set is_delete="是" where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

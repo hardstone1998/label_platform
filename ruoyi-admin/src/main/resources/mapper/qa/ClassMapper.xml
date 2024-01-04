@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.qa.mapper.Class1Mapper">
+
+    <resultMap type="Class1" id="Class1Result">
+        <result property="id"    column="id"    />
+        <result property="value"    column="value"    />
+        <result property="label"    column="label"    />
+        <result property="class1Id"    column="class_1_id"    />
+        <result property="class2Id"    column="class_2_id"    />
+    </resultMap>
+
+    <sql id="selectClass1Vo">
+        select id, value, label, class_1_id, class_2_id from class_1
+    </sql>
+
+    <select id="selectClass1List" parameterType="Class1" resultMap="Class1Result">
+        <include refid="selectClass1Vo"/>
+        <where>
+            <if test="value != null  and value != ''"> and value = #{value}</if>
+            <if test="label != null  and label != ''"> and label = #{label}</if>
+            <if test="class1Id != null "> and class_1_id = #{class1Id}</if>
+            <if test="class2Id != null "> and class_2_id = #{class2Id}</if>
+        </where>
+    </select>
+
+    <select id="selectClass1ById" parameterType="Long" resultMap="Class1Result">
+        <include refid="selectClass1Vo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertClass1" parameterType="Class1" useGeneratedKeys="true" keyProperty="id">
+        insert into class_1
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="value != null">value,</if>
+            <if test="label != null">label,</if>
+            <if test="class1Id != null">class_1_id,</if>
+            <if test="class2Id != null">class_2_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="value != null">#{value},</if>
+            <if test="label != null">#{label},</if>
+            <if test="class1Id != null">#{class1Id},</if>
+            <if test="class2Id != null">#{class2Id},</if>
+        </trim>
+    </insert>
+
+    <update id="updateClass1" parameterType="Class1">
+        update class_1
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="value != null">value = #{value},</if>
+            <if test="label != null">label = #{label},</if>
+            <if test="class1Id != null">class_1_id = #{class1Id},</if>
+            <if test="class2Id != null">class_2_id = #{class2Id},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteClass1ById" parameterType="Long">
+        delete from class_1 where id = #{id}
+    </delete>
+
+    <delete id="deleteClass1ByIds" parameterType="String">
+        delete from class_1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

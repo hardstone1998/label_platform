@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.asr.mapper.VoiceAnnotationMapper">
+    
+    <resultMap type="com.ruoyi.asr.domain.VoiceAnnotation" id="VoiceAnnotationResult">
+        <result property="id"    column="id"    />
+        <result property="audioPath"    column="audio_path"    />
+        <result property="audioName"    column="audio_name"    />
+        <result property="preText"    column="pre_text"    />
+        <result property="afterText"    column="after_text"    />
+        <result property="isUse"    column="is_use"    />
+        <result property="taskOwner"    column="task_owner"    />
+        <result property="isMask"    column="is_mask"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectVoiceAnnotationVo">
+        select id, audio_path, audio_name, pre_text, after_text, is_use, task_owner, is_mask, create_time, update_time from voice_annotation
+    </sql>
+
+    <select id="selectVoiceAnnotationList" parameterType="com.ruoyi.asr.domain.VoiceAnnotation" resultMap="VoiceAnnotationResult">
+        <include refid="selectVoiceAnnotationVo"/>
+        <where>  
+            <if test="audioName != null  and audioName != ''"> and audio_name like concat('%', #{audioName}, '%')</if>
+            <if test="isUse != null  and isUse != ''"> and is_use = #{isUse}</if>
+            <if test="isMask != null  and isMask != ''"> and is_mask = #{isMask}</if>
+        </where>
+    </select>
+    
+    <select id="selectVoiceAnnotationById" parameterType="Long" resultMap="VoiceAnnotationResult">
+        <include refid="selectVoiceAnnotationVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectVoiceAnnotationListByOwner" parameterType="com.ruoyi.asr.domain.VoiceAnnotation" resultMap="VoiceAnnotationResult">
+        <include refid="selectVoiceAnnotationVo"/>
+        <where>
+            <if test="audioName != null  and audioName != ''"> and audio_name like concat('%', #{audioName}, '%')</if>
+            <if test="isUse != null  and isUse != ''"> and is_use = #{isUse}</if>
+            <if test="isMask != null  and isMask != ''"> and is_mask = #{isMask}</if>
+            <if test="taskOwner != null  and taskOwner != ''"> and task_owner = #{taskOwner}</if>
+        </where>
+
+    </select>
+    <select id="getASRSum" resultType="java.lang.Integer">
+        select count(*) from voice_annotation
+    </select>
+    <select id="getAsrMarkedSum" resultType="java.lang.Integer">
+          select count(*) from voice_annotation where is_mask ="是"
+    </select>
+    <select id="getAsrAllocationSum" resultType="java.lang.Integer">
+          select count(*) from voice_annotation where task_owner != ""
+    </select>
+    <select id="getQACountSum" resultType="java.lang.Integer">
+        select count(*) from asr_result_1 where is_delete="否"
+    </select>
+    <select id="getQAMarkedSum" resultType="java.lang.Integer">
+        select count(*) from asr_result_1 where is_mark ="是" and is_delete="否"
+    </select>
+    <select id="getQAllocationSum" resultType="java.lang.Integer">
+        select count(*) from asr_result_1 where task_owner != ""
+    </select>
+
+    <insert id="insertVoiceAnnotation" parameterType="com.ruoyi.asr.domain.VoiceAnnotation" useGeneratedKeys="true" keyProperty="id">
+        insert into voice_annotation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="audioPath != null">audio_path,</if>
+            <if test="audioName != null">audio_name,</if>
+
+            <if test="afterText != null">after_text,</if>
+            <if test="isUse != null">is_use,</if>
+            <if test="taskOwner != null">task_owner,</if>
+            <if test="isMask != null">is_mask,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="audioPath != null">#{audioPath},</if>
+            <if test="audioName != null">#{audioName},</if>
+
+            <if test="afterText != null">#{afterText},</if>
+            <if test="isUse != null">#{isUse},</if>
+            <if test="taskOwner != null">#{taskOwner},</if>
+            <if test="isMask != null">#{isMask},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateVoiceAnnotation" parameterType="com.ruoyi.asr.domain.VoiceAnnotation">
+        update voice_annotation
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="audioPath != null">audio_path = #{audioPath},</if>
+            <if test="audioName != null">audio_name = #{audioName},</if>
+            <if test="afterText != null">after_text = #{afterText},</if>
+            <if test="isUse != null">is_use = #{isUse},</if>
+            <if test="taskOwner != null">task_owner = #{taskOwner},</if>
+            <if test="isMask != null">is_mask = #{isMask},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteVoiceAnnotationById" parameterType="Long">
+        delete from voice_annotation where id = #{id}
+    </delete>
+
+    <delete id="deleteVoiceAnnotationByIds" parameterType="String">
+        update voice_annotation set is_use ="否"  where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+
+</mapper>
