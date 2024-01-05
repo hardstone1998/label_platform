@@ -28,8 +28,9 @@
       <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <!-- <el-table-column label="主键" align="center" prop="id" />
       <el-table-column label="标签id" align="center" prop="tagId" /> -->
-      <el-table-column label="标签名字" align="center" prop="tagName" />
+      <!-- <el-table-column label="标签名字" align="center" prop="tagName" /> -->
       <!-- <el-table-column label="是否删除" align="center" prop="isDeleted" /> -->
+      
       <el-table-column label="备注" align="center" prop="createUser" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -85,6 +86,7 @@
 
 <script>
 import { listTag, getTag, delTag, addTag, updateTag } from "@/api/asr/tag";
+import {  listUser} from "@/api/system/user"
 
 export default {
   name: "Tag",
@@ -94,6 +96,8 @@ export default {
       loading: true,
       // 选中数组
       ids: [],
+      sevalue: [], //标签选择值
+      options: [],
       // 非单个禁用
       single: true,
       // 非多个禁用
@@ -129,6 +133,7 @@ export default {
   },
   created() {
     this.getList();
+    this.getOptions();
   },
   methods: {
     /** 查询tags列表 */
@@ -138,6 +143,14 @@ export default {
         this.tagList = response.rows;
         this.total = response.total;
         this.loading = false;
+      });
+    },
+    getOptions() {
+      optionsExtract().then((response) => {
+       // this.extractList = response.rows;
+       this.options =response.data.options;
+        //this.total = response.total;
+        //this.loading = false;
       });
     },
     // 取消按钮

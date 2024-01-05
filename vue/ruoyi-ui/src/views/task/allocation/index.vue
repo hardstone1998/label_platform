@@ -140,10 +140,19 @@
                 </div>
               </div>
             </el-col>
+            <!-- ASR已分配 -->
             <el-col :span="12" class="card-panel-col">
               <div class="card-panel">
                 <div class="card-panel-icon-wrapper icon-blue">
-                  <el-button type="info" icon="el-icon-message" circle></el-button>
+                  <el-upload
+                    ref="uploadASR"
+                    class="upload-component"
+                    action="/audioUpload/asr"
+                    :show-file-list="false"
+                    :before-upload="file => validateFile(file, '/audioUpload/asr')"
+                  >
+                    <el-button type="info" icon="el-icon-message" circle @click="uploadASR">上传ASR文件</el-button>
+                  </el-upload>
                 </div>
                 <div class="card-panel-description">
                   <div class="card-panel-text">ASR已分配</div>
@@ -156,10 +165,20 @@
                 </div>
               </div>
             </el-col>
+
+            <!-- QA已分配 -->
             <el-col :span="12" class="card-panel-col">
               <div class="card-panel">
                 <div class="card-panel-icon-wrapper icon-red">
-                  <el-button type="warning" icon="el-icon-star-off" circle></el-button>
+                  <el-upload
+                    ref="uploadQA"
+                    class="upload-component"
+                    action="/audioUpload/qa"
+                    :show-file-list="false"
+                    :before-upload="file => validateFile(file, '/audioUpload/qa')"
+                  >
+                    <el-button type="warning" icon="el-icon-star-off" circle @click="uploadQA">上传QR文件</el-button>
+                  </el-upload>
                 </div>
                 <div class="card-panel-description">
                   <div class="card-panel-text">QA已分配</div>
@@ -172,7 +191,6 @@
                 </div>
               </div>
             </el-col>
-          
           </el-row>
         </el-card>
       </el-col>
@@ -297,7 +315,7 @@
     <!-- User and Task Assignment Section -->
     <el-button @click="addUser">添加用户</el-button>
     <el-row :gutter="20" v-for="(row, index) in userTaskRows" :key="index">
-      <el-col :span="12">
+      <el-col :span="10">
         <!-- User List -->
         <h4>用户列表</h4>
         
@@ -305,25 +323,26 @@
           <el-option
             v-for="user in userList"
             :key="user.id"
-            :label="user.name"
+            :label="user.nickname"
             :value="user.id"
           />
         </el-select>
         <el-button @click="removeUser(index)">删除用户</el-button>
       </el-col>
 
-      <el-col :span="12">
+      <el-col :span="7">
         <!-- Task Assignment -->
-        <h4>为用户分配任务</h4>
-          <el-select v-model="row.selectedTaskType" placeholder="请选择任务类型">
-            <el-option
-            v-for="taskType in taskTypeList"
-            :key="taskType.id"
-            :label="taskType.name"
-            :value="taskType.id"
-          />
-          </el-select>
-
+        <h4>任务类型</h4>
+        <el-cascader
+          v-model="row.sevalue"
+          placeholder="选择问题分类"
+          :options="options"
+          :props="props"
+          @change="handleChange(index, $event)"
+        ></el-cascader>
+        </el-col>
+        <el-col :span="5">
+          <h4>任务数量</h4>
           <el-input v-model="row.taskQuantity" placeholder="请输入任务数量" />
 
         <!-- <el-button @click="addTask">添加任务</el-button> -->
@@ -361,6 +380,15 @@
   import {
     getData
   } from "@/api/asr/annotation";
+  import {
+    uploadASRFile,uploadQAFile,addAllocation,updateAllocation
+  } from "@/api/task/allocation";
+  import {
+  optionsExtract
+} from "@/api/qa/extract";
+import {
+  totalUser
+} from "@/api/system/user"
 
 export default {
    components: {
@@ -369,15 +397,19 @@ export default {
     },
   data() {
     return {
+      countData: {
+        asrAllocationSum: 0,
+        qallocationSum: 0,
+      },
       userTaskRows: [
         {
-          selectedUsers: [1, 2], // Example user IDs
-          selectedTaskType: 1,   // Example task type ID
+          selectedUsers: [], // Example user IDs
+          sevalue: null,   
           taskQuantity: 5,
         },
         {
-          selectedUsers: [3, 4], // Example user IDs
-          selectedTaskType: 2,   // Example task type ID
+          selectedUsers: [], // Example user IDs
+          sevalue: null,   
           taskQuantity: 3,
         },
         // Add more rows as needed
@@ -387,16 +419,15 @@ export default {
       { id: 1, name: 'Type 1' },
       { id: 2, name: 'Type 2' },
       ],
-      userList: [
-        { id: 1, name: 'User 1' },
-        { id: 2, name: 'User 2' },
-        // Add more users as needed
-      ],
+      userList: [],
       taskList: [
         { id: 101, name: 'Task 1' },
         { id: 102, name: 'Task 2' },
         // Add more tasks as needed
       ],
+      sevalue: [],
+       //标签选择值
+      options: [],
       selectedUser: null,
       selectedTask: null,
       userTaskAssignments: [],
@@ -439,8 +470,10 @@ export default {
     };
   },
   created() {
+   
     this.init();
   },
+  
   methods: {
     init() {
       if (
@@ -450,19 +483,72 @@ export default {
         this.isAdmin = true;
         this.getServer();
         this.getData();
+        this.getOptions();
+        this.getUsers();
+      }RFile
+    },
+
+    handleChange(index, value) {
+     // Check if value is an array and not empty
+     if (Array.isArray(value) && value.length > 0) {
+        // Assign the last string to row.sevalue
+        this.userTaskRows[index].sevalue = value[value.length - 1];
+      } else {
+        // Reset row.sevalue if the array is empty or not an array
+        this.userTaskRows[index].sevalue = "";
+      }
+      },
+    validateFile(file,url) {
+      const allowedFormats = ['mp3', 'wav', 'zip'];
+      const fileNameArr = file.name.split('.');
+      const fileFormat = fileNameArr[fileNameArr.length - 1].toLowerCase();
+      if (!allowedFormats.includes(fileFormat)) {
+        this.$message.error('只能上传mp3、wav音频文件或zip压缩包');
+        return false; // 阻止上传
+      }
+      this.handleFileUpload(file, url);
+    },
+    async uploadASR() {
+      // Trigger file selection
+      const fileInput = this.$refs.uploadASR.$refs.input;
+      fileInput.click();
+    },
+    async uploadQA() {
+      // Trigger file selection
+      const fileInput = this.$refs.uploadQA.$refs.input;
+      fileInput.click();
+    },
+    async handleFileUpload(file, url) {
+      try {
+        if (url === '/audioUpload/asr') {
+          await uploadASRFile(file);
+        } else if (url === '/audioUpload/qa') {
+          await uploadQAFile(file);
+        }
+        // File upload successful logic, you can update UI or perform other operations
+        console.log('File uploaded successfully');
+      } catch (error) {
+        // Handle the case when the upload fails
+        console.error('File upload failed:', error);
       }
     },
+
     removeUser(index) {
     this.userTaskRows.splice(index, 1);
   },
-    addUser() {
-      this.userTaskRows.push({ selectedUsers: [], selectedTaskType: null, taskQuantity: null });
-    },
-    addTask() {
-      const taskId = this.taskList.length + 1;
-      const newTask = { id: taskId, name: `Task ${taskId}` };
-      this.taskList.push(newTask);
-    },
+  addUser() {
+    this.userTaskRows.push({ selectedUsers: [], sevalue: null, taskQuantity: null });
+  },
+  addTask() {
+    const taskId = this.sevalue.length + 1;
+    const newTask = { id: taskId, name: `Task ${taskId}` };
+
+    // Ensure that each sevalue property refers to a new array
+    this.userTaskRows.forEach(row => {
+      row.sevalue = [...row.sevalue];
+      row.sevalue.push(newTask);
+    });
+  },
     assignTasks() {
       for (const row of this.userTaskRows) {
         if (row.selectedUsers.length > 0 && row.selectedTaskType && row.taskQuantity) {
@@ -476,7 +562,7 @@ export default {
               id: assignmentId,
               user,
               task: { name: row.taskQuantity }, // Assuming task name is the quantity
-              taskType: this.taskTypeList.find((type) => type.id === row.selectedTaskType),
+              taskType: this.sevalue.find((type) => type.id === row.selectedTaskType),
               taskQuantity: row.taskQuantity,
             });
           }
@@ -516,22 +602,17 @@ export default {
 
     // 取消按钮
     cancel() {
+      this.sevalue = [];
       this.open = false;
       this.reset();
     },
 
     reset() {
       this.form = {
-        id: null,
         name: null,
         desc: null,
         clazz: null,
-        accuracy: null,
-        recallRate: null,
-        bak1: null,
-        bak2: null,
-        createTime: null,
-        updateTime: null
+        userTaskRows: null
       };
       this.resetForm("form");
     },
@@ -541,10 +622,23 @@ export default {
       this.reset();
       this.open = true;
       this.task_title = "任务分配";
-      this.form.clazz = clazz
+      this.form.clazz = clazz;
+    },
+    getUsers() {
+      totalUser().then((response) => {
+       this.userList = response.rows.map(row => ({ id: row.userId, nickname: row.nickName }));
+      });
+    },
+
+    getOptions() {
+      optionsExtract().then((response) => {
+       this.options =response.data.options;
+      //  console.log(this.options)
+      });
     },
     /** 提交按钮 */
     submitForm() {
+      this.form.userTaskRows = this.userTaskRows
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
@@ -554,6 +648,7 @@ export default {
               this.getList();
             });
           } else {
+            console.log(this.form)
             addAllocation(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;

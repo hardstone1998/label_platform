@@ -18,12 +18,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="qa3"    column="qa_3"    />
         <result property="qa4"    column="qa_4"    />
         <result property="qa5"    column="qa_5"    />
+        <result property="qa6"    column="qa_6"    />
         <result property="qaMark"    column="qa_mark"    />
         <result property="updateTime"    column="update_time"    />
         <result property="isDelete"    column="is_delete"    />
         <result property="isMark"    column="is_mark"    />
         <result property="qaSum"    column="qa_sum"    />
         <result property="taskOwner"    column="task_owner"    />
+        <result property="taskId"    column="task_id"    />
+        <result property="clazzId"    column="clazz_id"    />
+        <result property="labelUser"    column="label_user"    />
+        <result property="verityUser"    column="verity_user"    />
+        <result property="labelTime"    column="label_time"    />
+        <result property="verityTime"    column="verity_time"    />
+        <result property="isPass"    column="is_pass"    />
+        <result property="verityFeedback"    column="verity_feedback"    />
     </resultMap>
 
     <sql id="selectAsrResult1Vo">
@@ -90,6 +99,36 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
+    <update id="updateAsrResult1ByClazzId" parameterType="AsrResult1">
+        update asr_result_1
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="audioPath != null">audio_path = #{audioPath},</if>
+            <if test="result != null">result = #{result},</if>
+            <if test="cuda != null">cuda = #{cuda},</if>
+            <if test="audioTime != null">audio_time = #{audioTime},</if>
+            <if test="execTime != null">exec_time = #{execTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="qa1 != null">qa_1 = #{qa1},</if>
+            <if test="qa2 != null">qa_2 = #{qa2},</if>
+            <if test="qa3 != null">qa_3 = #{qa3},</if>
+            <if test="qa4 != null">qa_4 = #{qa4},</if>
+            <if test="qa5 != null">qa_5 = #{qa5},</if>
+            <if test="isMark != null">is_mark = #{isMark},</if>
+            <if test="qaSum != null">qa_sum = #{qaSum},</if>
+
+            <if test="qaMark != null">qa_mark = #{qaMark},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="taskOwner != null">task_owner = #{taskOwner},</if>
+            <if test="taskId != null">task_id = #{taskId},</if>
+            <if test="clazzId != null">clazz_id = #{clazzId},</if>
+        </trim>
+        <where>
+        <if test="clazzId != null">clazz_id = #{clazzId},</if>
+        </where>
+        limit
+        <if test="updateNum != null">#{updateNum}</if>
+    </update>
+
     <update id="updateAsrResult1" parameterType="AsrResult1">
         update asr_result_1
         <trim prefix="SET" suffixOverrides=",">
@@ -110,6 +149,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="qaMark != null">qa_mark = #{qaMark},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="taskOwner != null">task_owner = #{taskOwner},</if>
+            <if test="taskId != null">task_id = #{taskId},</if>
+            <if test="clazzId != null">clazz_id = #{clazzId},</if>
         </trim>
         where id = #{id}
     </update>

@@ -1,5 +1,6 @@
 package com.ruoyi.task.service;
 
+import com.ruoyi.task.domain.RequestTask;
 import com.ruoyi.task.domain.Task;
 
 import java.util.List;
@@ -34,7 +35,7 @@ public interface ITaskService
      * @param task 【请填写功能名称】
      * @return 结果
      */
-    public int insertTask(Task task);
+    public int insertTask(RequestTask task);
 
     /**
      * 修改【请填写功能名称】

@@ -1,21 +1,24 @@
 package com.ruoyi.qa.domain;
 
 import com.alibaba.fastjson.JSONObject;
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 /**
  * extract对象 asr_result_1
- * 
+ *
  * @author ruoyi
  * @date 2023-07-13
  */
+@Data
 public class AsrResult1 extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -49,6 +52,8 @@ public class AsrResult1 extends BaseEntity
     private String qa3;
     private String qa4;
     private String qa5;
+
+    private String qa6;
     private String isDelete;
     private String qaSum;
 
@@ -85,6 +90,24 @@ public class AsrResult1 extends BaseEntity
 
     /** 标注任务所属人 */
     private String taskOwner;
+
+    private Long taskId;
+
+    private Long clazzId;
+
+    private Long labelUser;
+
+    private Long verityUser;
+
+    private Date labelTime;
+
+    private Date verityTime;
+
+    private int isPass;
+
+    private String verityFeedback;
+
+    private Long updateNum;
     public String getQaSum() {
         return qaSum;
     }
@@ -171,84 +194,84 @@ public class AsrResult1 extends BaseEntity
 
 
 
-    public void setId(Long id) 
+    public void setId(Long id)
     {
         this.id = id;
     }
 
-    public Long getId() 
+    public Long getId()
     {
         return id;
     }
-    public void setAudioPath(String audioPath) 
+    public void setAudioPath(String audioPath)
     {
         this.audioPath = audioPath;
     }
 
-    public String getAudioPath() 
+    public String getAudioPath()
     {
         return audioPath;
     }
-    public void setResult(String result) 
+    public void setResult(String result)
     {
         this.result = result;
     }
 
-    public String getResult() 
+    public String getResult()
     {
         return result;
     }
-    public void setCuda(String cuda) 
+    public void setCuda(String cuda)
     {
         this.cuda = cuda;
     }
 
-    public String getCuda() 
+    public String getCuda()
     {
         return cuda;
     }
-    public void setAudioTime(String audioTime) 
+    public void setAudioTime(String audioTime)
     {
         this.audioTime = audioTime;
     }
 
-    public String getAudioTime() 
+    public String getAudioTime()
     {
         return audioTime;
     }
-    public void setExecTime(String execTime) 
+    public void setExecTime(String execTime)
     {
         this.execTime = execTime;
     }
 
-    public String getExecTime() 
+    public String getExecTime()
     {
         return execTime;
     }
-    public void setQaExtract(String qaExtract) 
+    public void setQaExtract(String qaExtract)
     {
         this.qaExtract = qaExtract;
     }
 
-    public String getQaExtract() 
+    public String getQaExtract()
     {
         return qaExtract;
     }
-    public void setQaMark(String qaMark) 
+    public void setQaMark(String qaMark)
     {
         this.qaMark = qaMark;
     }
 
-    public String getQaMark() 
+    public String getQaMark()
     {
         return qaMark;
     }
-    public void setTaskOwner(String taskOwner) 
+    public void setTaskOwner(String taskOwner)
     {
         this.taskOwner = taskOwner;
     }
 
-    public String getTaskOwner() 
+    public String getTaskOwner()
     {
         return taskOwner;
     }

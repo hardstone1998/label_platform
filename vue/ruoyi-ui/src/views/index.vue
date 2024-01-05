@@ -227,7 +227,7 @@
             >+ New Tag</el-button
           >
         </el-form-item> -->
-        <el-form-item label="标签：" prop="dynamicTags">
+        <!-- <el-form-item label="标签：" prop="dynamicTags">
           <div style="margin: 15px 0"></div>
           <el-checkbox-group
             v-model="checkedCities"
@@ -237,11 +237,19 @@
               city
             }}</el-checkbox>
           </el-checkbox-group>
-        </el-form-item>
+        </el-form-item> -->
+        <el-cascader
+          v-model="sevalue"
+          placeholder="选择问题分类"
+          
+          :options="options"
+          :props="props"
+          @change="handleChange"
+        ></el-cascader>
       </el-form>
 
       <div slot="footer" class="dialog-footer">
-        <el-button size="mini" type="text" icon="el-icon-plus"  @click="addTags()">添加标签</el-button>
+        <!-- <el-button size="mini" type="text" icon="el-icon-plus"  @click="addTags()">添加标签</el-button> -->
         <!-- <el-button type="primary" @click="addTags">添加标签</el-button> -->
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
@@ -277,6 +285,9 @@ import {
   addAnnotation,
   updateAnnotation,
 } from "@/api/asr/annotation";
+import {
+  optionsExtract
+} from "@/api/qa/extract";
 
 import {addTag, updateTag } from "@/api/asr/tag";
 import markAsr from "./markAsr.vue";
@@ -290,6 +301,8 @@ export default {
     return {
       checkAll: false,
       checkedCities: [],
+      sevalue: [], //标签选择值
+      options: [],
       cities: [],
       isIndeterminate: true,
       // 遮罩层
@@ -364,6 +377,7 @@ export default {
   },
   created() {
     this.getList();
+    this.getOptions();
   },
 
   methods: {
@@ -380,6 +394,14 @@ export default {
         this.annotationList = response.rows;
         this.total = response.total;
         this.loading = false;
+      });
+    },
+    getOptions() {
+      optionsExtract().then((response) => {
+       // this.extractList = response.rows;
+       this.options =response.data.options;
+        //this.total = response.total;
+        //this.loading = false;
       });
     },
     addTags(){
@@ -468,8 +490,9 @@ export default {
         taskOwner: null,
         isMask: null,
         createTime: null,
-        dynamicTags: null,
+        // dynamicTags: null,
         updateTime: null,
+        sevalue:null,
       };
       this.resetForm("form");
     },
@@ -521,8 +544,8 @@ export default {
     handleUpdate(row) {
       this.audio_name_1 = row.audioName;
       //发送一个请求，根据id查对应的标签名字
-      
-      this.dynamicTags = [];
+      this.sevalue = []
+      // this.dynamicTags = [];
       this.reset();
       this.isPopupVisible = true;
       this.stopAudio = false;
@@ -538,8 +561,8 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-  
-      this.form.dynamicTags = this.dynamicTags;
+      this.form.sevalue = this.sevalue;
+      // this.form.dynamicTags = this.dynamicTags;
       this.form.selectTags=this.checkedCities;
       this.$refs["form"].validate((valid) => {
         if (valid) {

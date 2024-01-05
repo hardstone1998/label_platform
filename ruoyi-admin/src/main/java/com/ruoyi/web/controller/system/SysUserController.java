@@ -34,7 +34,7 @@ import com.ruoyi.system.service.ISysUserService;
 
 /**
  * 用户信息
- * 
+ *
  * @author ruoyi
  */
 @RestController
@@ -52,6 +52,17 @@ public class SysUserController extends BaseController
 
     @Autowired
     private ISysPostService postService;
+
+    /**
+     * 获取全部用户
+     */
+    @PreAuthorize("@ss.hasPermi('system:user:list')")
+    @GetMapping("/total")
+    public TableDataInfo total()
+    {
+        List<SysUser> list = userService.selectUserList(new SysUser());
+        return getDataTable(list);
+    }
 
     /**
      * 获取用户列表

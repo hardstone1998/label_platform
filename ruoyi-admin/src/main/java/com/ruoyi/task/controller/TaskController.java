@@ -3,6 +3,7 @@ package com.ruoyi.task.controller;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.task.domain.RequestTask;
 import com.ruoyi.task.domain.Task;
 import com.ruoyi.task.service.ITaskService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -76,8 +77,9 @@ public class TaskController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:allocation:add')")
     @Log(title = "【请填写功能名称】", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody Task task)
+    public AjaxResult add(@RequestBody RequestTask task)
     {
+        System.out.println("task:::"+task.toString());
         return toAjax(taskService.insertTask(task));
     }
 

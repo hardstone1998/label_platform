@@ -5,15 +5,15 @@ import com.ruoyi.qa.domain.AsrResult1;
 
 /**
  * extractMapper接口
- * 
+ *
  * @author ruoyi
  * @date 2023-07-13
  */
-public interface AsrResult1Mapper 
+public interface AsrResult1Mapper
 {
     /**
      * 查询extract
-     * 
+     *
      * @param id extract主键
      * @return extract
      */
@@ -21,7 +21,7 @@ public interface AsrResult1Mapper
 
     /**
      * 查询extract列表
-     * 
+     *
      * @param asrResult1 extract
      * @return extract集合
      */
@@ -33,7 +33,7 @@ public interface AsrResult1Mapper
 
     /**
      * 新增extract
-     * 
+     *
      * @param asrResult1 extract
      * @return 结果
      */
@@ -41,15 +41,17 @@ public interface AsrResult1Mapper
 
     /**
      * 修改extract
-     * 
+     *
      * @param asrResult1 extract
      * @return 结果
      */
     public int updateAsrResult1(AsrResult1 asrResult1);
 
+    public int updateAsrResult1ByClazzId(AsrResult1 asrResult1);
+
     /**
      * 删除extract
-     * 
+     *
      * @param id extract主键
      * @return 结果
      */
@@ -57,7 +59,7 @@ public interface AsrResult1Mapper
 
     /**
      * 批量删除extract
-     * 
+     *
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */

@@ -42,3 +42,33 @@ export function delAllocation(id) {
     method: 'delete'
   })
 }
+
+// 上传ASR语料
+export function uploadASRFile(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  return request({
+    url: '/audioUpload/asr',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+}
+
+// 上传QA语料
+export function uploadQAFile(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  return request({
+    url: '/audioUpload/qa',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+}

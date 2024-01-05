@@ -38,13 +38,6 @@ public class Task extends BaseEntity
     @Excel(name = "召回率")
     private Long recallRate;
 
-    /** $column.columnComment */
-    @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
-    private String bak1;
-
-    /** $column.columnComment */
-    @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
-    private String bak2;
 
     public void setId(Long id)
     {
@@ -100,24 +93,7 @@ public class Task extends BaseEntity
     {
         return recallRate;
     }
-    public void setBak1(String bak1)
-    {
-        this.bak1 = bak1;
-    }
 
-    public String getBak1()
-    {
-        return bak1;
-    }
-    public void setBak2(String bak2)
-    {
-        this.bak2 = bak2;
-    }
-
-    public String getBak2()
-    {
-        return bak2;
-    }
 
     @Override
     public String toString() {
@@ -128,8 +104,6 @@ public class Task extends BaseEntity
             .append("clazz", getClazz())
             .append("accuracy", getAccuracy())
             .append("recallRate", getRecallRate())
-            .append("bak1", getBak1())
-            .append("bak2", getBak2())
             .append("createTime", getCreateTime())
             .append("updateTime", getUpdateTime())
             .toString();
