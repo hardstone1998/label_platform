@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.asr.mapper.VoiceAnnotationMapper">
-    
+
     <resultMap type="com.ruoyi.asr.domain.VoiceAnnotation" id="VoiceAnnotationResult">
         <result property="id"    column="id"    />
         <result property="audioPath"    column="audio_path"    />
@@ -23,13 +23,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectVoiceAnnotationList" parameterType="com.ruoyi.asr.domain.VoiceAnnotation" resultMap="VoiceAnnotationResult">
         <include refid="selectVoiceAnnotationVo"/>
-        <where>  
+        <where>
             <if test="audioName != null  and audioName != ''"> and audio_name like concat('%', #{audioName}, '%')</if>
             <if test="isUse != null  and isUse != ''"> and is_use = #{isUse}</if>
             <if test="isMask != null  and isMask != ''"> and is_mask = #{isMask}</if>
         </where>
     </select>
-    
+
     <select id="selectVoiceAnnotationById" parameterType="Long" resultMap="VoiceAnnotationResult">
         <include refid="selectVoiceAnnotationVo"/>
         where id = #{id}
@@ -103,6 +103,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </trim>
         where id = #{id}
     </update>
+
+    <update id="updateVoiceAnnotationByClazzId" parameterType="com.ruoyi.asr.domain.VoiceAnnotation">
+        update voice_annotation
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="audioPath != null">audio_path = #{audioPath},</if>
+            <if test="audioName != null">audio_name = #{audioName},</if>
+            <if test="afterText != null">after_text = #{afterText},</if>
+            <if test="isUse != null">is_use = #{isUse},</if>
+            <if test="taskOwner != null">task_owner = #{taskOwner},</if>
+            <if test="isMask != null">is_mask = #{isMask},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="taskId != null">task_id = #{taskId},</if>
+            <if test="clazzId != null">clazz_id = #{clazzId},</if>
+            <if test="labelUser != null">label_user = #{labelUser},</if>
+        </trim>
+        <where>
+            <if test="clazzId != null">clazz_id = #{clazzId},</if>
+        </where>
+        limit
+        <if test="updateNum != null">#{updateNum}</if>
+    </update>
+
 
     <delete id="deleteVoiceAnnotationById" parameterType="Long">
         delete from voice_annotation where id = #{id}

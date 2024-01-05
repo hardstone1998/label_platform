@@ -91,7 +91,7 @@ public class AsrResult1 extends BaseEntity
     /** 标注任务所属人 */
     private String taskOwner;
 
-    private Long taskId;
+    private Integer taskId;
 
     private Long clazzId;
 
@@ -103,7 +103,7 @@ public class AsrResult1 extends BaseEntity
 
     private Date verityTime;
 
-    private int isPass;
+    private Integer isPass;
 
     private String verityFeedback;
 

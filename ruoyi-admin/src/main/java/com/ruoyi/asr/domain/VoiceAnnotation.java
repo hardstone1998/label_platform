@@ -1,18 +1,21 @@
 package com.ruoyi.asr.domain;
 
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 import java.util.Arrays;
+import java.util.Date;
 
 /**
  * 标注对象 voice_annotation
- * 
+ *
  * @author wrh
  * @date 2023-06-25
  */
+@Data
 public class VoiceAnnotation extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -52,6 +55,24 @@ public class VoiceAnnotation extends BaseEntity
 
     private String[] selectTags;
 
+    private Integer taskId;
+
+    private Long clazzId;
+
+    private Long labelUser;
+
+    private Long verityUser;
+
+    private Date labelTime;
+
+    private Date verityTime;
+
+    private Integer isPass;
+
+    private String verityFeedback;
+
+    private Long updateNum;
+
     public String[] getSelectTags() {
         return selectTags;
     }
@@ -73,70 +94,70 @@ public class VoiceAnnotation extends BaseEntity
         this.id = id;
     }
 
-    public Long getId() 
+    public Long getId()
     {
         return id;
     }
-    public void setAudioPath(String audioPath) 
+    public void setAudioPath(String audioPath)
     {
         this.audioPath = audioPath;
     }
 
-    public String getAudioPath() 
+    public String getAudioPath()
     {
         return audioPath;
     }
-    public void setAudioName(String audioName) 
+    public void setAudioName(String audioName)
     {
         this.audioName = audioName;
     }
 
-    public String getAudioName() 
+    public String getAudioName()
     {
         return audioName;
     }
-    public void setPreText(String preText) 
+    public void setPreText(String preText)
     {
         this.preText = preText;
     }
 
-    public String getPreText() 
+    public String getPreText()
     {
         return preText;
     }
-    public void setAfterText(String afterText) 
+    public void setAfterText(String afterText)
     {
         this.afterText = afterText;
     }
 
-    public String getAfterText() 
+    public String getAfterText()
     {
         return afterText;
     }
-    public void setIsUse(String isUse) 
+    public void setIsUse(String isUse)
     {
         this.isUse = isUse;
     }
 
-    public String getIsUse() 
+    public String getIsUse()
     {
         return isUse;
     }
-    public void setTaskOwner(String taskOwner) 
+    public void setTaskOwner(String taskOwner)
     {
         this.taskOwner = taskOwner;
     }
 
-    public String getTaskOwner() 
+    public String getTaskOwner()
     {
         return taskOwner;
     }
-    public void setIsMask(String isMask) 
+    public void setIsMask(String isMask)
     {
         this.isMask = isMask;
     }
 
-    public String getIsMask() 
+    public String getIsMask()
     {
         return isMask;
     }

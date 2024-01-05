@@ -121,6 +121,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="taskOwner != null">task_owner = #{taskOwner},</if>
             <if test="taskId != null">task_id = #{taskId},</if>
             <if test="clazzId != null">clazz_id = #{clazzId},</if>
+            <if test="labelUser != null">label_user = #{labelUser},</if>
         </trim>
         <where>
         <if test="clazzId != null">clazz_id = #{clazzId},</if>

@@ -1,6 +1,9 @@
 package com.ruoyi.task.service.impl;
 
 import java.util.List;
+
+import com.ruoyi.asr.domain.VoiceAnnotation;
+import com.ruoyi.asr.mapper.VoiceAnnotationMapper;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.qa.domain.AsrResult1;
 import com.ruoyi.qa.mapper.AsrResult1Mapper;
@@ -26,6 +29,9 @@ public class TaskServiceImpl implements ITaskService
 
     @Autowired
     private AsrResult1Mapper asrResult1Mapper;
+
+    @Autowired
+    private VoiceAnnotationMapper voiceAnnotationMapper;
 
     /**
      * 查询【请填写功能名称】
@@ -70,21 +76,33 @@ public class TaskServiceImpl implements ITaskService
 
         int i = taskMapper.insertTask(task1);
         List<UserTask> userTaskRows = task.getUserTaskRows();
+        int num = 0;
         for (UserTask userTask :userTaskRows){
             List<Long> selectedUsers = userTask.getSelectedUsers();
             for (Long userId :selectedUsers){
                 if (0L == clazz){
-
+                    VoiceAnnotation voiceAnnotation = new VoiceAnnotation();
+                    voiceAnnotation.setLabelUser(userId);
+                    voiceAnnotation.setUpdateNum(userTask.getTaskQuantity();
+                    voiceAnnotation.setTaskId(i);
+                    voiceAnnotation.setClazzId(userTask.getSevalue());
+                    voiceAnnotationMapper.updateVoiceAnnotationByClazzId(voiceAnnotation);
                 }else if(1L == clazz){
+//                    todo
+//                    添加iu该task_owner逻辑
                     AsrResult1 asrResult1 = new AsrResult1();
                     asrResult1.setLabelUser(userId);
+                    asrResult1.setUpdateNum(userTask.getTaskQuantity());
+                    asrResult1.setTaskId(i);
+                    asrResult1.setClazzId(userTask.getSevalue());
                     asrResult1Mapper.updateAsrResult1ByClazzId(asrResult1);
                 }else {
                     return -1;
                 }
+                num++;
             }
         }
-        return i;
+        return num;
     }
 
     /**
