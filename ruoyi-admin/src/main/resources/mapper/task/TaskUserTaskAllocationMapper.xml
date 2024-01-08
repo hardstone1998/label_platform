@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.task.mapper.TaskUserTaskAllocationMapper">
+
+    <resultMap type="TaskUserTaskAllocation" id="TaskUserTaskAllocationResult">
+        <result property="id"    column="id"    />
+        <result property="taskId"    column="task_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="wordAccuracy"    column="word_accuracy"    />
+        <result property="numberAccuracy"    column="number_accuracy"    />
+    </resultMap>
+
+    <sql id="selectTaskUserTaskAllocationVo">
+        select id, task_id, user_id, word_accuracy, number_accuracy from task_user_task_allocation
+    </sql>
+
+    <select id="selectTaskUserTaskAllocationList" parameterType="TaskUserTaskAllocation" resultMap="TaskUserTaskAllocationResult">
+        <include refid="selectTaskUserTaskAllocationVo"/>
+        <where>
+            <if test="taskId != null "> and task_id = #{taskId}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="wordAccuracy != null "> and word_accuracy = #{wordAccuracy}</if>
+            <if test="numberAccuracy != null "> and number_accuracy = #{numberAccuracy}</if>
+        </where>
+    </select>
+
+    <select id="selectTaskUserTaskAllocationById" parameterType="Long" resultMap="TaskUserTaskAllocationResult">
+        <include refid="selectTaskUserTaskAllocationVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTaskUserTaskAllocation" parameterType="TaskUserTaskAllocation" useGeneratedKeys="true" keyProperty="id">
+        insert into task_user_task_allocation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="taskId != null">task_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="wordAccuracy != null">word_accuracy,</if>
+            <if test="numberAccuracy != null">number_accuracy,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="taskId != null">#{taskId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="wordAccuracy != null">#{wordAccuracy},</if>
+            <if test="numberAccuracy != null">#{numberAccuracy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTaskUserTaskAllocation" parameterType="TaskUserTaskAllocation">
+        update task_user_task_allocation
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskId != null">task_id = #{taskId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="wordAccuracy != null">word_accuracy = #{wordAccuracy},</if>
+            <if test="numberAccuracy != null">number_accuracy = #{numberAccuracy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTaskUserTaskAllocationById" parameterType="Long">
+        delete from task_user_task_allocation where id = #{id}
+    </delete>
+
+    <delete id="deleteTaskUserTaskAllocationByIds" parameterType="String">
+        delete from task_user_task_allocation where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

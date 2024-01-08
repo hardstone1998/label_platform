@@ -55,6 +55,24 @@
       </el-form-item>
     </el-form>
 
+    <el-row :gutter="10" class="mb8">
+      <el-col :span="1.5">
+        <el-button
+          type="warning"
+          plain
+          icon="el-icon-download"
+          size="mini"
+          @click="handleExport"
+          v-hasPermi="['asr:tag:export']"
+          >导出</el-button
+        >
+      </el-col>
+      <right-toolbar
+        :showSearch.sync="showSearch"
+        @queryTable="getList"
+      ></right-toolbar>
+    </el-row>
+
     <el-table
       v-loading="loading"
       :data="annotationList"
@@ -603,9 +621,10 @@ export default {
         {
           ...this.queryParams,
         },
-        `annotation_${new Date().getTime()}.xlsx`
+        `annotation_${new Date().getTime()}.json`
       );
     },
+    
   },
   watch: {
     //当关闭时，强制重新加载子组件

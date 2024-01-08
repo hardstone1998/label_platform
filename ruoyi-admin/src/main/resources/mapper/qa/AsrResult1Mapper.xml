@@ -124,7 +124,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="labelUser != null">label_user = #{labelUser},</if>
         </trim>
         <where>
-        <if test="clazzId != null">clazz_id = #{clazzId},</if>
+        <if test="clazzId != null">( clazz_id = #{clazzId}  or cuda = #{clazzId})</if>
+            and task_owner is null
+            and task_id is null
+            and label_user is null
+            and (is_delete = "否" or is_delete is null)
+            and (is_mark is null or is_mark ="否")
         </where>
         limit
         <if test="updateNum != null">#{updateNum}</if>

@@ -24,6 +24,7 @@
     </el-form>
 
 
+
     <el-table v-loading="loading" :data="tagList" @selection-change="handleSelectionChange">
       <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <!-- <el-table-column label="主键" align="center" prop="id" />
@@ -236,7 +237,7 @@ export default {
     handleExport() {
       this.download('asr/tag/export', {
         ...this.queryParams
-      }, `tag_${new Date().getTime()}.xlsx`)
+      }, `tag_${new Date().getTime()}.json`)
     }
   }
 };

@@ -1,7 +1,16 @@
 package com.ruoyi.asr.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.parser.Feature;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +32,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
  * 标注Controller
- * 
+ *
  * @author wrh
  * @date 2023-06-25
  */
@@ -54,10 +63,22 @@ public class VoiceAnnotationController extends BaseController
     @PostMapping("/export")
     public void export(HttpServletResponse response, VoiceAnnotation voiceAnnotation)
     {
-        List<VoiceAnnotation> list = voiceAnnotationService.selectVoiceAnnotationList(voiceAnnotation);
-
-        ExcelUtil<VoiceAnnotation> util = new ExcelUtil<VoiceAnnotation>(VoiceAnnotation.class);
-        util.exportExcel(response, list, "标注数据");
+        String jsonData = voiceAnnotationService.selectVoiceAnnotationJsonList(voiceAnnotation);
+        String formattedJsonData = formatJson(jsonData);
+        try (FileWriter fileWriter = new FileWriter("data.json")) {
+            fileWriter.write(formattedJsonData);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        response.setContentType("application/octet-stream");
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=data.json");
+        try (FileInputStream fis = new FileInputStream(new File("data.json"))) {
+            IOUtils.copy(fis, response.getOutputStream());
+            response.flushBuffer();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -112,6 +133,12 @@ public class VoiceAnnotationController extends BaseController
         System.out.println("获取统计数据......");
         return success(voiceAnnotationService.selectVoiceAnnotationData());
     }
+
+    private String formatJson(String jsonData) {
+        Object jsonObjectOrArray = JSON.parse(jsonData, Feature.OrderedField);
+        return JSON.toJSONString(jsonObjectOrArray, SerializerFeature.PrettyFormat);
+    }
+
 
 
 }

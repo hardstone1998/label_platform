@@ -1,5 +1,6 @@
 package com.ruoyi.task.domain;
 
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -11,12 +12,13 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @author ruoyi
  * @date 2024-01-02
  */
+@Data
 public class Task extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
     /** $column.columnComment */
-    private Long id;
+    private Integer id;
 
     /** 任务名 */
     @Excel(name = "任务名")
@@ -38,74 +40,9 @@ public class Task extends BaseEntity
     @Excel(name = "召回率")
     private Long recallRate;
 
+    private int wordAccuracy;
 
-    public void setId(Long id)
-    {
-        this.id = id;
-    }
-
-    public Long getId()
-    {
-        return id;
-    }
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-    public void setDesc(String desc)
-    {
-        this.desc = desc;
-    }
-
-    public String getDesc()
-    {
-        return desc;
-    }
-    public void setClazz(Long clazz)
-    {
-        this.clazz = clazz;
-    }
-
-    public Long getClazz()
-    {
-        return clazz;
-    }
-    public void setAccuracy(Long accuracy)
-    {
-        this.accuracy = accuracy;
-    }
-
-    public Long getAccuracy()
-    {
-        return accuracy;
-    }
-    public void setRecallRate(Long recallRate)
-    {
-        this.recallRate = recallRate;
-    }
-
-    public Long getRecallRate()
-    {
-        return recallRate;
-    }
+    private int numberAccuracy;
 
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("id", getId())
-            .append("name", getName())
-            .append("desc", getDesc())
-            .append("clazz", getClazz())
-            .append("accuracy", getAccuracy())
-            .append("recallRate", getRecallRate())
-            .append("createTime", getCreateTime())
-            .append("updateTime", getUpdateTime())
-            .toString();
-    }
 }

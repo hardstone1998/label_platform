@@ -11,14 +11,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="clazz"    column="clazz"    />
         <result property="accuracy"    column="accuracy"    />
         <result property="recallRate"    column="recall_rate"    />
-        <result property="bak1"    column="bak1"    />
-        <result property="bak2"    column="bak2"    />
+        <result property="wordAccuracy"    column="word_accuracy"    />
+        <result property="numberAccuracy"    column="number_accuracy"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
     </resultMap>
 
     <sql id="selectTaskVo">
-        select id, task_name, task_desc, clazz, accuracy, recall_rate, create_time, update_time from task_allocation
+        select id, task_name, task_desc, clazz, accuracy, recall_rate, create_time, update_time,word_accuracy,number_accuracy from task_allocation
     </sql>
 
     <select id="selectTaskList" parameterType="Task" resultMap="TaskResult">
@@ -37,13 +37,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertTask" parameterType="Task" useGeneratedKeys="true" keyProperty="id">
         insert into task_allocation
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="name != null and name != ''">name,</if>
-            <if test="desc != null">desc,</if>
+            <if test="name != null and name != ''">task_name,</if>
+            <if test="desc != null">task_desc,</if>
             <if test="clazz != null">clazz,</if>
             <if test="accuracy != null">accuracy,</if>
             <if test="recallRate != null">recall_rate,</if>
-            <if test="bak1 != null">bak1,</if>
-            <if test="bak2 != null">bak2,</if>
+            <if test="wordAccuracy != null">word_accuracy,</if>
+            <if test="numberAccuracy != null">number_accuracy,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
          </trim>
@@ -53,8 +53,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="clazz != null">#{clazz},</if>
             <if test="accuracy != null">#{accuracy},</if>
             <if test="recallRate != null">#{recallRate},</if>
-            <if test="bak1 != null">#{bak1},</if>
-            <if test="bak2 != null">#{bak2},</if>
+            <if test="wordAccuracy != null">word_accuracy,</if>
+            <if test="numberAccuracy != null">number_accuracy,</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
          </trim>
@@ -63,13 +63,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateTask" parameterType="Task">
         update task_allocation
         <trim prefix="SET" suffixOverrides=",">
-            <if test="name != null and name != ''">name = #{name},</if>
-            <if test="desc != null">desc = #{desc},</if>
+            <if test="name != null and name != ''">task_name = #{name},</if>
+            <if test="desc != null">task_desc = #{desc},</if>
             <if test="clazz != null">clazz = #{clazz},</if>
             <if test="accuracy != null">accuracy = #{accuracy},</if>
             <if test="recallRate != null">recall_rate = #{recallRate},</if>
-            <if test="bak1 != null">bak1 = #{bak1},</if>
-            <if test="bak2 != null">bak2 = #{bak2},</if>
+            <if test="wordAccuracy != null">word_accuracy,</if>
+            <if test="numberAccuracy != null">number_accuracy,</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
         </trim>

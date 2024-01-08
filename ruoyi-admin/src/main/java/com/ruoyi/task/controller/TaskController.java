@@ -79,8 +79,9 @@ public class TaskController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody RequestTask task)
     {
-        System.out.println("task:::"+task.toString());
-        return toAjax(taskService.insertTask(task));
+        int i = taskService.insertTask(task);
+        if (i<=0)return toAjax(false);
+        return toAjax(i);
     }
 
     /**

@@ -2,28 +2,27 @@ package com.ruoyi.asr.service.impl;
 
 import java.util.*;
 
+import com.alibaba.fastjson.JSONObject;
 import com.mysql.cj.x.protobuf.MysqlxDatatypes;
-import com.ruoyi.asr.domain.AsrTag;
-import com.ruoyi.asr.domain.AsrTagRelation;
-import com.ruoyi.asr.domain.CountData;
+import com.ruoyi.asr.domain.*;
 import com.ruoyi.asr.mapper.AsrTagMapper;
 import com.ruoyi.asr.mapper.AsrTagRelationMapper;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.qa.domain.ExportResJson;
 import org.apache.commons.io.output.AppendableOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.asr.mapper.VoiceAnnotationMapper;
-import com.ruoyi.asr.domain.VoiceAnnotation;
 import com.ruoyi.asr.service.IVoiceAnnotationService;
 
 /**
  * 标注Service业务层处理
- * 
+ *
  * @author wrh
  * @date 2023-06-25
  */
 @Service
-public class VoiceAnnotationServiceImpl implements IVoiceAnnotationService 
+public class VoiceAnnotationServiceImpl implements IVoiceAnnotationService
 {
     @Autowired
     private VoiceAnnotationMapper voiceAnnotationMapper;
@@ -35,7 +34,7 @@ public class VoiceAnnotationServiceImpl implements IVoiceAnnotationService
 
     /**
      * 查询标注
-     * 
+     *
      * @param id 标注主键
      * @return 标注
      */
@@ -96,7 +95,7 @@ public class VoiceAnnotationServiceImpl implements IVoiceAnnotationService
     }
     /**
      * 查询标注列表
-     * 
+     *
      * @param voiceAnnotation 标注
      * @return 标注
      */
@@ -123,7 +122,7 @@ public class VoiceAnnotationServiceImpl implements IVoiceAnnotationService
 
     /**
      * 新增标注
-     * 
+     *
      * @param voiceAnnotation 标注
      * @return 结果
      */
@@ -137,7 +136,7 @@ public class VoiceAnnotationServiceImpl implements IVoiceAnnotationService
 
     /**
      * 修改标注
-     * 
+     *
      * @param voiceAnnotation 标注
      * @return 结果
      */
@@ -180,7 +179,7 @@ public class VoiceAnnotationServiceImpl implements IVoiceAnnotationService
 
     /**
      * 批量删除标注
-     * 
+     *
      * @param ids 需要删除的标注主键
      * @return 结果
      */
@@ -192,7 +191,7 @@ public class VoiceAnnotationServiceImpl implements IVoiceAnnotationService
 
     /**
      * 删除标注信息
-     * 
+     *
      * @param id 标注主键
      * @return 结果
      */
@@ -225,5 +224,22 @@ public class VoiceAnnotationServiceImpl implements IVoiceAnnotationService
         countData.setQANotMarkedSum((long) qaNotMarkedSum);
         countData.setQAllocationSum((long) qAllocationSum);
         return countData;
+    }
+
+//    todo
+    @Override
+    public String selectVoiceAnnotationJsonList(VoiceAnnotation voiceAnnotation) {
+        List<VoiceAnnotation> voiceAnnotations = voiceAnnotationMapper.selectVoiceAnnotationList(voiceAnnotation);
+        ArrayList<ExportASRResJson> exportResJsons = new ArrayList<ExportASRResJson>();
+        for (int i = 0; i < voiceAnnotations.size(); i++) {
+            VoiceAnnotation voiceAnnotation1 = voiceAnnotations.get(i);
+            String audioPath = voiceAnnotation1.getAudioPath();
+            String afterText = voiceAnnotation1.getAfterText();
+            if(afterText==null||afterText.length()==0||audioPath==null||audioPath.length()==0)continue;
+            ExportASRResJson exportASRResJson = new ExportASRResJson();
+            exportASRResJson.setAudio(new ExportASRResJson.Audio(audioPath,afterText));
+            exportResJsons.add(exportASRResJson);
+        }
+        return JSONObject.toJSONString(exportResJsons);
     }
 }
