@@ -61,9 +61,11 @@ public class VoiceAnnotationController extends BaseController
     //@PreAuthorize("@ss.hasPermi('asr:annotation:export')")
     @Log(title = "标注", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, VoiceAnnotation voiceAnnotation)
+    public void export(HttpServletResponse response, VoiceAnnotation voiceAnnotation,String exportFilePath)
     {
-        String jsonData = voiceAnnotationService.selectVoiceAnnotationJsonList(voiceAnnotation);
+        logger.info("文件路径:" + exportFilePath);
+        logger.info("下载信息:"+voiceAnnotation);
+        String jsonData = voiceAnnotationService.selectVoiceAnnotationJsonList(voiceAnnotation,exportFilePath);
         String formattedJsonData = formatJson(jsonData);
         try (FileWriter fileWriter = new FileWriter("data.json")) {
             fileWriter.write(formattedJsonData);

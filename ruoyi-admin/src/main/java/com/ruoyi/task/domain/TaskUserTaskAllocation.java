@@ -1,5 +1,6 @@
 package com.ruoyi.task.domain;
 
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -11,6 +12,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @author ruoyi
  * @date 2024-01-08
  */
+@Data
 public class TaskUserTaskAllocation extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -19,12 +21,22 @@ public class TaskUserTaskAllocation extends BaseEntity
     private Long id;
 
     /** $column.columnComment */
-    @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
+
     private Long taskId;
 
-    /** $column.columnComment */
-    @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
+    @Excel(name = "任务名")
+    private Long taskName;
+
     private Long userId;
+
+    @Excel(name = "用户名")
+    private Long userName;
+
+    @Excel(name = "任务类型")
+    private Long taskClazz;
+
+    @Excel(name = "准确率")
+    private Long accuracy;
 
     /** 字符准确率 */
     @Excel(name = "字符准确率")
@@ -34,60 +46,7 @@ public class TaskUserTaskAllocation extends BaseEntity
     @Excel(name = "个数准确率")
     private Long numberAccuracy;
 
-    public void setId(Long id)
-    {
-        this.id = id;
-    }
+    @Excel(name = "召回率")
+    private Long recallRate;
 
-    public Long getId()
-    {
-        return id;
-    }
-    public void setTaskId(Long taskId)
-    {
-        this.taskId = taskId;
-    }
-
-    public Long getTaskId()
-    {
-        return taskId;
-    }
-    public void setUserId(Long userId)
-    {
-        this.userId = userId;
-    }
-
-    public Long getUserId()
-    {
-        return userId;
-    }
-    public void setWordAccuracy(Long wordAccuracy)
-    {
-        this.wordAccuracy = wordAccuracy;
-    }
-
-    public Long getWordAccuracy()
-    {
-        return wordAccuracy;
-    }
-    public void setNumberAccuracy(Long numberAccuracy)
-    {
-        this.numberAccuracy = numberAccuracy;
-    }
-
-    public Long getNumberAccuracy()
-    {
-        return numberAccuracy;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("id", getId())
-            .append("taskId", getTaskId())
-            .append("userId", getUserId())
-            .append("wordAccuracy", getWordAccuracy())
-            .append("numberAccuracy", getNumberAccuracy())
-            .toString();
-    }
 }

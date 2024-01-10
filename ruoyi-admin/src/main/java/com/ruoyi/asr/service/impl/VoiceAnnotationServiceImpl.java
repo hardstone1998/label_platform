@@ -228,16 +228,23 @@ public class VoiceAnnotationServiceImpl implements IVoiceAnnotationService
 
 //    todo
     @Override
-    public String selectVoiceAnnotationJsonList(VoiceAnnotation voiceAnnotation) {
+    public String selectVoiceAnnotationJsonList(VoiceAnnotation voiceAnnotation,String filePath) {
         List<VoiceAnnotation> voiceAnnotations = voiceAnnotationMapper.selectVoiceAnnotationList(voiceAnnotation);
         ArrayList<ExportASRResJson> exportResJsons = new ArrayList<ExportASRResJson>();
         for (int i = 0; i < voiceAnnotations.size(); i++) {
             VoiceAnnotation voiceAnnotation1 = voiceAnnotations.get(i);
-            String audioPath = voiceAnnotation1.getAudioPath();
+            String audioName = voiceAnnotation1.getAudioName();
             String afterText = voiceAnnotation1.getAfterText();
-            if(afterText==null||afterText.length()==0||audioPath==null||audioPath.length()==0)continue;
+            if(afterText==null||afterText.length()==0||audioName==null||audioName.length()==0)continue;
             ExportASRResJson exportASRResJson = new ExportASRResJson();
-            exportASRResJson.setAudio(new ExportASRResJson.Audio(audioPath,afterText));
+            String audioPath = "";
+            if ('/'==filePath.charAt(filePath.length()-1)){
+                audioName = filePath+audioName;
+            }else {
+                audioName = filePath + "/" +audioName;
+            }
+
+            exportASRResJson.setAudio(new ExportASRResJson.Audio(audioName,afterText));
             exportResJsons.add(exportASRResJson);
         }
         return JSONObject.toJSONString(exportResJsons);

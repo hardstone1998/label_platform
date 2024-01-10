@@ -3,9 +3,8 @@ package com.ruoyi.task.controller;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
-import com.ruoyi.task.domain.RequestTask;
-import com.ruoyi.task.domain.Task;
-import com.ruoyi.task.service.ITaskService;
+import com.ruoyi.task.domain.TaskUserTaskAllocation;
+import com.ruoyi.task.service.ITaskUserTaskAllocationService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,82 +26,82 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 【请填写功能名称】Controller
  *
  * @author ruoyi
- * @date 2024-01-02
+ * @date 2024-01-10
  */
 @RestController
-@RequestMapping("/task/allocation")
-public class TaskController extends BaseController
+@RequestMapping("/task/user")
+public class TaskUserTaskAllocationController extends BaseController
 {
     @Autowired
-    private ITaskService taskService;
+    private ITaskUserTaskAllocationService taskUserTaskAllocationService;
 
     /**
      * 查询【请填写功能名称】列表
      */
-    @PreAuthorize("@ss.hasPermi('system:allocation:list')")
+    @PreAuthorize("@ss.hasPermi('task:user:list')")
     @GetMapping("/list")
-    public TableDataInfo list(Task Task)
+    public TableDataInfo list(TaskUserTaskAllocation taskUserTaskAllocation)
     {
+        System.out.println("被调用");
         startPage();
-        List<Task> list = taskService.selectTaskList(Task);
+        List<TaskUserTaskAllocation> list = taskUserTaskAllocationService.selectTaskUserTaskAllocationList(taskUserTaskAllocation);
+        System.out.println(list);
         return getDataTable(list);
     }
 
     /**
      * 导出【请填写功能名称】列表
      */
-    @PreAuthorize("@ss.hasPermi('system:allocation:export')")
+    @PreAuthorize("@ss.hasPermi('task:user:export')")
     @Log(title = "【请填写功能名称】", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, Task task)
+    public void export(HttpServletResponse response, TaskUserTaskAllocation taskUserTaskAllocation)
     {
-        List<Task> list = taskService.selectTaskList(task);
-        ExcelUtil<Task> util = new ExcelUtil<Task>(Task.class);
+        List<TaskUserTaskAllocation> list = taskUserTaskAllocationService.selectTaskUserTaskAllocationList(taskUserTaskAllocation);
+        ExcelUtil<TaskUserTaskAllocation> util = new ExcelUtil<TaskUserTaskAllocation>(TaskUserTaskAllocation.class);
         util.exportExcel(response, list, "【请填写功能名称】数据");
     }
 
     /**
      * 获取【请填写功能名称】详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:allocation:query')")
+    @PreAuthorize("@ss.hasPermi('task:user:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
-        return success(taskService.selectTaskById(id));
+        return success(taskUserTaskAllocationService.selectTaskUserTaskAllocationById(id));
     }
 
     /**
      * 新增【请填写功能名称】
      */
-    @PreAuthorize("@ss.hasPermi('system:allocation:add')")
+    @PreAuthorize("@ss.hasPermi('task:user:add')")
     @Log(title = "【请填写功能名称】", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody RequestTask task)
+    public AjaxResult add(@RequestBody TaskUserTaskAllocation taskUserTaskAllocation)
     {
-        int i = taskService.insertTask(task);
-        if (i<=0)return toAjax(false);
-        return toAjax(i);
+        return toAjax(taskUserTaskAllocationService.insertTaskUserTaskAllocation(taskUserTaskAllocation));
     }
 
     /**
      * 修改【请填写功能名称】
      */
-    @PreAuthorize("@ss.hasPermi('system:allocation:edit')")
+    @PreAuthorize("@ss.hasPermi('task:user:edit')")
     @Log(title = "【请填写功能名称】", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody Task task)
+    public AjaxResult edit(@RequestBody TaskUserTaskAllocation taskUserTaskAllocation)
     {
-        return toAjax(taskService.updateTask(task));
+        return toAjax(taskUserTaskAllocationService.updateTaskUserTaskAllocation(taskUserTaskAllocation));
     }
 
     /**
      * 删除【请填写功能名称】
      */
-    @PreAuthorize("@ss.hasPermi('system:allocation:remove')")
+    @PreAuthorize("@ss.hasPermi('task:user:remove')")
     @Log(title = "【请填写功能名称】", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
-        return toAjax(taskService.deleteTaskByIds(ids));
+        return toAjax(taskUserTaskAllocationService.deleteTaskUserTaskAllocationByIds(ids));
     }
 }

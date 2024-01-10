@@ -63,5 +63,5 @@ public interface IVoiceAnnotationService
 
     CountData selectVoiceAnnotationData();
 
-    String selectVoiceAnnotationJsonList(VoiceAnnotation voiceAnnotation);
+    String selectVoiceAnnotationJsonList(VoiceAnnotation voiceAnnotation,String filePath);
 }

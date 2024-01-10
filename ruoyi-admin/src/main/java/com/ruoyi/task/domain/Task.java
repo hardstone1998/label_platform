@@ -32,17 +32,25 @@ public class Task extends BaseEntity
     @Excel(name = "任务类型。0-asr标注，1-glm标注")
     private Long clazz;
 
-    /** 正确率 */
-    @Excel(name = "正确率")
-    private Long accuracy;
+
+    /** 字符准确率 */
+    @Excel(name = "字符准确率")
+    private int wordAccuracy;
+
+    /** 召回数 */
+    @Excel(name = "召回数")
+    private Long recallNum;
+
+    /** 分配总数 */
+    @Excel(name = "分配总数")
+    private Long allocationTotal;
 
     /** 召回率 */
     @Excel(name = "召回率")
-    private Long recallRate;
-
-    private int wordAccuracy;
-
-    private int numberAccuracy;
+    private Double recallRate;
 
 
+    /** 个数准确率 */
+    @Excel(name = "个数准确率")
+    private Long numberAccuracy;
 }

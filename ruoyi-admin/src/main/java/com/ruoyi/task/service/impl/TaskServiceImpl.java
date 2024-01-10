@@ -14,12 +14,13 @@ import com.ruoyi.system.service.ISysUserService;
 import com.ruoyi.task.domain.RequestTask;
 import com.ruoyi.task.domain.Task;
 import com.ruoyi.task.domain.TaskUserTaskAllocation;
-import com.ruoyi.task.domain.UserTask;
+import com.ruoyi.task.domain.TaskAllocationUser;
 import com.ruoyi.task.mapper.TaskMapper;
 import com.ruoyi.task.mapper.TaskUserTaskAllocationMapper;
 import com.ruoyi.task.service.ITaskService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 /**
@@ -71,7 +72,12 @@ public class TaskServiceImpl implements ITaskService
     @Override
     public List<Task> selectTaskList(Task task)
     {
-        return taskMapper.selectTaskList(task);
+        List<Task> tasks = taskMapper.selectTaskList(task);
+        for (Task task1 :tasks){
+            if (task1.getAllocationTotal()!=null&&task1.getAllocationTotal()!=0L)
+            task1.setRecallRate((1.0*task1.getRecallNum())/task1.getAllocationTotal());
+        }
+        return tasks;
     }
 
     /**
@@ -98,14 +104,14 @@ public class TaskServiceImpl implements ITaskService
 
         int i = taskMapper.insertTask(task1);
         if (i<=0)return -1;
-        List<UserTask> userTaskRows = task.getUserTaskRows();
+        List<TaskAllocationUser> taskAllocationUserRows = task.getTaskAllocationUserRows();
         int num = 0;
-        for (UserTask userTask :userTaskRows){
-            List<Long> selectedUsers = userTask.getSelectedUsers();
+        for (TaskAllocationUser taskAllocationUser : taskAllocationUserRows){
+            List<Long> selectedUsers = taskAllocationUser.getSelectedUsers();
             for (Long userId :selectedUsers){
                 SysUser user = userService.selectUserById(userId);
                 Class1 class1 = new Class1();
-                class1.setValue(userTask.getSevalue());
+                class1.setValue(taskAllocationUser.getSevalue());
                 List<Class1> class1s = class1Mapper.selectClass1List(class1);
                 Long class1Id = 1L;
                 int task_id = task1.getId();
@@ -115,7 +121,7 @@ public class TaskServiceImpl implements ITaskService
                 if (0L == clazz){
                     VoiceAnnotation voiceAnnotation = new VoiceAnnotation();
                     voiceAnnotation.setLabelUser(userId);
-                    voiceAnnotation.setUpdateNum(userTask.getTaskQuantity());
+                    voiceAnnotation.setUpdateNum(taskAllocationUser.getTaskQuantity());
                     voiceAnnotation.setTaskId(task_id);
                     voiceAnnotation.setTaskOwner(user.getUserName());
                     voiceAnnotation.setClazzId(class1Id);
@@ -124,7 +130,7 @@ public class TaskServiceImpl implements ITaskService
 //                    添加iu该task_owner逻辑
                     AsrResult1 asrResult1 = new AsrResult1();
                     asrResult1.setLabelUser(userId);
-                    asrResult1.setUpdateNum(userTask.getTaskQuantity());
+                    asrResult1.setUpdateNum(taskAllocationUser.getTaskQuantity());
                     asrResult1.setTaskId(task_id);
                     asrResult1.setTaskOwner(user.getUserName());
                     asrResult1.setClazzId(class1Id);

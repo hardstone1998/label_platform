@@ -56,22 +56,31 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['asr:tag:export']"
-          >导出</el-button
-        >
-      </el-col>
-      <right-toolbar
-        :showSearch.sync="showSearch"
-        @queryTable="getList"
-      ></right-toolbar>
-    </el-row>
+    <el-col :span="1.5">
+      <el-button
+        type="warning"
+        plain
+        icon="el-icon-download"
+        size="mini"
+        @click="showExportDialog"
+        v-hasPermi="['asr:tag:export']"
+      >
+        导出
+      </el-button>
+    </el-col>
+    <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+      </el-row>
+      <el-dialog title="导出设置" :visible.sync="exportDialogVisible">
+        <el-form :model="exportForm" label-width="80px">
+          <el-form-item label="文件路径">
+            <el-input v-model="exportForm.exportFilePath" placeholder="请输入文件路径"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="exportDialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="handleExport">确定</el-button>
+        </div>
+      </el-dialog>
 
     <el-table
       v-loading="loading"
@@ -211,6 +220,7 @@
             v-model="computedValue"
             placeholder="标注内容"
           />
+          <el-button type="primary" @click="sentenceTrim(computedValue)">标注整理</el-button>
         </el-form-item>
         <!-- <el-form-item label="标签：" prop="dynamicTags">
             <el-tooltip placement="top">
@@ -264,6 +274,7 @@
           :props="props"
           @change="handleChange"
         ></el-cascader>
+        
       </el-form>
 
       <div slot="footer" class="dialog-footer">
@@ -317,6 +328,11 @@ export default {
   components: { markAsr },
   data() {
     return {
+      // ... your existing data properties ...
+      exportDialogVisible: false,
+      exportForm: {
+        exportFilePath: "", // user-input file path
+      },
       checkAll: false,
       checkedCities: [],
       sevalue: [], //标签选择值
@@ -614,15 +630,36 @@ export default {
         })
         .catch(() => {});
     },
-    /** 导出按钮操作 */
+    showExportDialog() {
+      this.exportDialogVisible = true;
+    },
+    sentenceTrim(value){
+        console.log(value)
+        this.computedValue = value.replaceAll(" ","").replaceAll(",","，").replaceAll("?","？").replaceAll(".","。")
+        
+    },
+
     handleExport() {
+      // Validate exportForm.exportFilePath if needed
+      if (this.exportForm.exportFilePath.trim() === "") {
+        this.$message.error("请输入文件路径");
+        return;
+      }
+
+      
+
+      // Perform the export with the user-input file path
       this.download(
         "asr/annotation/export",
         {
           ...this.queryParams,
+          exportFilePath: this.exportForm.exportFilePath,
         },
         `annotation_${new Date().getTime()}.json`
       );
+
+      // Close the export dialog
+      this.exportDialogVisible = false;
     },
     
   },

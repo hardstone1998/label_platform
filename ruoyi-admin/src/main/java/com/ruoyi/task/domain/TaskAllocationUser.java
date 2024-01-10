@@ -9,7 +9,7 @@ import java.util.List;
  * @date：14:49 2024/1/5
  */
 @Data
-public class UserTask {
+public class TaskAllocationUser {
 
     private List<Long> selectedUsers;
 
