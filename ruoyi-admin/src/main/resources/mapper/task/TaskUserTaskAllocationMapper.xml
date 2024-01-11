@@ -10,22 +10,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="taskName"    column="task_name"    />
         <result property="taskClazz"    column="clazz"    />
         <result property="userId"    column="user_id"    />
-        <result property="userName"    column="nick_name"    />
+        <result property="userName"    column="user_name"    />
+        <result property="nickName"    column="nick_name"    />
         <result property="wordAccuracy"    column="word_accuracy"    />
         <result property="numberAccuracy"    column="number_accuracy"    />
+        <result property="recallNum"    column="recall_num"    />
+        <result property="createTime"    column="create_time"    />
     </resultMap>
 
 <!--    <sql id="selectTaskUserTaskAllocationVo">-->
 <!--        select id, task_id, user_id, word_accuracy, number_accuracy from task_user_task_allocation-->
 <!--    </sql>-->
     <sql id="selectTaskUserTaskAllocationVo">
-        select tu.id, tu.task_id,t.task_name,t.clazz, tu.user_id,u.nick_name, tu.word_accuracy, tu.number_accuracy from task_user_task_allocation tu inner join task_allocation t on t.id=tu.id inner join sys_user u on u.user_id = tu.user_id
+        select tu.id, tu.task_id,t.task_name,t.clazz, tu.user_id,u.user_name,u.nick_name, tu.word_accuracy, tu.number_accuracy,tu.recall_num,t.create_time from task_user_task_allocation tu inner join task_allocation t on t.id=tu.id inner join sys_user u on u.user_id = tu.user_id
     </sql>
     <select id="selectTaskUserTaskAllocationList" parameterType="TaskUserTaskAllocation" resultMap="TaskUserTaskAllocationResult">
         <include refid="selectTaskUserTaskAllocationVo"/>
         <where>
             <if test="taskId != null "> and task_id = #{taskId}</if>
             <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="userName != null "> and user_name = #{userName}</if>
             <if test="wordAccuracy != null "> and word_accuracy = #{wordAccuracy}</if>
             <if test="numberAccuracy != null "> and number_accuracy = #{numberAccuracy}</if>
         </where>

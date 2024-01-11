@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.asr.mapper.VoiceAnnotationMapper">
 
-    <resultMap type="com.ruoyi.asr.domain.VoiceAnnotation" id="VoiceAnnotationResult">
+    <resultMap type="VoiceAnnotation" id="VoiceAnnotationResult">
         <result property="id"    column="id"    />
         <result property="audioPath"    column="audio_path"    />
         <result property="audioName"    column="audio_name"    />
@@ -12,21 +12,40 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="afterText"    column="after_text"    />
         <result property="isUse"    column="is_use"    />
         <result property="taskOwner"    column="task_owner"    />
-        <result property="isMask"    column="is_mask"    />
+        <result property="isMark"    column="is_mask"    />
+        <result property="cer"    column="cer"    />
+        <result property="tags"    column="tags"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="audioTime"    column="audio_time"    />
+        <result property="audioLenth"    column="audio_lenth"    />
+        <result property="clazzId"    column="clazz_id"    />
+        <result property="taskId"    column="task_id"    />
+        <result property="labelUser"    column="label_user"    />
+        <result property="verityUser"    column="verity_user"    />
+        <result property="labelTime"    column="label_time"    />
+        <result property="verityTime"    column="verity_time"    />
+        <result property="isPass"    column="is_pass"    />
+        <result property="verity"    column="verity"    />
+        <result property="accuracy"    column="accuracy"    />
+        <result property="verityText"    column="verity_text"    />
     </resultMap>
-
     <sql id="selectVoiceAnnotationVo">
-        select id, audio_path, audio_name, pre_text, after_text, is_use, task_owner, is_mask, create_time, update_time from voice_annotation
+        select id, audio_path, audio_name, pre_text, after_text, is_use, task_owner, is_mask, cer, tags, create_time, update_time, audio_time, audio_lenth, clazz_id, task_id, label_user, verity_user, label_time, verity_time, is_pass, verity, accuracy, verity_text from voice_annotation
     </sql>
 
     <select id="selectVoiceAnnotationList" parameterType="com.ruoyi.asr.domain.VoiceAnnotation" resultMap="VoiceAnnotationResult">
         <include refid="selectVoiceAnnotationVo"/>
         <where>
             <if test="audioName != null  and audioName != ''"> and audio_name like concat('%', #{audioName}, '%')</if>
+            <if test="preText != null  and preText != ''"> and pre_text like concat('%', #{preText}, '%')</if>
             <if test="isUse != null  and isUse != ''"> and is_use = #{isUse}</if>
-            <if test="isMask != null  and isMask != ''"> and is_mask = #{isMask}</if>
+            <if test="isMark != null  and isMark != ''"> and is_mask = #{isMark}</if>
+            <if test="clazzId != null "> and clazz_id = #{clazzId}</if>
+            <if test="taskId != null "> and task_id = #{taskId}</if>
+            <if test="labelUser != null "> and label_user = #{labelUser}</if>
+            <if test="verityUser != null "> and verity_user = #{verityUser}</if>
+            <if test="isPass != null "> and is_pass = #{isPass}</if>
         </where>
     </select>
 
@@ -38,9 +57,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectVoiceAnnotationVo"/>
         <where>
             <if test="audioName != null  and audioName != ''"> and audio_name like concat('%', #{audioName}, '%')</if>
+            <if test="preText != null  and preText != ''"> and pre_text like concat('%', #{preText}, '%')</if>
             <if test="isUse != null  and isUse != ''"> and is_use = #{isUse}</if>
-            <if test="isMask != null  and isMask != ''"> and is_mask = #{isMask}</if>
+            <if test="isMark != null  and isMark != ''"> and is_mask = #{isMark}</if>
             <if test="taskOwner != null  and taskOwner != ''"> and task_owner = #{taskOwner}</if>
+            <if test="clazzId != null "> and clazz_id = #{clazzId}</if>
+            <if test="taskId != null "> and task_id = #{taskId}</if>
+            <if test="labelUser != null "> and label_user = #{labelUser}</if>
+            <if test="verityUser != null "> and verity_user = #{verityUser}</if>
+            <if test="isPass != null "> and is_pass = #{isPass}</if>
         </where>
 
     </select>
@@ -97,7 +122,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="afterText != null">after_text = #{afterText},</if>
             <if test="isUse != null">is_use = #{isUse},</if>
             <if test="taskOwner != null">task_owner = #{taskOwner},</if>
-            <if test="isMask != null">is_mask = #{isMask},</if>
+            <if test="isMark != null">is_mask = #{isMark},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
         </trim>
@@ -118,6 +143,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="taskId != null">task_id = #{taskId},</if>
             <if test="clazzId != null">clazz_id = #{clazzId},</if>
             <if test="labelUser != null">label_user = #{labelUser},</if>
+            <if test="verityUser != null">verity_user = #{verityUser},</if>
+            <if test="labelTime != null">label_time = #{labelTime},</if>
+            <if test="verityTime != null">verity_time = #{verityTime},</if>
+            <if test="isPass != null">is_pass = #{isPass},</if>
+            <if test="verity != null">verity = #{verity},</if>
+            <if test="accuracy != null">accuracy = #{accuracy},</if>
+            <if test="verityText != null">verity_text = #{verityText},</if>
         </trim>
         <where>
             <if test="clazzId != null"> and clazz_id = #{clazzId}</if>

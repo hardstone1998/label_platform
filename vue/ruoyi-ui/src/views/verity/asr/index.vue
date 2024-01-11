@@ -166,40 +166,25 @@
         :show-overflow-tooltip="true"
       />
       <el-table-column
-        label="标注前文本"
+        label="标注人"
         align="center"
-        prop="preText"
+        prop="taskOwner"
         :show-overflow-tooltip="true"
       />
       <el-table-column
-        label="标注后文本"
+        label="审核后文本"
         align="center"
         prop="afterText"
         :show-overflow-tooltip="true"
       />
-      <!-- <el-table-column prop="isUse" label="是否使用" width="100">
-        <template slot-scope="scope">
-          <el-tag
-            :type="scope.row.isUse === '是' ? 'success' : 'danger'"
-            disable-transitions
-            >{{ scope.row.isUse }}</el-tag
-          >
-        </template> -->
-      <!-- </el-table-column> -->
-
-      <!-- <el-table-column
-        label="类别"
+      <el-table-column
+        label="标注文本"
         align="center"
-        @change="selectClazzLabel(clazzId)"
+        prop="verityText"
         :show-overflow-tooltip="true"
-      /> -->
-      <el-table-column label="类别" align="center" prop="clazzId">
-        <template label="类别" align="center" slot-scope="scope">
-          {{ selectClazzLabel(clazzList,scope.row.clazzId) }}
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="isMark" label="是否已标注" width="100">
+      />
+      
+      <el-table-column prop="isMark" label="是否标注" width="100">
         <template slot-scope="scope">
           <el-tag
             :type="scope.row.isMark === '是' ? 'primary' : 'info'"
@@ -208,16 +193,44 @@
           >
         </template>
       </el-table-column>
+      <el-table-column prop="isPass" label="是否通过" width="100">
+        <template slot-scope="scope">
+          <el-tag
+            :type="scope.row.isPass === '是' ? 'primary' : 'info'"
+            disable-transitions
+            >{{ scope.row.isPass }}</el-tag
+          >
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="字符错误率"
+        align="center"
+        prop="accuracy"
+        :show-overflow-tooltip="true"
+      />
+      
 
       <el-table-column
         label="标注时间"
         align="center"
-        prop="labelTime"
+        prop="updateTime"
         width="150"
       >
         <template slot-scope="scope">
           <span>{{
-            parseTime(scope.row.updateTime, "{y}-{m}-{d}   {h}:{i}:{s}")
+            parseTime(scope.row.labelTime, "{y}-{m}-{d}   {h}:{i}:{s}")
+          }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="审核时间"
+        align="center"
+        prop="updateTime"
+        width="150"
+      >
+        <template slot-scope="scope">
+          <span>{{
+            parseTime(scope.row.verityTime, "{y}-{m}-{d}   {h}:{i}:{s}")
           }}</span>
         </template>
       </el-table-column>
@@ -227,27 +240,12 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">
-          <!-- <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="showPopup"
-            v-hasPermi="['asr:annotation:edit']"
-            >标注</el-button
-          > -->
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            >标注</el-button
-          >
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            >舍弃</el-button
+            >审核</el-button
           >
         </template>
       </el-table-column>
@@ -291,7 +289,7 @@
         <el-form-item label="标注：" prop="preText">
           <el-input
             type="textarea"
-            :rows="6"
+            :rows="4"
             v-model="computedValue"
             placeholder="标注内容"
           />
@@ -357,7 +355,7 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-    <!-- <el-dialog :title="title" :visible.sync="opentagadd" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="opentagadd" width="500px" append-to-body>
       <el-form ref="formadd" :model="formadd" :rules="rulesadd" label-width="80px">
        
         <el-form-item label="标签名字" prop="tagName">
@@ -372,7 +370,7 @@
         <el-button type="primary" @click="submitFormtagadd()">确 定</el-button>
         <el-button @click="canceltagadd">取 消</el-button>
       </div>
-    </el-dialog> -->
+    </el-dialog>
     <!-- 引入组件 -->
     <!-- <markAsr v-if="isPopupVisible" @close="closePopup"> </markAsr> -->
   </div>
@@ -392,7 +390,7 @@ import {
 } from "@/api/qa/extract";
 
 import {addTag, updateTag } from "@/api/asr/tag";
-import markAsr from "./markAsr.vue";
+import markAsr from "@/views/markAsr.vue";
 import {allByUser} from "@/api/task/user"
 import { setCanvasCreator } from "echarts";
 
@@ -487,7 +485,7 @@ export default {
       },
       // 表单参数
       form: {},
-      // formadd:{},
+      formadd:{},
       rules:{},
 
       // 表单校验
@@ -526,30 +524,6 @@ export default {
   },
 
   methods: {
-    // 查询类别名称
-    // 递归函数，根据 id 查找 label
-  selectClazzLabel(array,targetId) {
-    if(targetId ==undefined ||targetId == null){
-      return null;
-    }
-    for (const item of array) {
-      if (item.id === targetId) {
-        return item.label;
-      }
-
-      if (item.children && item.children.length > 0) {
-        const label = this.selectClazzLabel(item.children,targetId);
-        if (label) {
-          return label;
-        }
-      }
-    }
-    // 如果没有找到匹配的 id，可以返回 null 或其他适当的值
-    return null;
-  },
-
-
-
   formatClazzList(clazzList) { 
   // 将 clazzList 格式化为适用于 el-cascader 的 options 数据 
   return clazzList.map(clazz => ({ 
@@ -609,7 +583,7 @@ export default {
     getOptions() {
       optionsExtract().then((response) => {
        // this.extractList = response.rows;
-      //  console.log(response.data);
+       console.log(response.data);
        this.clazzList =response.data.options;
         //this.total = response.total;
         //this.loading = false;
@@ -622,21 +596,21 @@ export default {
       this.opentagadd = false;
 
     },
-    // submitFormtagadd(){
+    submitFormtagadd(){
     
-    //   this.$refs["formadd"].validate(valid => {
-    //     if (valid) {
-    //         addTag(this.formadd).then(response => {
-    //           this.$modal.msgSuccess("添加成功，请重新进入该界面");
-    //           this.opentagadd = false;
-    //           this.formadd.tagName=null;
-    //           this.formadd.createUser=null;
-    //          // this.getList();
-    //         });
+      this.$refs["formadd"].validate(valid => {
+        if (valid) {
+            addTag(this.formadd).then(response => {
+              this.$modal.msgSuccess("添加成功，请重新进入该界面");
+              this.opentagadd = false;
+              this.formadd.tagName=null;
+              this.formadd.createUser=null;
+             // this.getList();
+            });
           
-    //     }
-    //   });
-    // },
+        }
+      });
+    },
 
 
     handleClose(tag) {
@@ -699,7 +673,7 @@ export default {
         afterText: null,
         isUse: null,
         taskOwner: null,
-        isMark: null,
+        isMask: null,
         createTime: null,
         // dynamicTags: null,
         updateTime: null,
@@ -785,14 +759,22 @@ export default {
     submitForm() {
       this.form.sevalue = this.sevalue;
       // this.form.dynamicTags = this.dynamicTags;
-      // this.form.selectTags=this.checkedCities;
+      this.form.selectTags=this.checkedCities;
       this.$refs["form"].validate((valid) => {
         if (valid) {
-          updateAnnotation(this.form).then((response) => {
-            this.$modal.msgSuccess("标注成功");
-            this.open = false;
-            this.getList();
-          });
+          if (this.form.id != null) {
+            updateAnnotation(this.form).then((response) => {
+              this.$modal.msgSuccess("标注成功");
+              this.open = false;
+              this.getList();
+            });
+          } else {
+            addAnnotation(this.form).then((response) => {
+              this.$modal.msgSuccess("新增成功");
+              this.open = false;
+              this.getList();
+            });
+          }
         }
       });
     },

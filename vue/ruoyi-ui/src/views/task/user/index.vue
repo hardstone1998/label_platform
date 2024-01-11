@@ -68,6 +68,7 @@
       <el-table-column label="id" align="center" width="55" prop="id" />
       <el-table-column label="任务名" align="center" prop="taskName" />
       <el-table-column label="用户名" align="center" prop="userName" />
+      <el-table-column label="用户昵称" align="center" prop="nickName" />
       <el-table-column label="任务类型" align="center" prop="taskClazz" />
       <el-table-column label="个数准确率" align="center" prop="numberAccuracy" />
       <el-table-column label="字符准确率" align="center" prop="wordAccuracy" />

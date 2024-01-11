@@ -332,7 +332,7 @@
 
       <el-col :span="7">
         <!-- Task Assignment -->
-        <h4>任务类型</h4>
+        <h4>问题分类</h4>
         <el-cascader
           v-model="row.sevalue"
           placeholder="选择问题分类"
@@ -381,7 +381,7 @@
     getData
   } from "@/api/asr/annotation";
   import {
-    uploadASRFile,uploadQAFile,addAllocation,updateAllocation
+    uploadASRFile,uploadQAFile,addTask,updateTask
   } from "@/api/task/allocation";
   import {
   optionsExtract
@@ -642,14 +642,14 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateAllocation(this.form).then(response => {
+            updateTask(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
             console.log(this.form)
-            addAllocation(this.form).then(response => {
+            addTask(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();

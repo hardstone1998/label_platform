@@ -143,8 +143,8 @@ public class VoiceAnnotationServiceImpl implements IVoiceAnnotationService
     @Override
     public int updateVoiceAnnotation(VoiceAnnotation voiceAnnotation)
     {
-        voiceAnnotation.setIsMask("是");
-
+        voiceAnnotation.setIsMark("是");
+        voiceAnnotation.setLabelTime(new Date());
 
         if(voiceAnnotation.getAfterText()==null){
             voiceAnnotation.setAfterText(voiceAnnotation.getPreText());
@@ -226,10 +226,10 @@ public class VoiceAnnotationServiceImpl implements IVoiceAnnotationService
         return countData;
     }
 
-//    todo
     @Override
     public String selectVoiceAnnotationJsonList(VoiceAnnotation voiceAnnotation,String filePath) {
         List<VoiceAnnotation> voiceAnnotations = voiceAnnotationMapper.selectVoiceAnnotationList(voiceAnnotation);
+
         ArrayList<ExportASRResJson> exportResJsons = new ArrayList<ExportASRResJson>();
         for (int i = 0; i < voiceAnnotations.size(); i++) {
             VoiceAnnotation voiceAnnotation1 = voiceAnnotations.get(i);
@@ -247,6 +247,7 @@ public class VoiceAnnotationServiceImpl implements IVoiceAnnotationService
             exportASRResJson.setAudio(new ExportASRResJson.Audio(audioName,afterText));
             exportResJsons.add(exportASRResJson);
         }
+
         return JSONObject.toJSONString(exportResJsons);
     }
 }

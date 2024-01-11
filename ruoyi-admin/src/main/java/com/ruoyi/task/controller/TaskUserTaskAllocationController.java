@@ -36,14 +36,26 @@ public class TaskUserTaskAllocationController extends BaseController
     private ITaskUserTaskAllocationService taskUserTaskAllocationService;
 
     /**
-     * 查询【请填写功能名称】列表
+     * 查询用户任务列表
      */
     @PreAuthorize("@ss.hasPermi('task:user:list')")
     @GetMapping("/list")
     public TableDataInfo list(TaskUserTaskAllocation taskUserTaskAllocation)
     {
-        System.out.println("被调用");
         startPage();
+        List<TaskUserTaskAllocation> list = taskUserTaskAllocationService.selectTaskUserTaskAllocationList(taskUserTaskAllocation);
+        System.out.println(list);
+        return getDataTable(list);
+    }
+
+    /**
+     * 查询用户全部任务
+     */
+    @GetMapping("/allByUser")
+    public TableDataInfo allByUser(String userName)
+    {
+        TaskUserTaskAllocation taskUserTaskAllocation = new TaskUserTaskAllocation();
+        taskUserTaskAllocation.setUserName(userName);
         List<TaskUserTaskAllocation> list = taskUserTaskAllocationService.selectTaskUserTaskAllocationList(taskUserTaskAllocation);
         System.out.println(list);
         return getDataTable(list);

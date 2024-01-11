@@ -31,7 +31,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['system:allocation:add']"
+          v-hasPermi="['task:allocation:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -41,7 +41,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['system:allocation:export']"
+          v-hasPermi="['task:allocation:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
@@ -88,10 +88,10 @@
 </template>
 
 <script>
-import { listAllocation, getAllocation, delAllocation, addAllocation, updateAllocation } from "@/api/task/allocation";
+import { listTask, getTask, delTask, addTask, updateTask } from "@/api/task/allocation";
 
 export default {
-  name: "Allocation",
+  name: "Task",
   data() {
     return {
       formData: {
@@ -154,7 +154,7 @@ export default {
     /** 查询【请填写功能名称】列表 */
     getList() {
       this.loading = true;
-      listAllocation(this.queryParams).then(response => {
+      listTask(this.queryParams).then(response => {
         this.allocationList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -207,7 +207,7 @@ export default {
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getAllocation(id).then(response => {
+      getTask(id).then(response => {
         this.form = response.data;
         this.open = true;
         this.title = "修改【请填写功能名称】";
@@ -218,13 +218,13 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateAllocation(this.form).then(response => {
+            updateTask(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addAllocation(this.form).then(response => {
+            addTask(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -237,7 +237,7 @@ export default {
     handleDelete(row) {
       const ids = row.id || this.ids;
       this.$modal.confirm('是否确认删除【请填写功能名称】编号为"' + ids + '"的数据项？').then(function() {
-        return delAllocation(ids);
+        return delTask(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -245,7 +245,7 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('system/allocation/export', {
+      this.download('task/allocation/export', {
         ...this.queryParams
       }, `allocation_${new Date().getTime()}.xlsx`)
     }

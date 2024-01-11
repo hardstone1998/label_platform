@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
 // 查询【请填写功能名称】列表
-export function listAllocation(query) {
+export function listTask(query) {
   return request({
     url: '/task/allocation/list',
     method: 'get',
@@ -9,8 +9,9 @@ export function listAllocation(query) {
   })
 }
 
+
 // 查询【请填写功能名称】详细
-export function getAllocation(id) {
+export function getTask(id) {
   return request({
     url: '/task/allocation/' + id,
     method: 'get'
@@ -18,7 +19,7 @@ export function getAllocation(id) {
 }
 
 // 新增【请填写功能名称】
-export function addAllocation(data) {
+export function addTask(data) {
   return request({
     url: '/task/allocation',
     method: 'post',
@@ -27,7 +28,7 @@ export function addAllocation(data) {
 }
 
 // 修改【请填写功能名称】
-export function updateAllocation(data) {
+export function updateTask(data) {
   return request({
     url: '/task/allocation',
     method: 'put',
@@ -36,7 +37,7 @@ export function updateAllocation(data) {
 }
 
 // 删除【请填写功能名称】
-export function delAllocation(id) {
+export function delTask(id) {
   return request({
     url: '/task/allocation/' + id,
     method: 'delete'

@@ -49,7 +49,7 @@ public class VoiceAnnotation extends BaseEntity
 
     /** 是否已标注。0未标注，1已标注 */
     @Excel(name = "是否已标注。0未标注，1已标注")
-    private String isMask;
+    private String isMark;
 
     private String[] dynamicTags;
 
@@ -73,108 +73,31 @@ public class VoiceAnnotation extends BaseEntity
 
     private Long updateNum;
 
-    public String[] getSelectTags() {
-        return selectTags;
-    }
+    /** 字错率 */
+    @Excel(name = "字错率")
+    private String cer;
 
-    public void setSelectTags(String[] selectTags) {
-        this.selectTags = selectTags;
-    }
+    /** 标签备注 */
+    @Excel(name = "标签备注")
+    private String tags;
 
-    public String[] getDynamicTags() {
-        return dynamicTags;
-    }
+    /** 音频长度 */
+    @Excel(name = "音频长度")
+    private String audioTime;
 
-    public void setDynamicTags(String[] dynamicTags) {
-        this.dynamicTags = dynamicTags;
-    }
+    /** 文字长度 */
+    @Excel(name = "文字长度")
+    private String audioLenth;
 
-    public void setId(Long id)
-    {
-        this.id = id;
-    }
+    /** 审核意见 */
+    @Excel(name = "审核意见")
+    private String verity;
 
-    public Long getId()
-    {
-        return id;
-    }
-    public void setAudioPath(String audioPath)
-    {
-        this.audioPath = audioPath;
-    }
+    /** 正确率 */
+    @Excel(name = "正确率")
+    private Long accuracy;
 
-    public String getAudioPath()
-    {
-        return audioPath;
-    }
-    public void setAudioName(String audioName)
-    {
-        this.audioName = audioName;
-    }
-
-    public String getAudioName()
-    {
-        return audioName;
-    }
-    public void setPreText(String preText)
-    {
-        this.preText = preText;
-    }
-
-    public String getPreText()
-    {
-        return preText;
-    }
-    public void setAfterText(String afterText)
-    {
-        this.afterText = afterText;
-    }
-
-    public String getAfterText()
-    {
-        return afterText;
-    }
-    public void setIsUse(String isUse)
-    {
-        this.isUse = isUse;
-    }
-
-    public String getIsUse()
-    {
-        return isUse;
-    }
-    public void setTaskOwner(String taskOwner)
-    {
-        this.taskOwner = taskOwner;
-    }
-
-    public String getTaskOwner()
-    {
-        return taskOwner;
-    }
-    public void setIsMask(String isMask)
-    {
-        this.isMask = isMask;
-    }
-
-    public String getIsMask()
-    {
-        return isMask;
-    }
-
-    @Override
-    public String toString() {
-        return "VoiceAnnotation{" +
-                "id=" + id +
-                ", audioPath='" + audioPath + '\'' +
-                ", audioName='" + audioName + '\'' +
-                ", preText='" + preText + '\'' +
-                ", afterText='" + afterText + '\'' +
-                ", isUse='" + isUse + '\'' +
-                ", taskOwner='" + taskOwner + '\'' +
-                ", isMask='" + isMask + '\'' +
-                ", dynamicTags=" + Arrays.toString(dynamicTags) +
-                ", selectTags=" + Arrays.toString(selectTags) +
-                '}';
-    }
+    /** 审核后文本 */
+    @Excel(name = "审核后文本")
+    private String verityText;
 }

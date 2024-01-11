@@ -9,6 +9,15 @@ export function listUser(query) {
   })
 }
 
+// 查询【请填写功能名称】列表
+export function allByUser(userName) {
+  return request({
+    url: '/task/user/allByUser',
+    method: 'get',
+    params: { "userName": userName }
+  })
+}
+
 // 查询【请填写功能名称】详细
 export function getUser(id) {
   return request({

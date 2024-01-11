@@ -25,28 +25,38 @@ public class TaskUserTaskAllocation extends BaseEntity
     private Long taskId;
 
     @Excel(name = "任务名")
-    private Long taskName;
+    private String taskName;
 
     private Long userId;
 
     @Excel(name = "用户名")
-    private Long userName;
+    private String userName;
+
+    @Excel(name = "用户昵称")
+    private String nickName;
 
     @Excel(name = "任务类型")
     private Long taskClazz;
 
     @Excel(name = "准确率")
-    private Long accuracy;
+    private Double accuracy;
 
     /** 字符准确率 */
     @Excel(name = "字符准确率")
-    private Long wordAccuracy;
+    private Double wordAccuracy;
 
     /** 个数准确率 */
     @Excel(name = "个数准确率")
-    private Long numberAccuracy;
+    private Double numberAccuracy;
 
+    /** 召回率 */
     @Excel(name = "召回率")
-    private Long recallRate;
+    private Double recallRate;
+
+
+    /** 召回数 */
+    private Double recallNum;
+
+
 
 }

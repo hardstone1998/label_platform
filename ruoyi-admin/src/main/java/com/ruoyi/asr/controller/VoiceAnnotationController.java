@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * @author wrh
  * @date 2023-06-25
  */
+@Slf4j
 @RestController
 @RequestMapping("/asr/annotation")
 public class VoiceAnnotationController extends BaseController
@@ -50,6 +52,7 @@ public class VoiceAnnotationController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(VoiceAnnotation voiceAnnotation)
     {
+        logger.info("查询ASR被调用请求参数："+voiceAnnotation);
         startPage();
         List<VoiceAnnotation> list = voiceAnnotationService.selectVoiceAnnotationList(voiceAnnotation);
         return getDataTable(list);
