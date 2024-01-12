@@ -20,7 +20,7 @@
       <el-form-item label="搜索文本" prop="audioName">
         <el-input
           v-model="queryParams.preText"
-          placeholder="文本搜索搜索"
+          placeholder="文本搜索"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -271,7 +271,7 @@
       append-to-body
       @close="stopAudioPlayback"
     >
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <markAsr
           v-if="isPopupVisible"
           @close="closePopup"
@@ -341,12 +341,14 @@
             }}</el-checkbox>
           </el-checkbox-group>
         </el-form-item> -->
-        <el-cascader
-          v-model="sevalue"
-          placeholder="选择问题分类"
-          :options="clazzList"
-          @change="handleChange"
+        <el-form-item  label="问题分类：" prop="verity">
+          <el-cascader 
+            v-model="sevalue"
+            placeholder="选择问题分类"
+            :options="formatClazzList(clazzList)"
+            @change="handleChange"
         ></el-cascader>
+        </el-form-item>
         
       </el-form>
 
@@ -521,8 +523,8 @@ export default {
   },
   created() {
     this.getList();
-    this.getOptions();
     this.getClazz();
+    this.getTaskList();
   },
 
   methods: {
@@ -574,13 +576,15 @@ export default {
      },
 
    handleChange(value) {
-     this.sevalue=value;
+    
+    this.form.clazzId = value[value.length-1]
+    //  this.sevalue=value;
 
-     this.selectvalue=this.sevalue[this.sevalue.length-1]
+    //  this.selectvalue=this.sevalue[this.sevalue.length-1]
      //console.log(this.sevalue);
      },
 
-    getClazz(){
+    getTaskList(){
       var userName = this.$store.state.user.name;
       console.log(userName);
       allByUser(userName).then((response) => {
@@ -606,7 +610,7 @@ export default {
         this.loading = false;
       });
     },
-    getOptions() {
+    getClazz() {
       optionsExtract().then((response) => {
        // this.extractList = response.rows;
       //  console.log(response.data);
@@ -622,21 +626,6 @@ export default {
       this.opentagadd = false;
 
     },
-    // submitFormtagadd(){
-    
-    //   this.$refs["formadd"].validate(valid => {
-    //     if (valid) {
-    //         addTag(this.formadd).then(response => {
-    //           this.$modal.msgSuccess("添加成功，请重新进入该界面");
-    //           this.opentagadd = false;
-    //           this.formadd.tagName=null;
-    //           this.formadd.createUser=null;
-    //          // this.getList();
-    //         });
-          
-    //     }
-    //   });
-    // },
 
 
     handleClose(tag) {
@@ -703,7 +692,7 @@ export default {
         createTime: null,
         // dynamicTags: null,
         updateTime: null,
-        sevalue:null,
+        clazzId:null,
       };
       this.resetForm("form");
     },
@@ -766,7 +755,7 @@ export default {
     handleUpdate(row) {
       this.audio_name_1 = row.audioName;
       //发送一个请求，根据id查对应的标签名字
-      this.sevalue = []
+      // this.sevalue = []
       // this.dynamicTags = [];
       this.reset();
       this.isPopupVisible = true;
@@ -783,11 +772,14 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-      this.form.sevalue = this.sevalue;
+      this.form.labelUserName = this.$store.state.user.name;
+      // this.form.sevalue = this.sevalue;
       // this.form.dynamicTags = this.dynamicTags;
       // this.form.selectTags=this.checkedCities;
       this.$refs["form"].validate((valid) => {
         if (valid) {
+          
+          console.log(this.form);
           updateAnnotation(this.form).then((response) => {
             this.$modal.msgSuccess("标注成功");
             this.open = false;
@@ -795,6 +787,8 @@ export default {
           });
         }
       });
+      console.log("test2:")
+      console.log(this.queryParams)
     },
     /** 删除按钮操作 */
     handleDelete(row) {

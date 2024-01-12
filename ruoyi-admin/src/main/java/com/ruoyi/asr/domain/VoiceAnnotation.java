@@ -61,6 +61,8 @@ public class VoiceAnnotation extends BaseEntity
 
     private Long labelUser;
 
+    private String labelUserName;
+
     private Long verityUser;
 
     private Date labelTime;
@@ -100,4 +102,6 @@ public class VoiceAnnotation extends BaseEntity
     /** 审核后文本 */
     @Excel(name = "审核后文本")
     private String verityText;
+
+    private Long verityClazzId;
 }

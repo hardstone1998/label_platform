@@ -7,13 +7,16 @@ import com.mysql.cj.x.protobuf.MysqlxDatatypes;
 import com.ruoyi.asr.domain.*;
 import com.ruoyi.asr.mapper.AsrTagMapper;
 import com.ruoyi.asr.mapper.AsrTagRelationMapper;
+import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.qa.domain.ExportResJson;
+import com.ruoyi.system.mapper.SysUserMapper;
 import org.apache.commons.io.output.AppendableOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.asr.mapper.VoiceAnnotationMapper;
 import com.ruoyi.asr.service.IVoiceAnnotationService;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 标注Service业务层处理
@@ -31,6 +34,10 @@ public class VoiceAnnotationServiceImpl implements IVoiceAnnotationService
 
     @Autowired
     private AsrTagRelationMapper asrTagRelationMapper;
+
+    @Autowired
+    private SysUserMapper sysUserMapper;
+
 
     /**
      * 查询标注
@@ -110,7 +117,7 @@ public class VoiceAnnotationServiceImpl implements IVoiceAnnotationService
 //        }
 //        String[] strings = tags.toArray(new String[tags.size()]);
 //
-        if (voiceAnnotation.getTaskOwner().equals("admin")){
+        if ("admin".equals(voiceAnnotation.getTaskOwner())){
 
             return voiceAnnotationMapper.selectVoiceAnnotationList(voiceAnnotation);
         }else {
@@ -141,10 +148,15 @@ public class VoiceAnnotationServiceImpl implements IVoiceAnnotationService
      * @return 结果
      */
     @Override
+    @Transactional
     public int updateVoiceAnnotation(VoiceAnnotation voiceAnnotation)
     {
         voiceAnnotation.setIsMark("是");
-        voiceAnnotation.setLabelTime(new Date());
+        voiceAnnotation.setLabelTime(DateUtils.getNowDate());
+        String labelUserName = voiceAnnotation.getLabelUserName();
+        SysUser sysUser = sysUserMapper.selectUserByUserName(labelUserName);
+        voiceAnnotation.setLabelUser(sysUser.getUserId());
+
 
         if(voiceAnnotation.getAfterText()==null){
             voiceAnnotation.setAfterText(voiceAnnotation.getPreText());
@@ -154,24 +166,24 @@ public class VoiceAnnotationServiceImpl implements IVoiceAnnotationService
         String[] selectTags = voiceAnnotation.getSelectTags();
 
         //先删除所有改标签关联信息，再将该标签添加关联表中
-        asrTagRelationMapper.deleteTagRelByAsrId(voiceAnnotation.getId());
-        ArrayList<Long> tagIds = new ArrayList<>();
+//        asrTagRelationMapper.deleteTagRelByAsrId(voiceAnnotation.getId());
+//        ArrayList<Long> tagIds = new ArrayList<>();
         //根据名字获取id
-        for (String selectTag : selectTags) {
-            AsrTag asrTag = asrTagMapper.selectTagByTagName(selectTag);
-            tagIds.add(asrTag.getId());
-        }
+//        for (String selectTag : selectTags) {
+//            AsrTag asrTag = asrTagMapper.selectTagByTagName(selectTag);
+//            tagIds.add(asrTag.getId());
+//        }
 
 
 
         //循环插入
-        for (int i = 0; i < tagIds.size(); i++) {
-            AsrTagRelation asrTagRelation1 = new AsrTagRelation();
-            asrTagRelation1.setAsrId(voiceAnnotation.getId());
-            asrTagRelation1.setTagId(tagIds.get(i));
-            asrTagRelation1.setCreateTime(DateUtils.getNowDate());
-            asrTagRelationMapper.insertAsrTagRelation(asrTagRelation1);
-        }
+//        for (int i = 0; i < tagIds.size(); i++) {
+//            AsrTagRelation asrTagRelation1 = new AsrTagRelation();
+//            asrTagRelation1.setAsrId(voiceAnnotation.getId());
+//            asrTagRelation1.setTagId(tagIds.get(i));
+//            asrTagRelation1.setCreateTime(DateUtils.getNowDate());
+//            asrTagRelationMapper.insertAsrTagRelation(asrTagRelation1);
+//        }
         voiceAnnotation.setUpdateTime(DateUtils.getNowDate());
 
         return voiceAnnotationMapper.updateVoiceAnnotation(voiceAnnotation);

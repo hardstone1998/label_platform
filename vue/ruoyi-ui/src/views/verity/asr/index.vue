@@ -19,7 +19,7 @@
 
       <el-form-item label="搜索文本" prop="audioName">
         <el-input
-          v-model="queryParams.preText"
+          v-model="queryParams.afterText"
           placeholder="文本搜索搜索"
           clearable
           @keyup.enter.native="handleQuery"
@@ -37,28 +37,16 @@
       </el-form-item>
 
 
-      <el-form-item label="是否使用" prop="isUse">
-        <!-- <el-dropdown @command="handleCommandUse">
-          <span class="el-dropdown-link">
-            是否使用<i class="el-icon-arrow-down el-icon--right"></i>
-          </span>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="a">是</el-dropdown-item>
-            <el-dropdown-item command="b">否</el-dropdown-item>
-          </el-dropdown-menu> -->
-
+      <!-- <el-form-item label="是否使用" prop="isUse">
           <el-select v-model="queryParams.isUse"  placeholder="是否使用">
           <el-option
-            
             v-for="use in isUse"
             :key="use.id"
             :label="use.name"
             :value="use.id"
           />
-        </el-select>
-        <!-- </el-dropdown> -->
-        
-      </el-form-item>
+        </el-select>     
+      </el-form-item> -->
 
       <el-form-item label="是否标注" prop="isMark">
         <!-- <el-dropdown @command="handleCommandMark">
@@ -126,7 +114,7 @@
         icon="el-icon-download"
         size="mini"
         @click="showExportDialog"
-        v-hasPermi="['asr:tag:export']"
+        v-hasPermi="['verity:asr:export']"
       >
         导出
       </el-button>
@@ -147,7 +135,7 @@
 
     <el-table
       v-loading="loading"
-      :data="annotationList"
+      :data="verityAsrList"
       @selection-change="handleSelectionChange"
       ref="filterTable"
     >
@@ -259,7 +247,7 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改标注对话框 -->
+    <!-- 审核界面-->
     <el-dialog
       :title="form.audioName"
       :visible.sync="open"
@@ -269,7 +257,7 @@
       append-to-body
       @close="stopAudioPlayback"
     >
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="verityForm" :rules="rules" label-width="100px">
         <markAsr
           v-if="isPopupVisible"
           @close="closePopup"
@@ -281,110 +269,60 @@
         </markAsr>
         <el-form-item label="提示：">
           <el-input
-            placeholder="欢迎使用标注工具，请使用中文标点符号进行标注，如果该音频没有有效内容或者音频内容不清晰，请返回上一级舍弃该音频。"
+            placeholder="欢迎使用审核工具，请使用中文标点符号进行标注。"
             :disabled="true"
           >
           </el-input>
         </el-form-item>
-        <el-form-item label="标注：" prop="preText">
+        <el-form-item label="标注：" prop="verityText">
           <el-input
             type="textarea"
             :rows="4"
             v-model="computedValue"
-            placeholder="标注内容"
+            placeholder="审核内容"
           />
           <el-button type="primary" @click="sentenceTrim(computedValue)">标注整理</el-button>
         </el-form-item>
-        <!-- <el-form-item label="标签：" prop="dynamicTags">
-            <el-tooltip placement="top">
-              <div slot="content">Tips: 添加标签（可选），输入内容后回车添加，最多输入5个。</div>
-              <i class="el-icon-question" />
-            </el-tooltip>
-         
-          <el-tag
-            :key="tag"
-            v-for="tag in dynamicTags"
-            closable
-            :disable-transitions="false"
-            @close="handleClose(tag)"
-          >
-            {{ tag }}
-          </el-tag>
-          <el-input
-            class="input-new-tag"
-            v-if="inputVisible"
-            v-model="inputValue"
-            ref="saveTagInput"
-            size="small"
-            @keyup.enter.native="handleInputConfirm"
-            @blur="handleInputConfirm"
-          >
-          </el-input>
-          <el-button
-            v-else
-            class="button-new-tag"
-            size="small"
-            @click="showInput"
-            >+ New Tag</el-button
-          >
-        </el-form-item> -->
-        <!-- <el-form-item label="标签：" prop="dynamicTags">
-          <div style="margin: 15px 0"></div>
-          <el-checkbox-group
-            v-model="checkedCities"
-            @change="handleCheckedCitiesChange"
-          >
-            <el-checkbox v-for="city in cities" :label="city" :key="city">{{
-              city
-            }}</el-checkbox>
-          </el-checkbox-group>
-        </el-form-item> -->
-        <el-cascader
-          v-model="sevalue"
-          placeholder="选择问题分类"
-          :options="clazzList"
-          @change="handleChange"
+        <el-form-item  label="问题分类：" prop="sevalue">
+          <el-cascader 
+            v-model="sevalue"
+            placeholder="选择问题分类"
+            :options="formatClazzList(clazzList)"
+            @change="handleChange"
         ></el-cascader>
+        </el-form-item>
+
+        <el-form-item label="审核意见：" prop="verity">
+          <el-input
+            v-model="verity"
+            type="textarea"
+            :rows="1"
+            placeholder="审核意见"
+            
+          />
+        </el-form-item>
         
       </el-form>
 
       <div slot="footer" class="dialog-footer">
-        <!-- <el-button size="mini" type="text" icon="el-icon-plus"  @click="addTags()">添加标签</el-button> -->
-        <!-- <el-button type="primary" @click="addTags">添加标签</el-button> -->
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button type="primary" 
+        @click="submitForm"
+        >确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-    <el-dialog :title="title" :visible.sync="opentagadd" width="500px" append-to-body>
-      <el-form ref="formadd" :model="formadd" :rules="rulesadd" label-width="80px">
-       
-        <el-form-item label="标签名字" prop="tagName">
-          <el-input v-model="formadd.tagName" placeholder="请输入标签名字" />
-        </el-form-item>
-
-        <el-form-item label="标签描述" prop="createUser">
-          <el-input v-model="formadd.createUser" placeholder="请输入标签描述" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitFormtagadd()">确 定</el-button>
-        <el-button @click="canceltagadd">取 消</el-button>
-      </div>
-    </el-dialog>
-    <!-- 引入组件 -->
-    <!-- <markAsr v-if="isPopupVisible" @close="closePopup"> </markAsr> -->
   </div>
 </template>
 
 <script>
 
 import {
-  listAnnotation,
-  getAnnotation,
-  delAnnotation,
-  addAnnotation,
-  updateAnnotation,
-} from "@/api/asr/annotation";
+  listVerityAsr,
+  getVerityAsr,
+  delVerityAsr,
+  addVerityAsr,
+  updateVerityAsr,
+} from "@/api/verity/asr";
 import {
   optionsExtract
 } from "@/api/qa/extract";
@@ -395,11 +333,12 @@ import {allByUser} from "@/api/task/user"
 import { setCanvasCreator } from "echarts";
 
 export default {
-  name: "Annotation",
+  name: "VerityAsr",
 
   components: { markAsr },
   data() {
     return {
+      
       isMark: [
         {
           id:"否",
@@ -463,7 +402,7 @@ export default {
       // 总条数
       total: 0,
       // 标注表格数据
-      annotationList: [],
+      verityAsrList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -474,16 +413,17 @@ export default {
         pageNum: 1,
         pageSize: 10,
         audioName: null,
-        preText : null,
+        afterText : null,
         isUse: null,
         isMark: null,
-        taskOwner: null,
         clazzId: null,
         selectedTask: null,
         isPass: null,
         taskId :null,
       },
+      verity: null,
       // 表单参数
+      verityForm:{},
       form: {},
       formadd:{},
       rules:{},
@@ -500,7 +440,7 @@ export default {
     computedValue: {
       get() {
         if (this.form.afterText === null || this.form.afterText === "") {
-          return this.form.preText;
+          return this.form.afterText;
         } else {
           return this.form.afterText;
         }
@@ -510,7 +450,7 @@ export default {
       },
       set(newValue) {
         if (this.form.afterText === "") {
-          this.form.preText = newValue;
+          this.form.afterText = newValue;
         } else {
           this.form.afterText = newValue;
         }
@@ -548,10 +488,7 @@ export default {
      },
 
    handleChange(value) {
-     this.sevalue=value;
-
-     this.selectvalue=this.sevalue[this.sevalue.length-1]
-     //console.log(this.sevalue);
+      this.verityForm.verityClazzId = value[value.length-1]
      },
 
     getClazz(){
@@ -574,11 +511,12 @@ export default {
       this.loading = true;
       this.queryParams.taskOwner = this.$store.state.user.name;
       console.log(this.queryParams)
-      listAnnotation(this.queryParams).then((response) => {
-        this.annotationList = response.rows;
+      listVerityAsr(this.queryParams).then((response) => {
+        this.verityAsrList = response.rows;
         this.total = response.total;
         this.loading = false;
       });
+      console.log(this.verityAsrList);
     },
     getOptions() {
       optionsExtract().then((response) => {
@@ -596,23 +534,6 @@ export default {
       this.opentagadd = false;
 
     },
-    submitFormtagadd(){
-    
-      this.$refs["formadd"].validate(valid => {
-        if (valid) {
-            addTag(this.formadd).then(response => {
-              this.$modal.msgSuccess("添加成功，请重新进入该界面");
-              this.opentagadd = false;
-              this.formadd.tagName=null;
-              this.formadd.createUser=null;
-             // this.getList();
-            });
-          
-        }
-      });
-    },
-
-
     handleClose(tag) {
       this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
     },
@@ -669,15 +590,14 @@ export default {
         id: null,
         audioPath: null,
         audioName: null,
-        preText: null,
         afterText: null,
         isUse: null,
-        taskOwner: null,
-        isMask: null,
+        isMark: null,
         createTime: null,
         // dynamicTags: null,
         updateTime: null,
-        sevalue:null,
+        sevalue: null,
+        // verity: null,
       };
       this.resetForm("form");
     },
@@ -712,10 +632,9 @@ export default {
         pageNum: 1,
         pageSize: 10,
         audioName: null,
-        preText : null,
+        afterText : null,
         isUse: null,
         isMark: null,
-        taskOwner: null,
         clazzId: null,
         selectedTask: null,
         isPass: null,
@@ -738,6 +657,7 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
+      
       this.audio_name_1 = row.audioName;
       //发送一个请求，根据id查对应的标签名字
       this.sevalue = []
@@ -746,37 +666,34 @@ export default {
       this.isPopupVisible = true;
       this.stopAudio = false;
       const id = row.id || this.ids;
-      getAnnotation(id).then((response) => {
+      getVerityAsr(id).then((response) => {
         this.form = response.data;
         this.cities = response.data.dynamicTags;
         this.checkedCities=response.data.selectTags;
-      
+        this.verityForm.afterText = this.form.afterText;
         this.open = true;
         this.title = "添加标签";
+        
       });
     },
     /** 提交按钮 */
     submitForm() {
-      this.form.sevalue = this.sevalue;
-      // this.form.dynamicTags = this.dynamicTags;
-      this.form.selectTags=this.checkedCities;
-      this.$refs["form"].validate((valid) => {
-        if (valid) {
-          if (this.form.id != null) {
-            updateAnnotation(this.form).then((response) => {
-              this.$modal.msgSuccess("标注成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addAnnotation(this.form).then((response) => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
+      // this.verityForm.sevalue = this.sevalue;
+      
+      this.verityForm.id = this.form.id;
+      this.verityForm.labelUserName = this.$store.state.user.name;
+      this.verityForm.verityText = this.computedValue;
+      this.verityForm.verity = this.verity;
+      console.log("------------------")
+      console.log(this.verityForm)
+        if (this.verityForm != null) {
+          updateVerityAsr(this.verityForm).then((response) => {
+            this.$modal.msgSuccess("标注成功");
+            this.open = false;
+            this.getList();
+          });
         }
-      });
+      // });
     },
     /** 删除按钮操作 */
     handleDelete(row) {
@@ -784,7 +701,7 @@ export default {
       this.$modal
         .confirm('是否确认舍弃编号为"' + ids + '"的音频数据？')
         .then(function () {
-          return delAnnotation(ids);
+          return delVerityAsr(ids);
         })
         .then(() => {
           this.getList();
@@ -812,12 +729,12 @@ export default {
 
       // Perform the export with the user-input file path
       this.download(
-        "asr/annotation/export",
+        "verity/asr/export",
         {
           ...this.queryParams,
           exportFilePath: this.exportForm.exportFilePath,
         },
-        `annotation_${new Date().getTime()}.json`
+        `verity_asr_${new Date().getTime()}.json`
       );
 
       // Close the export dialog

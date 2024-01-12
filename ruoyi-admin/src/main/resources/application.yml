@@ -113,3 +113,5 @@ xss:
 label:
   update:
     directory: 'AudioPath'
+  verity:
+    error-rate: 0.0
