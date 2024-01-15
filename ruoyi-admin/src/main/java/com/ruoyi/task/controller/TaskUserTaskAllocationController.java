@@ -3,7 +3,10 @@ package com.ruoyi.task.controller;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.system.service.ISysUserService;
 import com.ruoyi.task.domain.TaskUserTaskAllocation;
+import com.ruoyi.task.domain.VerityTaskAllocationReq;
 import com.ruoyi.task.service.ITaskUserTaskAllocationService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +38,21 @@ public class TaskUserTaskAllocationController extends BaseController
     @Autowired
     private ITaskUserTaskAllocationService taskUserTaskAllocationService;
 
+    @Autowired
+    private ISysUserService sysUserService;
+
     /**
      * 查询用户任务列表
      */
-    @PreAuthorize("@ss.hasPermi('task:user:list')")
+//    @PreAuthorize("@ss.hasPermi('task:user:list')")
     @GetMapping("/list")
     public TableDataInfo list(TaskUserTaskAllocation taskUserTaskAllocation)
     {
+        String responsiblePersonName = taskUserTaskAllocation.getResponsiblePersonName();
+        if(responsiblePersonName!=null &&!"admin".equals(responsiblePersonName)){
+            SysUser sysUser = sysUserService.selectUserByUserName(responsiblePersonName);
+            taskUserTaskAllocation.setResponsiblePersonId(sysUser.getUserId());
+        }
         startPage();
         List<TaskUserTaskAllocation> list = taskUserTaskAllocationService.selectTaskUserTaskAllocationList(taskUserTaskAllocation);
         System.out.println(list);
@@ -115,5 +126,17 @@ public class TaskUserTaskAllocationController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(taskUserTaskAllocationService.deleteTaskUserTaskAllocationByIds(ids));
+    }
+
+    /**
+     * 审核任务分配
+     */
+    @PreAuthorize("@ss.hasPermi('task:user:verityAllocation')")
+    @Log(title = "审核任务分配", businessType = BusinessType.DELETE)
+    @PostMapping("/verityAllocation")
+    public AjaxResult verityAllocation(@RequestBody VerityTaskAllocationReq verityTaskAllocationReq)
+    {
+        System.out.println(verityTaskAllocationReq);
+        return toAjax(taskUserTaskAllocationService.verityAllocation(verityTaskAllocationReq));
     }
 }

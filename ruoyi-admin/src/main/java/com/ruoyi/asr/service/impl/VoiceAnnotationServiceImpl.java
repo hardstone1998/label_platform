@@ -262,4 +262,9 @@ public class VoiceAnnotationServiceImpl implements IVoiceAnnotationService
 
         return JSONObject.toJSONString(exportResJsons);
     }
+
+    @Override
+    public int selectVoiceAnnotationCount(VoiceAnnotation voiceAnnotation) {
+        return voiceAnnotationMapper.selectVoiceAnnotationCount(voiceAnnotation);
+    }
 }

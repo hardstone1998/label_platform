@@ -2,11 +2,21 @@ package com.ruoyi.task.service.impl;
 
 import java.util.List;
 
+import com.ruoyi.asr.domain.VoiceAnnotation;
+import com.ruoyi.asr.mapper.VoiceAnnotationMapper;
+import com.ruoyi.asr.service.IVoiceAnnotationService;
+import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.system.service.ISysUserService;
 import com.ruoyi.task.domain.TaskUserTaskAllocation;
+import com.ruoyi.task.domain.VerityTaskAllocationReq;
+import com.ruoyi.task.domain.VerityTaskSysUser;
 import com.ruoyi.task.mapper.TaskUserTaskAllocationMapper;
 import com.ruoyi.task.service.ITaskUserTaskAllocationService;
+import com.ruoyi.task.service.IVerityTaskSysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 【请填写功能名称】Service业务层处理
@@ -19,6 +29,16 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
 {
     @Autowired
     private TaskUserTaskAllocationMapper taskUserTaskAllocationMapper;
+
+    @Autowired
+    private IVerityTaskSysUserService verityTaskSysUserService;
+
+    @Autowired
+    private IVoiceAnnotationService voiceAnnotationService;
+
+    @Autowired
+    private ISysUserService sysUserService;
+
 
     /**
      * 查询【请填写功能名称】
@@ -41,7 +61,16 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
     @Override
     public List<TaskUserTaskAllocation> selectTaskUserTaskAllocationList(TaskUserTaskAllocation taskUserTaskAllocation)
     {
-        return taskUserTaskAllocationMapper.selectTaskUserTaskAllocationList(taskUserTaskAllocation);
+        List<TaskUserTaskAllocation> taskUserTaskAllocations = taskUserTaskAllocationMapper.selectTaskUserTaskAllocationList(taskUserTaskAllocation);
+        for (TaskUserTaskAllocation t:taskUserTaskAllocations) {
+            VerityTaskSysUser verityTaskSysUser = new VerityTaskSysUser();
+            verityTaskSysUser.setTaskId(t.getTaskId());
+            verityTaskSysUser.setLabelUserId(t.getUserId());
+            List<VerityTaskSysUser> verityTaskSysUsers = verityTaskSysUserService.selectVerityTaskSysUserList(verityTaskSysUser);
+            if(verityTaskSysUsers.size()>0)
+                t.setVerityUser(verityTaskSysUsers.get(0).getVerityUserName());
+        }
+        return taskUserTaskAllocations;
     }
 
     /**
@@ -90,5 +119,36 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
     public int deleteTaskUserTaskAllocationById(Long id)
     {
         return taskUserTaskAllocationMapper.deleteTaskUserTaskAllocationById(id);
+    }
+
+    @Override
+    @Transactional
+    public int verityAllocation(VerityTaskAllocationReq verityTaskAllocationReq) {
+        VoiceAnnotation voiceAnnotation = new VoiceAnnotation();
+        voiceAnnotation.setLabelUser(verityTaskAllocationReq.getLabelUserId());
+        voiceAnnotation.setTaskId(verityTaskAllocationReq.getTaskId());
+        int num = voiceAnnotationService.selectVoiceAnnotationCount(voiceAnnotation);
+        Long verityNum = verityTaskAllocationReq.getVerityNum();
+        if (verityNum==null || verityNum == 0){
+            Double verityPercentage = verityTaskAllocationReq.getVerityPercentage();
+            if (verityPercentage == null ||verityPercentage==0)return -1;
+            verityTaskAllocationReq.setVerityNum((long) (num*verityPercentage));
+        }
+        System.out.println(num);
+        if (num<verityNum)return -1;
+        VerityTaskSysUser verityTaskSysUser = new VerityTaskSysUser();
+        verityTaskSysUser.setTaskId(verityTaskAllocationReq.getTaskId());
+        verityTaskSysUser.setLabelUserId(verityTaskAllocationReq.getLabelUserId());
+        verityTaskSysUser.setVerityUserId(verityTaskAllocationReq.getVerityUserId());
+        verityTaskSysUser.setCreateTime(DateUtils.getNowDate());
+        verityTaskSysUser.setUpdateTime(DateUtils.getNowDate());
+        String reqUser = verityTaskAllocationReq.getReqUser();
+        SysUser sysUser = sysUserService.selectUserByUserName(reqUser);
+        verityTaskSysUser.setReqUser(sysUser.getUserId());
+        verityTaskSysUser.setExtractNum(verityNum);
+        int i = verityTaskSysUserService.insertVerityTaskSysUser(verityTaskSysUser);
+//        voiceAnnotationService.updateVoiceAnnotation()
+
+        return i;
     }
 }

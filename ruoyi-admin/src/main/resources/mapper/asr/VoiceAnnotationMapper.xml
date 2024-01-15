@@ -67,8 +67,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="verityUser != null "> and verity_user = #{verityUser}</if>
             <if test="isPass != null "> and is_pass = #{isPass}</if>
         </where>
-
     </select>
+<!--    selectVoiceAnnotationCount-->
+    <select id="selectVoiceAnnotationCount"  parameterType="Integer">
+        select count(1) from voice_annotation
+        <where>
+            <if test="taskOwner != null  and taskOwner != ''"> and task_owner = #{taskOwner}</if>
+            <if test="labelUser != null "> and label_user = #{labelUser}</if>
+            <if test="verityUser != null "> and verity_user = #{verityUser}</if>
+            <if test="taskId != null "> and task_id = #{taskId}</if>
+        </where>
+    </select>
+
     <select id="getASRSum" resultType="java.lang.Integer">
         select count(*) from voice_annotation
     </select>

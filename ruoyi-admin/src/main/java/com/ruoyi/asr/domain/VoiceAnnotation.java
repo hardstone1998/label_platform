@@ -55,7 +55,7 @@ public class VoiceAnnotation extends BaseEntity
 
     private String[] selectTags;
 
-    private Integer taskId;
+    private Long taskId;
 
     private Long clazzId;
 

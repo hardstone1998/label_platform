@@ -18,6 +18,17 @@ export function getTask(id) {
   })
 }
 
+// 查询【请填写功能名称】详细
+export function allTask(username) {
+  return request({
+    url: '/task/allocation/all',
+    method: 'post',
+    params: {
+      responsiblePersonName: username
+    }
+  })
+}
+
 // 新增【请填写功能名称】
 export function addTask(data) {
   return request({

@@ -15,10 +15,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="numberAccuracy"    column="number_accuracy"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="responsiblePersonId"    column="responsible_person_id"    />
     </resultMap>
 
     <sql id="selectTaskVo">
-        select id, task_name, task_desc, clazz, number_accuracy, recall_num,allocation_total, create_time, update_time,word_accuracy from task_allocation
+        select id, task_name, task_desc, clazz, number_accuracy, recall_num,allocation_total, create_time, update_time,word_accuracy,responsible_person_id from task_allocation
     </sql>
 
     <select id="selectTaskList" parameterType="Task" resultMap="TaskResult">
@@ -26,6 +27,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             <if test="name != null  and name != ''"> and task_name like concat('%', #{name}, '%')</if>
             <if test="clazz != null "> and clazz = #{clazz}</if>
+            <if test="responsiblePersonId != null "> and responsible_person_id = #{responsiblePersonId}</if>
         </where>
     </select>
 

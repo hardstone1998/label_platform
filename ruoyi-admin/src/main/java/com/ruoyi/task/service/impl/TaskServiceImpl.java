@@ -72,6 +72,7 @@ public class TaskServiceImpl implements ITaskService
     @Override
     public List<Task> selectTaskList(Task task)
     {
+
         List<Task> tasks = taskMapper.selectTaskList(task);
         for (Task task1 :tasks){
             if (task1.getAllocationTotal()!=null&&task1.getAllocationTotal()!=0L)
@@ -122,7 +123,7 @@ public class TaskServiceImpl implements ITaskService
                     VoiceAnnotation voiceAnnotation = new VoiceAnnotation();
                     voiceAnnotation.setLabelUser(userId);
                     voiceAnnotation.setUpdateNum(taskAllocationUser.getTaskQuantity());
-                    voiceAnnotation.setTaskId(task_id);
+                    voiceAnnotation.setTaskId((long)task_id);
                     voiceAnnotation.setTaskOwner(user.getUserName());
                     voiceAnnotation.setClazzId(class1Id);
                     voiceAnnotationMapper.updateVoiceAnnotationByClazzId(voiceAnnotation);

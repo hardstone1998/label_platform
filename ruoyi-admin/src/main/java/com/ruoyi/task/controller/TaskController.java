@@ -3,6 +3,8 @@ package com.ruoyi.task.controller;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.system.service.ISysUserService;
 import com.ruoyi.task.domain.RequestTask;
 import com.ruoyi.task.domain.Task;
 import com.ruoyi.task.service.ITaskService;
@@ -36,8 +38,11 @@ public class TaskController extends BaseController
     @Autowired
     private ITaskService taskService;
 
+    @Autowired
+    private ISysUserService sysUserService;
+
     /**
-     * 查询【请填写功能名称】列表
+     * 查询任务列表
      */
     @PreAuthorize("@ss.hasPermi('system:allocation:list')")
     @GetMapping("/list")
@@ -45,6 +50,25 @@ public class TaskController extends BaseController
     {
         startPage();
         List<Task> list = taskService.selectTaskList(Task);
+        return getDataTable(list);
+    }
+    /**
+     * 全部任务列表
+     */
+//    @PreAuthorize("@ss.hasPermi('system:allocation:all')")
+    @PostMapping("/all")
+    public TableDataInfo all(String responsiblePersonName)
+    {
+        if(responsiblePersonName!=null ||responsiblePersonName.length()==0)return null;
+        Task task = new Task();
+        List<Task> list = null;
+        if ("admin".equals(responsiblePersonName)) {
+            list = taskService.selectTaskList(task);
+        }else {
+            SysUser sysUser = sysUserService.selectUserByUserName(responsiblePersonName);
+            task.setResponsiblePersonId(sysUser.getUserId());
+            taskService.selectTaskList(task);
+        }
         return getDataTable(list);
     }
 

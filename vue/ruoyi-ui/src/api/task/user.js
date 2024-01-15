@@ -51,3 +51,12 @@ export function delUser(id) {
     method: 'delete'
   })
 }
+
+export function verityAnnotation(data){
+  console.log("verityAnnotation");
+  return request({
+    url: '/task/user/verityAllocation',
+    method: 'post',
+    data: data
+  })
+}

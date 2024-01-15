@@ -30,6 +30,8 @@ public interface VoiceAnnotationMapper
 
     public List<VoiceAnnotation> selectVoiceAnnotationListByOwner(VoiceAnnotation voiceAnnotation);
 
+    public int selectVoiceAnnotationCount(VoiceAnnotation voiceAnnotation);
+
 
     /**
      * 新增标注

@@ -1,6 +1,7 @@
 package com.ruoyi.task.service;
 
 import com.ruoyi.task.domain.TaskUserTaskAllocation;
+import com.ruoyi.task.domain.VerityTaskAllocationReq;
 
 import java.util.List;
 
@@ -59,4 +60,6 @@ public interface ITaskUserTaskAllocationService
      * @return 结果
      */
     public int deleteTaskUserTaskAllocationById(Long id);
+
+    public int verityAllocation(VerityTaskAllocationReq verityTaskAllocationReq);
 }

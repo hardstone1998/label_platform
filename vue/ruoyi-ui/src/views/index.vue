@@ -17,7 +17,7 @@
         />
       </el-form-item>
 
-      <el-form-item label="搜索文本" prop="audioName">
+      <el-form-item label="搜索文本" prop="preText">
         <el-input
           v-model="queryParams.preText"
           placeholder="文本搜索"
@@ -760,12 +760,14 @@ export default {
       this.reset();
       this.isPopupVisible = true;
       this.stopAudio = false;
+      // this.form.clazzId = this.queryParams.clazzId;
       const id = row.id || this.ids;
+      
       getAnnotation(id).then((response) => {
         this.form = response.data;
-        this.cities = response.data.dynamicTags;
-        this.checkedCities=response.data.selectTags;
-      
+        // this.cities = response.data.dynamicTags;
+        // this.checkedCities=response.data.selectTags;
+        console.log(response);
         this.open = true;
         this.title = "添加标签";
       });
@@ -787,8 +789,6 @@ export default {
           });
         }
       });
-      console.log("test2:")
-      console.log(this.queryParams)
     },
     /** 删除按钮操作 */
     handleDelete(row) {
@@ -809,8 +809,7 @@ export default {
     },
     sentenceTrim(value){
         console.log(value)
-        this.computedValue = value.replaceAll(" ","").replaceAll(",","，").replaceAll("?","？").replaceAll(".","。").replaceAll("/n","");
-        
+        this.computedValue = value.replaceAll(" ","").replaceAll(",","，").replaceAll("?","？").replaceAll(".","。").replaceAll("/n","").replaceAll("，，","，").replaceAll("。。","。").replaceAll("？？","？").replaceAll("，。","，");
     },
 
     handleExport() {

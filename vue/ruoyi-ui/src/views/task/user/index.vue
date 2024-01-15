@@ -65,15 +65,34 @@
     </el-row>
 
     <el-table v-loading="loading" :data="allocationList" @selection-change="handleSelectionChange">
+      <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="id" align="center" width="55" prop="id" />
       <el-table-column label="任务名" align="center" prop="taskName" />
       <el-table-column label="用户名" align="center" prop="userName" />
       <el-table-column label="用户昵称" align="center" prop="nickName" />
+      <el-table-column label="审核人" align="center" prop="verityUser" />
       <el-table-column label="任务类型" align="center" prop="taskClazz" />
+      <el-table-column label="标注数量" align="center" prop="labelNum" />
+      <el-table-column label="审核数量" align="center" prop="verityNum" />
       <el-table-column label="个数准确率" align="center" prop="numberAccuracy" />
       <el-table-column label="字符准确率" align="center" prop="wordAccuracy" />
       <el-table-column label="召回率" align="center" prop="recallRate" />
       <el-table-column label="任务创建时间" align="center" prop="createTime" />
+      <el-table-column
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+      >
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="allocationVerity(scope.row)"
+            >分配审核</el-button
+          >
+        </template>
+      </el-table-column>
     </el-table>
     
     <pagination
@@ -83,16 +102,75 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
+
+    <!-- 分配审核任务对话框 -->
+    <el-dialog
+      :title="form.taskName"
+      :visible.sync="open"
+      width="1000px"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      append-to-body
+    >
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+        <el-form-item  label="标注人" prop="form.labelUser">
+          <el-input
+            :rows="6"
+            v-model="form.labelUser"
+            placeholder="标注人"
+            readonly
+          />
+        </el-form-item>
+        <el-form-item  label="审核人" prop="form.verityUserId">
+          <el-select v-model="form.verityUserId" placeholder="审核人">
+          <el-option
+            v-for="user in userList"
+            :key="user.id"
+            :label="user.nickname"
+            :value="user.id"
+          />
+        </el-select>
+        </el-form-item>
+        <el-form-item  label="抽取审核数量" prop="form.verityNum">
+          <el-input
+            :rows="6"
+            v-model="form.verityNum"
+            placeholder="请设置审核数量"
+          />
+        </el-form-item>
+        <el-form-item  label="抽取审核百分比" prop="form.verityPercentage">
+          <el-input
+            :rows="6"
+            v-model="form.verityPercentage"
+            placeholder="请设置抽取审核百分比"
+            
+          />
+        </el-form-item>
+        
+      </el-form>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { listUser, getUser, delUser, addUser, updateUser } from "@/api/task/user";
+import { listUser, getUser, delUser, addUser, updateUser,verityAnnotation } from "@/api/task/user";
+import { allTask } from "@/api/task/allocation";
+import {
+  totalUser
+} from "@/api/system/user"
 
 export default {
   name: "TaskUserTaskAllocation",
   data() {
     return {
+      userList: [],
+      clearable:false,
+      clearTime: false,
       // 遮罩层
       loading: true,
       // 选中数组
@@ -115,10 +193,14 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        taskId: null,
-        userId: null,
-        wordAccuracy: null,
-        numberAccuracy: null
+        taskName: null,
+        userName: null,
+        clazz: null,
+        responsiblePersonId: null,
+        beginTime:null,
+        endTime:null,
+        responsiblePersonName: null,
+        
       },
       // 表单参数
       form: {},
@@ -134,11 +216,71 @@ export default {
     };
   },
   created() {
+    this.getTask();
     this.getList();
+    this.getUsers();
   },
   methods: {
+    getTask(){
+      allTask(this.$store.state.user.name).then(response => {
+        console.log(response);
+      })
+    },
+    resetQuery() {
+      this.queryParams = {
+        pageNum: 1,
+        pageSize: 10,
+        taskName: null,
+        userName: null,
+        clazz: null,
+        verityUserId:null,
+        responsiblePersonId: null,
+        beginTime:null,
+        endTime:null,
+        responsiblePersonName: null,
+      };
+      this.resetForm("queryForm");
+      this.handleQuery();
+    },
+    getUsers() {
+      totalUser().then((response) => {
+       this.userList = response.rows.map(row => ({ id: row.userId, nickname: row.nickName }));
+      });
+    },
+    // 多选框选中数据
+    handleSelectionChange(selection) {
+      this.ids = selection.map(item => item.id)
+      this.single = selection.length!==1
+      this.multiple = !selection.length
+    },
+    // 表单重置
+    reset() {
+      this.form = {
+        id: null,
+        taskId:null,
+        taskName:null,
+        labelUser: null,
+        verityUserId: null,
+        verityNum: null,
+        verityPercentage: null,
+        reqUser:null
+      };
+    },
+    /** 分配审核操作 */
+    allocationVerity(row) {
+      this.reset();
+      this.isPopupVisible = true;
+      const id = row.id || this.ids;
+      this.form.labelUserId = row.userId;
+      this.form.taskId = row.taskId;
+      this.form.taskName = row.taskName;
+      this.form.labelUser = row.userName;
+      this.open = true;
+      this.title = "分配审核";
+    },
     /** 查询【请填写功能名称】列表 */
     getList() {
+      this.queryParams.responsiblePersonName = this.$store.state.user.name;
       this.loading = true;
       listUser(this.queryParams).then(response => {
         console.log(response);
@@ -152,17 +294,6 @@ export default {
       this.open = false;
       this.reset();
     },
-    // 表单重置
-    reset() {
-      this.form = {
-        id: null,
-        taskId: null,
-        userId: null,
-        wordAccuracy: null,
-        numberAccuracy: null
-      };
-      this.resetForm("form");
-    },
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
@@ -170,7 +301,7 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.reset();
+      // this.reset();
       const id = row.id || this.ids
       getUser(id).then(response => {
         this.form = response.data;
@@ -183,7 +314,26 @@ export default {
       this.download('task/user/export', {
         ...this.queryParams
       }, `allocation_${new Date().getTime()}.xlsx`)
-    }
+    },
+     // 取消按钮
+     cancel() {
+      this.open = false;
+      this.reset();
+    },
+    /** 提交按钮 */
+    submitForm() {
+      this.form.reqUser = this.$store.state.user.name;
+      this.$refs["form"].validate((valid) => {
+        if (valid) {
+          console.log(this.form);
+          verityAnnotation(this.form).then((response) => {
+            this.$modal.msgSuccess("分配成功");
+            this.open = false;
+            this.getList();
+          });
+        }
+      });
+    },
   }
 };
 </script>

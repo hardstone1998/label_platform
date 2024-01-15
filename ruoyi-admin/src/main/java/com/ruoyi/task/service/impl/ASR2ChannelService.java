@@ -1,7 +1,6 @@
 package com.ruoyi.task.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ruoyi.task.service.IASR2ChannelService;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.entity.StringEntity;

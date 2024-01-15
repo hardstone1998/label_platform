@@ -58,5 +58,14 @@ public class TaskUserTaskAllocation extends BaseEntity
     private Double recallNum;
 
 
+    private Long responsiblePersonId;
+
+    private String responsiblePersonName;
+
+    private Long verityUser;
+
+    private String labelNum;
+
+    private String verityNum;
 
 }
