@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.task.mapper.UnallocationMapper">
+
+    <resultMap type="Unallocation" id="UnallocationResult">
+        <result property="clazzId"    column="clazz_id"    />
+        <result property="label"    column="label"    />
+        <result property="num"    column="num"    />
+        <result property="asrOrQa"    column="asrOrQa"    />
+    </resultMap>
+
+    <sql id="selectUnallocationVo">
+        select clazz_id, label, num, asrOrQa from unallocation
+    </sql>
+
+    <select id="selectUnallocationList" parameterType="Unallocation" resultMap="UnallocationResult">
+        <include refid="selectUnallocationVo"/>
+        <where>
+            <if test="clazzId != null "> and clazz_id = #{clazzId}</if>
+            <if test="label != null  and label != ''"> and label = #{label}</if>
+            <if test="num != null "> and num = #{num}</if>
+            <if test="asrOrQa != null  and asrOrQa != ''"> and asrOrQa = #{asrOrQa}</if>
+        </where>
+    </select>
+
+    <select id="selectUnallocationByClazzId" parameterType="Long" resultMap="UnallocationResult">
+        <include refid="selectUnallocationVo"/>
+        where clazz_id = #{clazzId}
+    </select>
+
+    <insert id="insertUnallocation" parameterType="Unallocation">
+        insert into unallocation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="clazzId != null">clazz_id,</if>
+            <if test="label != null">label,</if>
+            <if test="num != null">num,</if>
+            <if test="asrOrQa != null and asrOrQa != ''">asrOrQa,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="clazzId != null">#{clazzId},</if>
+            <if test="label != null">#{label},</if>
+            <if test="num != null">#{num},</if>
+            <if test="asrOrQa != null and asrOrQa != ''">#{asrOrQa},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUnallocation" parameterType="Unallocation">
+        update unallocation
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="label != null">label = #{label},</if>
+            <if test="num != null">num = #{num},</if>
+            <if test="asrOrQa != null and asrOrQa != ''">asrOrQa = #{asrOrQa},</if>
+        </trim>
+        where clazz_id = #{clazzId}
+    </update>
+
+    <delete id="deleteUnallocationByClazzId" parameterType="Long">
+        delete from unallocation where clazz_id = #{clazzId}
+    </delete>
+
+    <delete id="deleteUnallocationByClazzIds" parameterType="String">
+        delete from unallocation where clazz_id in
+        <foreach item="clazzId" collection="array" open="(" separator="," close=")">
+            #{clazzId}
+        </foreach>
+    </delete>
+</mapper>

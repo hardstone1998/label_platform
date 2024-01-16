@@ -11,6 +11,7 @@ import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.qa.domain.ExportResJson;
 import com.ruoyi.system.mapper.SysUserMapper;
+import com.ruoyi.task.domain.AddVerityUser;
 import org.apache.commons.io.output.AppendableOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -189,6 +190,11 @@ public class VoiceAnnotationServiceImpl implements IVoiceAnnotationService
         return voiceAnnotationMapper.updateVoiceAnnotation(voiceAnnotation);
     }
 
+    @Override
+    public int addVerity(AddVerityUser addVerityUser) {
+        return voiceAnnotationMapper.addVerityUser(addVerityUser);
+    }
+
     /**
      * 批量删除标注
      *
@@ -266,5 +272,20 @@ public class VoiceAnnotationServiceImpl implements IVoiceAnnotationService
     @Override
     public int selectVoiceAnnotationCount(VoiceAnnotation voiceAnnotation) {
         return voiceAnnotationMapper.selectVoiceAnnotationCount(voiceAnnotation);
+    }
+
+    @Override
+    public int selectVoiceAnnotationVerityCount(VoiceAnnotation voiceAnnotation) {
+        return voiceAnnotationMapper.selectVoiceAnnotationVerityCount(voiceAnnotation);
+    }
+
+    @Override
+    public Double selectVoiceAnnotationWordAccuracy(VoiceAnnotation voiceAnnotation) {
+        return voiceAnnotationMapper.selectVoiceAnnotationWordAccuracy(voiceAnnotation);
+    }
+
+    @Override
+    public int selectVoiceAnnotationRecall(VoiceAnnotation voiceAnnotation) {
+        return voiceAnnotationMapper.selectVoiceAnnotationRecall(voiceAnnotation);
     }
 }

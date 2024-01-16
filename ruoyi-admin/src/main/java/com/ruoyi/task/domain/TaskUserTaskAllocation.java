@@ -55,7 +55,7 @@ public class TaskUserTaskAllocation extends BaseEntity
 
 
     /** 召回数 */
-    private Double recallNum;
+    private Integer recallNum;
 
 
     private Long responsiblePersonId;

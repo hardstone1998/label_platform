@@ -3,7 +3,7 @@
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="任务名" prop="taskName">
         <el-input
-          v-model="queryParams.taskId"
+          v-model="queryParams.taskName"
           placeholder="请输入任务名"
           clearable
           @keyup.enter.native="handleQuery"
@@ -11,7 +11,7 @@
       </el-form-item>
       <el-form-item label="用户名" prop="userName">
         <el-input
-          v-model="queryParams.userId"
+          v-model="queryParams.userName"
           placeholder="请输入用户名"
           clearable
           @keyup.enter.native="handleQuery"
@@ -76,7 +76,7 @@
       <el-table-column label="审核数量" align="center" prop="verityNum" />
       <el-table-column label="个数准确率" align="center" prop="numberAccuracy" />
       <el-table-column label="字符准确率" align="center" prop="wordAccuracy" />
-      <el-table-column label="召回率" align="center" prop="recallRate" />
+      <el-table-column label="召回数量" align="center" prop="recallNum" />
       <el-table-column label="任务创建时间" align="center" prop="createTime" />
       <el-table-column
         label="操作"
@@ -168,7 +168,16 @@ export default {
   name: "TaskUserTaskAllocation",
   data() {
     return {
-      userList: [],
+      userList: [
+        {
+          id: 130,
+          nickname: 'user25'
+        },
+        {
+          id: 129,
+          nickname: 'user24'
+        }
+      ],
       clearable:false,
       clearTime: false,
       // 遮罩层
@@ -200,25 +209,26 @@ export default {
         beginTime:null,
         endTime:null,
         responsiblePersonName: null,
-        
+        clearable:false,
+        clearTime: false,
       },
       // 表单参数
       form: {},
       // 表单校验
-      rules: {
-        taskId: [
-          { required: true, message: "$comment不能为空", trigger: "blur" }
-        ],
-        userId: [
-          { required: true, message: "$comment不能为空", trigger: "blur" }
-        ],
-      }
+      // rules: {
+      //   taskName: [
+      //     { required: true, message: "$comment不能为空", trigger: "blur" }
+      //   ],
+      //   userId: [
+      //     { required: true, message: "$comment不能为空", trigger: "blur" }
+      //   ],
+      // }
     };
   },
   created() {
     this.getTask();
     this.getList();
-    this.getUsers();
+    // this.getUsers();
   },
   methods: {
     getTask(){
@@ -242,11 +252,11 @@ export default {
       this.resetForm("queryForm");
       this.handleQuery();
     },
-    getUsers() {
-      totalUser().then((response) => {
-       this.userList = response.rows.map(row => ({ id: row.userId, nickname: row.nickName }));
-      });
-    },
+    // getUsers() {
+    //   totalUser().then((response) => {
+    //    this.userList = response.rows.map(row => ({ id: row.userId, nickname: row.nickName }));
+    //   });
+    // },
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)

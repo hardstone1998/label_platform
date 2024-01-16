@@ -137,6 +137,8 @@ public class TaskUserTaskAllocationController extends BaseController
     public AjaxResult verityAllocation(@RequestBody VerityTaskAllocationReq verityTaskAllocationReq)
     {
         System.out.println(verityTaskAllocationReq);
-        return toAjax(taskUserTaskAllocationService.verityAllocation(verityTaskAllocationReq));
+        int i = taskUserTaskAllocationService.verityAllocation(verityTaskAllocationReq);
+        if (i == -1)return toAjax(false);
+        return toAjax(1);
     }
 }

@@ -69,7 +69,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 <!--    selectVoiceAnnotationCount-->
-    <select id="selectVoiceAnnotationCount"  parameterType="Integer">
+    <select id="selectVoiceAnnotationCount"  resultType="int">
+        select count(1) from voice_annotation
+        <where>
+            <if test="taskOwner != null  and taskOwner != ''"> and task_owner = #{taskOwner}</if>
+            <if test="labelUser != null "> and label_user = #{labelUser}</if>
+            <if test="verityUser != null "> and verity_user = #{verityUser}</if>
+            <if test="taskId != null "> and task_id = #{taskId}</if>
+            <if test="isPass != null "> and is_pass = #{isPass}</if>
+        </where>
+    </select>
+
+<!--    selectVoiceAnnotationVerityCount-->
+    <select id="selectVoiceAnnotationVerityCount"  resultType="int">
         select count(1) from voice_annotation
         <where>
             <if test="taskOwner != null  and taskOwner != ''"> and task_owner = #{taskOwner}</if>
@@ -77,6 +89,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="verityUser != null "> and verity_user = #{verityUser}</if>
             <if test="taskId != null "> and task_id = #{taskId}</if>
         </where>
+        and is_pass is not null
+    </select>
+
+    <select id="selectVoiceAnnotationRecall"  resultType="int">
+        select count(1) from voice_annotation
+        <where>
+            <if test="taskOwner != null  and taskOwner != ''"> and task_owner = #{taskOwner}</if>
+            <if test="labelUser != null "> and label_user = #{labelUser}</if>
+            <if test="taskId != null "> and task_id = #{taskId}</if>
+        </where>
+        and verity_user is not null
+    </select>
+
+<!--    selectVoiceAnnotationWordAccuracy-->
+    <select id="selectVoiceAnnotationWordAccuracy"  resultType="double">
+        select avg(accuracy/LENGTH(pre_text)) from voice_annotation
+        <where>
+            <if test="taskOwner != null  and taskOwner != ''"> and task_owner = #{taskOwner}</if>
+            <if test="labelUser != null "> and label_user = #{labelUser}</if>
+            <if test="taskId != null "> and task_id = #{taskId}</if>
+        </where>
+        and accuracy is not null
     </select>
 
     <select id="getASRSum" resultType="java.lang.Integer">
@@ -147,6 +181,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="verityText != null">verity_text = #{verityText},</if>
         </trim>
         where id = #{id}
+    </update>
+
+<!--    addVerityUser-->
+    <update id="addVerityUser" parameterType="com.ruoyi.task.domain.AddVerityUser">
+        update voice_annotation
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="verityUser != null">verity_user = #{verityUser}</if>
+        </trim>
+        <where>
+            <if test="labelUser != null "> and label_user = #{labelUser}</if>
+            <if test="taskId != null "> and task_id = #{taskId}</if>
+        </where>
+        and verity_user is null
+        limit #{verityNum}
     </update>
 
     <update id="updateVoiceAnnotationByClazzId" parameterType="com.ruoyi.asr.domain.VoiceAnnotation">

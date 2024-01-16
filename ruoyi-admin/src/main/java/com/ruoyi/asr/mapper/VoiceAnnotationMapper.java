@@ -2,6 +2,7 @@ package com.ruoyi.asr.mapper;
 
 import java.util.List;
 import com.ruoyi.asr.domain.VoiceAnnotation;
+import com.ruoyi.task.domain.AddVerityUser;
 
 /**
  * 标注Mapper接口
@@ -32,6 +33,12 @@ public interface VoiceAnnotationMapper
 
     public int selectVoiceAnnotationCount(VoiceAnnotation voiceAnnotation);
 
+    public int selectVoiceAnnotationVerityCount(VoiceAnnotation voiceAnnotation);
+
+    public Double selectVoiceAnnotationWordAccuracy(VoiceAnnotation voiceAnnotation);
+
+    public int selectVoiceAnnotationRecall(VoiceAnnotation voiceAnnotation);
+
 
     /**
      * 新增标注
@@ -48,6 +55,8 @@ public interface VoiceAnnotationMapper
      * @return 结果
      */
     public int updateVoiceAnnotation(VoiceAnnotation voiceAnnotation);
+
+    public int addVerityUser(AddVerityUser addVerityUser);
 
     public int updateVoiceAnnotationByClazzId(VoiceAnnotation voiceAnnotation);
 

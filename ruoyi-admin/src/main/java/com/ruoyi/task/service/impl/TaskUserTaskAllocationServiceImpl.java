@@ -8,6 +8,7 @@ import com.ruoyi.asr.service.IVoiceAnnotationService;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.system.service.ISysUserService;
+import com.ruoyi.task.domain.AddVerityUser;
 import com.ruoyi.task.domain.TaskUserTaskAllocation;
 import com.ruoyi.task.domain.VerityTaskAllocationReq;
 import com.ruoyi.task.domain.VerityTaskSysUser;
@@ -53,10 +54,10 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
     }
 
     /**
-     * 查询【请填写功能名称】列表
+     * 查询任务用户列表
      *
-     * @param taskUserTaskAllocation 【请填写功能名称】
-     * @return 【请填写功能名称】
+     * @param taskUserTaskAllocation 任务用户
+     * @return 任务用户
      */
     @Override
     public List<TaskUserTaskAllocation> selectTaskUserTaskAllocationList(TaskUserTaskAllocation taskUserTaskAllocation)
@@ -67,8 +68,25 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
             verityTaskSysUser.setTaskId(t.getTaskId());
             verityTaskSysUser.setLabelUserId(t.getUserId());
             List<VerityTaskSysUser> verityTaskSysUsers = verityTaskSysUserService.selectVerityTaskSysUserList(verityTaskSysUser);
-            if(verityTaskSysUsers.size()>0)
+            if(verityTaskSysUsers.size()>0){
                 t.setVerityUser(verityTaskSysUsers.get(0).getVerityUserName());
+            }
+            VoiceAnnotation voiceAnnotation =new VoiceAnnotation();
+            voiceAnnotation.setLabelUser(t.getUserId());
+            voiceAnnotation.setTaskId(t.getTaskId());
+            voiceAnnotation.setIsMark("是");
+            int labelNum = voiceAnnotationService.selectVoiceAnnotationCount(voiceAnnotation);
+            int verityNum = voiceAnnotationService.selectVoiceAnnotationVerityCount(voiceAnnotation);
+            t.setLabelNum(String.valueOf(labelNum));
+            t.setVerityNum(String.valueOf(verityNum));
+            Double wordAccuracy = voiceAnnotationService.selectVoiceAnnotationWordAccuracy(voiceAnnotation);
+            t.setWordAccuracy(wordAccuracy);
+            voiceAnnotation.setIsPass(1);
+            int passNum = voiceAnnotationService.selectVoiceAnnotationCount(voiceAnnotation);
+            if (labelNum>0)
+                t.setNumberAccuracy(1.0*passNum/labelNum);
+            int recall = voiceAnnotationService.selectVoiceAnnotationRecall(voiceAnnotation);
+            t.setRecallNum(recall);
         }
         return taskUserTaskAllocations;
     }
@@ -134,7 +152,6 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
             if (verityPercentage == null ||verityPercentage==0)return -1;
             verityTaskAllocationReq.setVerityNum((long) (num*verityPercentage));
         }
-        System.out.println(num);
         if (num<verityNum)return -1;
         VerityTaskSysUser verityTaskSysUser = new VerityTaskSysUser();
         verityTaskSysUser.setTaskId(verityTaskAllocationReq.getTaskId());
@@ -147,7 +164,12 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
         verityTaskSysUser.setReqUser(sysUser.getUserId());
         verityTaskSysUser.setExtractNum(verityNum);
         int i = verityTaskSysUserService.insertVerityTaskSysUser(verityTaskSysUser);
-//        voiceAnnotationService.updateVoiceAnnotation()
+        AddVerityUser addVerityUser = new AddVerityUser();
+        addVerityUser.setLabelUser(verityTaskAllocationReq.getLabelUserId());
+        addVerityUser.setTaskId(verityTaskAllocationReq.getTaskId());
+        addVerityUser.setVerityUser(verityTaskAllocationReq.getVerityUserId());
+        addVerityUser.setVerityNum(verityTaskAllocationReq.getVerityNum());
+        voiceAnnotationService.addVerity(addVerityUser);
 
         return i;
     }

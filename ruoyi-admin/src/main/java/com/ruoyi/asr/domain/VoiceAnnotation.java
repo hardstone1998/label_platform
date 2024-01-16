@@ -61,9 +61,11 @@ public class VoiceAnnotation extends BaseEntity
 
     private Long labelUser;
 
+    private Long verityUser;
+
     private String labelUserName;
 
-    private Long verityUser;
+
 
     private Date labelTime;
 
