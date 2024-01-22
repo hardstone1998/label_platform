@@ -402,16 +402,6 @@ export default {
         qallocationSum: 0,
       },
       userTaskRows: [
-        {
-          selectedUsers: [], // Example user IDs
-          sevalue: null,   
-          taskQuantity: 5,
-        },
-        {
-          selectedUsers: [], // Example user IDs
-          sevalue: null,   
-          taskQuantity: 3,
-        },
         // Add more rows as needed
       ],
       userTaskAssignments: [],
@@ -638,7 +628,8 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-      this.form.userTaskRows = this.userTaskRows
+      this.form.taskAllocationUser = this.userTaskRows;
+      console.log(this.form);
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {

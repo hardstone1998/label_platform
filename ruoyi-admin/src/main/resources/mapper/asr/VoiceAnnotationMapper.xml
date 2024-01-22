@@ -141,7 +141,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="afterText != null">after_text,</if>
             <if test="isUse != null">is_use,</if>
             <if test="taskOwner != null">task_owner,</if>
-            <if test="isMask != null">is_mask,</if>
+            <if test="isMark != null">is_mask,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
          </trim>
@@ -152,7 +152,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="afterText != null">#{afterText},</if>
             <if test="isUse != null">#{isUse},</if>
             <if test="taskOwner != null">#{taskOwner},</if>
-            <if test="isMask != null">#{isMask},</if>
+            <if test="isMark != null">#{isMark},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
          </trim>
@@ -205,7 +205,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="afterText != null">after_text = #{afterText},</if>
             <if test="isUse != null">is_use = #{isUse},</if>
             <if test="taskOwner != null">task_owner = #{taskOwner},</if>
-            <if test="isMask != null">is_mask = #{isMask},</if>
+            <if test="isMark != null">is_mask = #{isMark},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="taskId != null">task_id = #{taskId},</if>

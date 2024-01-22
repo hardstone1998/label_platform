@@ -131,7 +131,7 @@ public class TaskUserTaskAllocationController extends BaseController
     /**
      * 审核任务分配
      */
-    @PreAuthorize("@ss.hasPermi('task:user:verityAllocation')")
+//    @PreAuthorize("@ss.hasPermi('task:user:verityAllocation')")
     @Log(title = "审核任务分配", businessType = BusinessType.DELETE)
     @PostMapping("/verityAllocation")
     public AjaxResult verityAllocation(@RequestBody VerityTaskAllocationReq verityTaskAllocationReq)

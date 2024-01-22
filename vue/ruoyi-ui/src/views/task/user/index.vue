@@ -170,12 +170,27 @@ export default {
     return {
       userList: [
         {
-          id: 130,
-          nickname: 'user25'
+          id: 131,
+          nickname: 'user26'
         },
         {
-          id: 129,
-          nickname: 'user24'
+          id: 132,
+          nickname: 'user27'
+        }
+        ,
+        {
+          id: 133,
+          nickname: 'user28'
+        }
+        ,
+        {
+          id: 134,
+          nickname: 'user29'
+        }
+        ,
+        {
+          id: 135,
+          nickname: 'user30'
         }
       ],
       clearable:false,

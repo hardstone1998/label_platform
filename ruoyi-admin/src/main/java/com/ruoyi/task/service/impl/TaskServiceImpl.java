@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 【请填写功能名称】Service业务层处理
@@ -87,6 +88,7 @@ public class TaskServiceImpl implements ITaskService
      * @param task 【请填写功能名称】
      * @return 结果
      */
+    @Transactional
     @Override
     public int insertTask(RequestTask task)
     {
@@ -105,7 +107,7 @@ public class TaskServiceImpl implements ITaskService
 
         int i = taskMapper.insertTask(task1);
         if (i<=0)return -1;
-        List<TaskAllocationUser> taskAllocationUserRows = task.getTaskAllocationUserRows();
+        List<TaskAllocationUser> taskAllocationUserRows = task.getTaskAllocationUser();
         int num = 0;
         for (TaskAllocationUser taskAllocationUser : taskAllocationUserRows){
             List<Long> selectedUsers = taskAllocationUser.getSelectedUsers();

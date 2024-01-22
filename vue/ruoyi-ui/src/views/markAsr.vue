@@ -76,13 +76,13 @@ export default {
         //console.log("取消按钮")
       }else{        
         //this.wavesurfer.load(require("../assets/audio/" + this.audioName));
-        this.wavesurfer.load("audio/" + this.audioName);
+        this.wavesurfer.load("/mnt/vdc/mydata/nginx/html/audio/" + this.audioName);
       }
       
     },
     loadAudio2(audio_name_1){
       //this.wavesurfer.load(require("../assets/audio/" + audio_name_1));
-      this.wavesurfer.load("audio/" +audio_name_1);
+      this.wavesurfer.load("/mnt/vdc/mydata/nginx/html/audio/" +audio_name_1);
     },
 
     playMusic() {
