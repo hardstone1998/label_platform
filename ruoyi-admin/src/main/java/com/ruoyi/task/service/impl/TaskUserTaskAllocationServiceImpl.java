@@ -149,10 +149,10 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
         Long verityNum = verityTaskAllocationReq.getVerityNum();
         if (verityNum==null || verityNum == 0){
             Double verityPercentage = verityTaskAllocationReq.getVerityPercentage();
-            if (verityPercentage == null ||verityPercentage==0)return -1;
+            if (verityPercentage == null ||verityPercentage==0)throw new RuntimeException("审核数量为空");
             verityTaskAllocationReq.setVerityNum((long) (num*verityPercentage));
         }
-        if (num<verityNum)return -1;
+        if (num<verityNum)throw new RuntimeException("分配审核数量大于实际标注数量");
         VerityTaskSysUser verityTaskSysUser = new VerityTaskSysUser();
         verityTaskSysUser.setTaskId(verityTaskAllocationReq.getTaskId());
         verityTaskSysUser.setLabelUserId(verityTaskAllocationReq.getLabelUserId());

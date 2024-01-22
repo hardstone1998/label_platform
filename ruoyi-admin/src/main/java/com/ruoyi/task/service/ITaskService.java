@@ -38,6 +38,14 @@ public interface ITaskService
     public int insertTask(RequestTask task);
 
     /**
+     * 一键分配功能
+     *
+     * @param task 【请填写功能名称】
+     * @return 结果
+     */
+    public int allocationTask(Long id ,RequestTask task);
+
+    /**
      * 修改【请填写功能名称】
      *
      * @param task 【请填写功能名称】

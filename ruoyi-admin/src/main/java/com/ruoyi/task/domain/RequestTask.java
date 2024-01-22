@@ -12,7 +12,6 @@ import java.util.List;
 @Data
 public class RequestTask {
 
-    /** $column.columnComment */
     private Long id;
 
     /** 任务名 */
@@ -27,5 +26,5 @@ public class RequestTask {
     @Excel(name = "任务类型。0-asr标注，1-glm标注")
     private Long clazz;
 
-    private List<TaskAllocationUser> TaskAllocationUser;
+    private List<TaskAllocationUser> taskAllocationUser;
 }

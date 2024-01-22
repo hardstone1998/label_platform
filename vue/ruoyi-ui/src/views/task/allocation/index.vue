@@ -136,10 +136,32 @@
                 </div>
                 <div class="card-panel-description">
                   <div class="card-panel-text">QA分配</div>
-                  
                 </div>
               </div>
             </el-col>
+
+            <!-- 一键分配 -->
+            <el-col :span="12" class="card-panel-col">
+              <div class="card-panel">
+                <div class="card-panel-icon-wrapper icon-blue">
+                  <el-button type="primary" icon="el-icon-edit" @click="taskAllocation(0)" circle></el-button>
+                </div>
+                <div class="card-panel-description">
+                  <div class="card-panel-text">均匀分配</div>
+                </div>
+              </div>
+            </el-col>
+            <el-col :span="12" class="card-panel-col">
+              <div class="card-panel">
+                <div class="card-panel-icon-wrapper icon-red">
+                  <el-button type="success" icon="el-icon-check"  @click="taskAllocation(1)" circle></el-button>
+                </div>
+                <div class="card-panel-description">
+                  <div class="card-panel-text">顺序分配</div>
+                </div>
+              </div>
+            </el-col>
+
             <!-- ASR已分配 -->
             <el-col :span="12" class="card-panel-col">
               <div class="card-panel">
@@ -364,6 +386,60 @@
     </div>
   </el-dialog>
 
+
+
+
+  <!-- 一键分配对话框 -->
+  <el-dialog :title="task_title" :visible.sync="taskOpen" width="80%"  append-to-body>
+    <!-- Task Form -->
+    <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form-item label="任务名" prop="name">
+        <el-input v-model="form.name" placeholder="请输入任务名" />
+      </el-form-item>
+      <el-form-item label="任务描述" prop="desc">
+        <el-input v-model="form.desc" type="textarea" placeholder="请输入内容" />
+      </el-form-item>
+      <el-form-item label="分配方式" prop="way">
+        <el-select v-model="way" placeholder="请选择分配方式" disabled>
+        <el-option
+            v-for="way in wayList"
+            :key="way.id"
+            :label="way.name"
+            :value="way.id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="任务类型" prop="clazz">
+        <el-select v-model="form.clazz" placeholder="请选择任务类型">
+        <el-option
+            v-for="task in taskList"
+            :key="task.id"
+            :label="task.name"
+            :value="task.id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="分配用户" prop="clazz">
+      <el-select v-model="taskAllocationUser[0].selectedUsers" multiple placeholder="请选择用户">
+          <el-option
+            v-for="user in userList"
+            :key="user.id"
+            :label="user.nickname"
+            :value="user.id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="数量" prop="taskQuantity">
+        <el-input v-model="taskAllocationUser[0].taskQuantity" placeholder="请输入任务数量" />
+      </el-form-item>
+    </el-form>
+    <!-- Dialog Footer -->
+    <div slot="footer" class="dialog-footer">
+      <el-button type="primary" @click="submitTaskForm">确 定</el-button>
+      <el-button @click="cancelTask">取 消</el-button>
+    </div>
+  </el-dialog>
+
   </div>
   
 </template>
@@ -381,7 +457,7 @@
     getData
   } from "@/api/asr/annotation";
   import {
-    uploadASRFile,uploadQAFile,addTask,updateTask
+    uploadASRFile,uploadQAFile,addTask,updateTask,allocation
   } from "@/api/task/allocation";
   import {
   optionsExtract
@@ -397,6 +473,7 @@ export default {
     },
   data() {
     return {
+      way: null,
       countData: {
         asrAllocationSum: 0,
         qallocationSum: 0,
@@ -404,6 +481,7 @@ export default {
       userTaskRows: [
         // Add more rows as needed
       ],
+      taskAllocationUser:[{ selectedUsers: [], taskQuantity: null }],
       userTaskAssignments: [],
       taskTypeList: [
       { id: 1, name: 'Type 1' },
@@ -411,8 +489,13 @@ export default {
       ],
       userList: [],
       taskList: [
-        { id: 101, name: 'Task 1' },
-        { id: 102, name: 'Task 2' },
+        { id: 0, name: 'ASR标注' },
+        { id: 1, name: 'QA标注' },
+        // Add more tasks as needed
+      ],
+      wayList: [
+        { id: 0, name: '均匀分配' },
+        { id: 1, name: '顺序分配' },
         // Add more tasks as needed
       ],
       sevalue: [],
@@ -429,6 +512,8 @@ export default {
       loading: true,
       // 是否显示弹出层
       open: false,
+      // 是否一键任务分配
+      taskOpen: false,
       // 是否为管理员
       isAdmin: false,
       test1: {},
@@ -597,6 +682,13 @@ export default {
       this.reset();
     },
 
+    // 取消按钮
+    cancelTask() {
+      this.sevalue = [];
+      this.taskOpen = false;
+      this.reset();
+    },
+
     reset() {
       this.form = {
         name: null,
@@ -613,6 +705,14 @@ export default {
       this.open = true;
       this.task_title = "任务分配";
       this.form.clazz = clazz;
+    },
+
+     /** 一键分配操作 */
+     taskAllocation(way) {
+      this.reset();
+      this.taskOpen = true;
+      this.task_title = "一键任务分配";
+      this.way = way;
     },
     getUsers() {
       totalUser().then((response) => {
@@ -647,6 +747,22 @@ export default {
             });
           }
         }
+      });
+    },
+
+    /** 提交任务分配按钮 */
+    submitTaskForm() {
+      this.form.taskAllocationUser = this.taskAllocationUser;
+      console.log(this.form);
+      this.$refs["form"].validate(valid => {
+        if (valid) {
+            console.log(this.form)
+            allocation(this.way,this.form).then(response => {
+              this.$modal.msgSuccess("新增成功");
+              this.open = false;
+              this.getList();
+            });
+          }
       });
     },
 

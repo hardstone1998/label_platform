@@ -38,6 +38,15 @@ export function addTask(data) {
   })
 }
 
+// 一键分配
+export function allocation(id,data) {
+  return request({
+    url: '/task/allocation/simple/' +id,
+    method: 'post',
+    data: data
+  })
+}
+
 // 修改【请填写功能名称】
 export function updateTask(data) {
   return request({

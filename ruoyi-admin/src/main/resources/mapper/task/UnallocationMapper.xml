@@ -20,7 +20,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             <if test="clazzId != null "> and clazz_id = #{clazzId}</if>
             <if test="label != null  and label != ''"> and label = #{label}</if>
-            <if test="num != null "> and num = #{num}</if>
+            <if test="num != null "> and num >= #{num}</if>
             <if test="asrOrQa != null  and asrOrQa != ''"> and asrOrQa = #{asrOrQa}</if>
         </where>
     </select>

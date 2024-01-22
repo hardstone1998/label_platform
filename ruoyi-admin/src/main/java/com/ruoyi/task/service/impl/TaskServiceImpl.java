@@ -1,5 +1,7 @@
 package com.ruoyi.task.service.impl;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.ruoyi.asr.domain.VoiceAnnotation;
@@ -11,13 +13,11 @@ import com.ruoyi.qa.domain.Class1;
 import com.ruoyi.qa.mapper.AsrResult1Mapper;
 import com.ruoyi.qa.mapper.Class1Mapper;
 import com.ruoyi.system.service.ISysUserService;
-import com.ruoyi.task.domain.RequestTask;
-import com.ruoyi.task.domain.Task;
-import com.ruoyi.task.domain.TaskUserTaskAllocation;
-import com.ruoyi.task.domain.TaskAllocationUser;
+import com.ruoyi.task.domain.*;
 import com.ruoyi.task.mapper.TaskMapper;
 import com.ruoyi.task.mapper.TaskUserTaskAllocationMapper;
 import com.ruoyi.task.service.ITaskService;
+import com.ruoyi.task.service.IUnallocationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
@@ -51,6 +51,9 @@ public class TaskServiceImpl implements ITaskService
 
     @Autowired
     private TaskUserTaskAllocationMapper taskUserTaskAllocationMapper;
+
+    @Autowired
+    private IUnallocationService unallocationService;
 
     /**
      * 查询【请填写功能名称】
@@ -98,7 +101,7 @@ public class TaskServiceImpl implements ITaskService
         task1.setClazz(clazz);
         String task_name = task.getName();
         if (task_name ==null || task_name.length()==0){
-            return -1;
+            throw new RuntimeException("任务名为空");
         }
         task1.setName(task_name);
         task1.setDesc(task.getDesc());
@@ -106,7 +109,7 @@ public class TaskServiceImpl implements ITaskService
         task1.setUpdateTime(DateUtils.getNowDate());
 
         int i = taskMapper.insertTask(task1);
-        if (i<=0)return -1;
+        if (i<=0)throw new RuntimeException("任务插入失败");
         List<TaskAllocationUser> taskAllocationUserRows = task.getTaskAllocationUser();
         int num = 0;
         for (TaskAllocationUser taskAllocationUser : taskAllocationUserRows){
@@ -139,7 +142,7 @@ public class TaskServiceImpl implements ITaskService
                     asrResult1.setClazzId(class1Id);
                     asrResult1Mapper.updateAsrResult1ByClazzId(asrResult1);
                 }else {
-                    return -1;
+                    throw new RuntimeException("类型错误");
                 }
                 TaskUserTaskAllocation taskUserTaskAllocation = new TaskUserTaskAllocation();
                 taskUserTaskAllocation.setTaskId((long)task_id);
@@ -150,6 +153,157 @@ public class TaskServiceImpl implements ITaskService
         }
         log.info("任务分配完成");
         return num;
+    }
+
+    /**
+     * 一键分配功能
+     *
+     * @param id 任务类型
+     * @param task 任务
+     * @return 结果
+     */
+    @Override
+    @Transactional
+    public int allocationTask(Long id, RequestTask task) {
+        log.info("任务分配"+task);
+        Task task1 = new Task();
+        Long clazz =task.getClazz();
+        task1.setClazz(clazz);
+        String task_name = task.getName();
+        if (task_name ==null || task_name.length()==0){
+            throw new RuntimeException("任务名为空");
+        }
+        task1.setName(task_name);
+        task1.setDesc(task.getDesc());
+        task1.setCreateTime(DateUtils.getNowDate());
+        task1.setUpdateTime(DateUtils.getNowDate());
+
+        int i = taskMapper.insertTask(task1);
+        int taskId = task1.getId();
+        List<TaskAllocationUser> taskAllocationUser = task.getTaskAllocationUser();
+        if (taskAllocationUser.isEmpty()) throw new RuntimeException("不存在用户信息");
+        TaskAllocationUser taskAllocationUser1 = taskAllocationUser.get(0);
+        if (i<=0)throw new RuntimeException("不存在用户信息");
+        if (0L ==id){
+            equalityAllocation(clazz,taskId,taskAllocationUser1);
+        }else if(1L == id){
+            sequenceAllocation(clazz,taskId,taskAllocationUser1);
+        }else {
+            throw new RuntimeException("任务类型错误");
+        }
+        return 1;
+    }
+
+    /**
+     * 均等分配
+     */
+    private int equalityAllocation(Long clazz, int taskId, TaskAllocationUser taskUser){
+        long taskQuantity = taskUser.getTaskQuantity();
+        List<Long> selectedUsers = taskUser.getSelectedUsers();
+        long userNum =selectedUsers.size();
+        List<Unallocation> unallocations = unallocationService.selectUnallocationList(new Unallocation(null,null,userNum,0L==clazz?"asr":"qa"));
+        Collections.sort(unallocations, new Comparator<Unallocation>() {
+            @Override
+            public int compare(Unallocation o1, Unallocation o2) {
+                return (int) (o1.getNum() -o2.getNum());
+            }
+        });
+        long clazzNum = unallocations.size();
+        long residueNum = taskQuantity;
+        if (0L == clazz){
+            for (Unallocation unallocation:unallocations) {
+                long num = unallocation.getNum();
+                long avgUser = num/userNum;
+                long avg = (long) Math.ceil(1.0*residueNum/clazzNum);
+                long minAvg = Math.min(avgUser,avg);
+
+                if (minAvg==0L)continue;
+                residueNum -= minAvg;
+                for (Long userId:selectedUsers) {
+                    SysUser user = userService.selectUserById(userId);
+                    VoiceAnnotation voiceAnnotation = new VoiceAnnotation();
+                    voiceAnnotation.setLabelUser(userId);
+                    voiceAnnotation.setUpdateNum(minAvg);
+                    voiceAnnotation.setTaskId((long) taskId);
+                    voiceAnnotation.setTaskOwner(user.getUserName());
+                    voiceAnnotation.setClazzId(unallocation.getClazzId());
+                    System.out.println(voiceAnnotation);
+                    voiceAnnotationMapper.updateVoiceAnnotationByClazzId(voiceAnnotation);
+                }
+            }
+        }else if(1L == clazz){
+            for (Unallocation unallocation:unallocations) {
+                long num = unallocation.getNum();
+                long avgUser = num / userNum;
+                long avg = (long) Math.ceil(1.0*residueNum/clazzNum);
+                long minAvg = Math.min(avgUser, avg);
+                residueNum -= minAvg;
+                for (Long userId : selectedUsers) {
+                    SysUser user = userService.selectUserById(userId);
+                    AsrResult1 asrResult1 = new AsrResult1();
+                    asrResult1.setLabelUser(userId);
+                    asrResult1.setUpdateNum(minAvg);
+                    asrResult1.setTaskId(taskId);
+                    asrResult1.setTaskOwner(user.getUserName());
+                    asrResult1.setClazzId(unallocation.getClazzId());
+                    asrResult1Mapper.updateAsrResult1ByClazzId(asrResult1);
+                }
+            }
+        }else {
+            throw new RuntimeException("类型错误");
+        }
+        return 1;
+    }
+
+    /**
+     * 顺序分配
+     */
+    private int sequenceAllocation(Long clazz, int taskId, TaskAllocationUser taskUser){
+        List<Long> selectedUsers = taskUser.getSelectedUsers();
+        if (0L == clazz){
+            for (Long userId:selectedUsers) {
+                SysUser user = userService.selectUserById(userId);
+                long taskQuantity = taskUser.getTaskQuantity();
+                List<Unallocation> unallocations = unallocationService.selectUnallocationList(new Unallocation(null,null,null,"asr"));
+                for (Unallocation unallocation:unallocations) {
+                    Long num = unallocation.getNum();
+                    VoiceAnnotation voiceAnnotation = new VoiceAnnotation();
+                    voiceAnnotation.setLabelUser(userId);
+                    voiceAnnotation.setUpdateNum(Math.min(taskQuantity,num));
+                    voiceAnnotation.setTaskId((long)taskId);
+                    voiceAnnotation.setTaskOwner(user.getUserName());
+                    voiceAnnotation.setClazzId(unallocation.getClazzId());
+                    voiceAnnotationMapper.updateVoiceAnnotationByClazzId(voiceAnnotation);
+                    if (num>taskQuantity){
+                        break;
+                    }
+                    taskQuantity-=num;
+                }
+            }
+        }else if(1L == clazz){
+            for (Long userId:selectedUsers) {
+                SysUser user = userService.selectUserById(userId);
+                long taskQuantity = taskUser.getTaskQuantity();
+                List<Unallocation> unallocations = unallocationService.selectUnallocationList(new Unallocation(null,null,null,"qa"));
+                for (Unallocation unallocation:unallocations) {
+                    Long num = unallocation.getNum();
+                    AsrResult1 asrResult1 = new AsrResult1();
+                    asrResult1.setLabelUser(userId);
+                    asrResult1.setUpdateNum(Math.min(taskQuantity,num));
+                    asrResult1.setTaskId(taskId);
+                    asrResult1.setTaskOwner(user.getUserName());
+                    asrResult1.setClazzId(unallocation.getClazzId());
+                    asrResult1Mapper.updateAsrResult1ByClazzId(asrResult1);
+                    if (num>taskQuantity){
+                        break;
+                    }
+                    taskQuantity-=num;
+                }
+            }
+        }else {
+            throw new RuntimeException("类型错误");
+        }
+        return 1;
     }
 
     /**

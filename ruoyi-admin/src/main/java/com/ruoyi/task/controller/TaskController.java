@@ -109,6 +109,23 @@ public class TaskController extends BaseController
     }
 
     /**
+     * 一键分配功能
+     *
+     * @param id 任务类型 0为均匀分配，1为顺序分配。（均匀分配为每个用户各种类型任务相同，顺序分配为类型一全部分给用户1如果不够再将类型二全部分给用户1，用户2也是如此。以此类推）
+     * @param task 任务
+     * @return 结果
+     */
+    @PreAuthorize("@ss.hasPermi('system:allocation:add')")
+    @Log(title = "一键分配", businessType = BusinessType.INSERT)
+    @PostMapping("/simple/{id}")
+    public AjaxResult allocation(@PathVariable("id") Long id,@RequestBody RequestTask task)
+    {
+        int i = taskService.allocationTask(id,task);
+        if (i<=0)return toAjax(false);
+        return toAjax(i);
+    }
+
+    /**
      * 修改【请填写功能名称】
      */
     @PreAuthorize("@ss.hasPermi('system:allocation:edit')")
