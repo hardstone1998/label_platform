@@ -25,6 +25,50 @@
           @change="handleChange2"
         ></el-cascader>
       </el-form-item>
+
+      <el-form-item label="是否标注" prop="isMark">
+        <!-- <el-dropdown @command="handleCommandMark">
+          <span class="el-dropdown-link">
+            是否已标注<i class="el-icon-arrow-down el-icon--right"></i>
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item command="a">是</el-dropdown-item>
+            <el-dropdown-item command="b">否</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown> -->
+        <el-select  v-model="queryParams.isMark" placeholder="是否已标注">
+          <el-option
+            v-for="mark in isMark"
+            :key="mark.id"
+            :label="mark.name"
+            :value="mark.id"
+          />
+        </el-select>
+        
+      </el-form-item>
+
+      <el-form-item label="任务查询" prop="taskList">
+        <el-select v-model="queryParams.taskId" placeholder="请选择任务">
+          <el-option
+            v-for="task in taskList"
+            :key="task.taskId"
+            :label="task.taskName"
+            :value="task.taskId"
+          />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="审核结果" prop="isPass">
+        <el-select v-model="queryParams.isPass" placeholder="请选择审核结果">
+          <el-option
+            v-for="pass in isPass"
+            :key="pass.id"
+            :label="pass.name"
+            :value="pass.id"
+          />
+        </el-select>
+      </el-form-item>
+
       <el-form-item>
         <el-button
           type="primary"
@@ -156,8 +200,8 @@
     <el-dialog
       title="Q&A标注"
       :visible.sync="open"
-      width="800px"
-      higth="700px"
+      width="100%"
+      higth="100%"
       append-to-body
     >
       <!-- 新增播放音频按钮 -->
@@ -212,7 +256,7 @@
           />
         </el-form-item>
 
-        <el-button type="text" @click="dialogVisible = true">QA1</el-button>
+        <el-button type="text" >QA1</el-button>
         <el-form-item prop="qaExtract">
           <el-input
             v-model="form.qa1"
@@ -221,16 +265,18 @@
             placeholder="请输入内容"
           />
         </el-form-item>
-        <el-button type="text" @click="dialogVisible2 = true">QA2</el-button>
+        <el-button type="text" >QA2</el-button>
         <el-form-item prop="qaExtract">
           <el-input v-model="form.qa2" type="textarea" :rows="3" />
         </el-form-item>
-        <el-button type="text" @click="dialogVisible3 = true">QA3</el-button>
+        <el-button type="text" >QA3</el-button>
         <el-form-item prop="qaExtract">
           <el-input v-model="form.qa3" type="textarea" :rows="3" />
         </el-form-item>
+        <el-button type="primary" @click="sentenceTrim()">标注整理</el-button>
       </el-form>
       <div slot="footer" class="dialog-footer">
+
         <el-cascader
           v-model="sevalue"
           placeholder="选择问题分类"
@@ -245,7 +291,7 @@
       </div>
     </el-dialog>
 
-    <el-dialog
+    <!-- <el-dialog
       title="提示"
       :visible.sync="dialogVisible2"
       width="30%"
@@ -286,12 +332,13 @@
               >
             </template>
           </el-table-column>
+          
         </el-table>
         <el-button @click="dialogVisible2 = false">取 消</el-button>
         <el-button type="primary" @click="handleRelUpdate()">确 定</el-button>
       </span>
-    </el-dialog>
-    <el-dialog
+    </el-dialog> -->
+    <!-- <el-dialog
       title="提示"
       :visible.sync="dialogVisible3"
       width="20%"
@@ -339,7 +386,7 @@
         <el-button @click="dialogVisible3 = false">取 消</el-button>
         <el-button type="primary" @click="handleRelUpdate2()">确 定</el-button>
       </span>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
@@ -360,11 +407,32 @@ import {
   addRelation,
   updateRelation,
 } from "@/api/qa/relation";
-
+import {allByUser} from "@/api/task/user";
 export default {
   name: "Extract",
   data() {
     return {
+      isPass: [
+        {
+          id : 0,
+          name: "不通过"
+        },
+        {
+          id : 1,
+          name: "通过"
+        }
+      ],
+      isMark: [
+        {
+          id:"否",
+          name: "否"
+      },
+      {
+          id:"是",
+          name: "是"
+      }
+      ],
+      taskList: [],
       props:{
         value:"id"
       },
@@ -424,9 +492,34 @@ export default {
   created() {
     this.getList();
     this.getOptions();
+    this.getTaskList();
   },
 
   methods: {
+    sentenceTrim(){
+      this.form.qa1 = this.form.qa1.replaceAll(" ","").replaceAll(",","，").replaceAll("?","？").replaceAll(".","。").replaceAll("/n","").replaceAll("，，","，").replaceAll("。。","。").replaceAll("？？","？").replaceAll("，。","，").replaceAll(":","：").replaceAll("客户：","客户问：").replaceAll("客服：","客服答：").replaceAll("客户询问：","客户问：").replaceAll("客服回答：","客服答：");
+      this.form.qa2 = this.form.qa2.replaceAll(" ","").replaceAll(",","，").replaceAll("?","？").replaceAll(".","。").replaceAll("/n","").replaceAll("，，","，").replaceAll("。。","。").replaceAll("？？","？").replaceAll("，。","，").replaceAll(":","：").replaceAll("客户：","客户问：").replaceAll("客服：","客服答：").replaceAll("客户询问：","客户问：").replaceAll("客服回答：","客服答：");
+      this.form.qa3 = this.form.qa3.replaceAll(" ","").replaceAll(",","，").replaceAll("?","？").replaceAll(".","。").replaceAll("/n","").replaceAll("，，","，").replaceAll("。。","。").replaceAll("？？","？").replaceAll("，。","，").replaceAll(":","：").replaceAll("客户：","客户问：").replaceAll("客服：","客服答：").replaceAll("客户询问：","客户问：").replaceAll("客服回答：","客服答：");
+      if(this.form.qa1==null||this.form.qa1==""){
+        this.form.qa1 = this.form.qa2;
+        this.form.qa2 = this.form.qa3;
+        this.form.qa3 = "";
+      }
+      if(this.form.qa2==null||this.form.qa2==""){
+        this.form.qa2 = this.form.qa3;
+        this.form.qa3 = "";
+      }
+    },
+
+    getTaskList(){
+      var userName = this.$store.state.user.name;
+      console.log(userName);
+      allByUser(userName).then((response) => {
+        this.taskList = response.rows.map((row) => { return { taskId: row.taskId, taskName: row.taskName }; }); 
+        console.log(this.taskList);
+      });
+      
+    },
 
     handleChange2(value) {
      
@@ -591,6 +684,7 @@ export default {
     getList() {
       this.loading = true;
       this.queryParams.taskOwner = this.$store.state.user.name;
+      console.log(this.queryParams);
       listExtract(this.queryParams).then((response) => {
         this.extractList = response.rows;
        // console.log("返回结果",response.rows)

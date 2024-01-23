@@ -46,7 +46,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="result != null  and result != ''"> and result like concat('%', #{result}, '%')</if>
             <if test="qaExtract != null  and qaExtract != ''"> and qa_extract = #{qaExtract}</if>
             <if test="isDelete != null  and isDelete != ''"> and is_delete = #{isDelete}</if>
+            <if test="isMark != null  and isMark != ''"> and is_mark = #{isMark}</if>
             <if test="cuda != null  and cuda != ''"> and cuda = #{cuda}</if>
+            <if test="taskId != null  and taskId != ''"> and task_id = #{taskId}</if>
+            <if test="isPass != null  and isPass != ''"> and is_pass = #{isPass}</if>
         </where>
     </select>
 
@@ -61,7 +64,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="audioPath != null  and audioPath != ''"> and audio_path = #{audioPath}</if>
             <if test="result != null  and result != ''"> and result like concat('%', #{result}, '%')</if>
             <if test="taskOwner != null  and taskOwner != ''"> and task_owner = #{taskOwner}</if>
+            <if test="cuda != null  and cuda != ''"> and cuda = #{cuda}</if>
+            <if test="isMark != null  and isMark != ''"> and is_mark = #{isMark}</if>
             <if test="isDelete != null  and isDelete != '' and isDelete !='否'.toString" > and is_delete = #{isDelete}</if>
+            <if test="taskId != null  and taskId != ''"> and task_id = #{taskId}</if>
+            <if test="isPass != null  and isPass != ''"> and is_pass = #{isPass}</if>
         </where>
 
     </select>
