@@ -57,6 +57,14 @@ public class AsrResult1 extends BaseEntity
     private String isDelete;
     private String qaSum;
 
+    public String getVerityText() {
+        String verityText = "";
+        if (qa4!=null&&qa4!="")verityText+=qa4;
+        if (qa5!=null&&qa5!="")verityText+=qa5;
+        if (qa6!=null&&qa6!="")verityText+=qa6;
+        return verityText;
+    }
+
     private List<Class1> options;
 
     public List<Class1> getOptions() {
@@ -108,6 +116,10 @@ public class AsrResult1 extends BaseEntity
     private String verityFeedback;
 
     private Long updateNum;
+
+    private Long accuracy;
+
+    private Long verityClazzId;
     public String getQaSum() {
         return qaSum;
     }

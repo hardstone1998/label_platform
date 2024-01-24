@@ -42,14 +42,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectAsrResult1List" parameterType="AsrResult1" resultMap="AsrResult1Result">
         <include refid="selectAsrResult1Vo"/>
         <where>
-            <if test="audioPath != null  and audioPath != ''"> and audio_path = #{audioPath}</if>
+            <if test="audioPath != null  and audioPath != ''"> and audio_path like concat('%',#{audioPath}, '%')</if>
             <if test="result != null  and result != ''"> and result like concat('%', #{result}, '%')</if>
+            <if test="qaSum != null  and qaSum != ''"> and qa_sum like concat('%', #{qaSum}, '%')</if>
             <if test="qaExtract != null  and qaExtract != ''"> and qa_extract = #{qaExtract}</if>
             <if test="isDelete != null  and isDelete != ''"> and is_delete = #{isDelete}</if>
             <if test="isMark != null  and isMark != ''"> and is_mark = #{isMark}</if>
             <if test="cuda != null  and cuda != ''"> and cuda = #{cuda}</if>
             <if test="taskId != null  and taskId != ''"> and task_id = #{taskId}</if>
             <if test="isPass != null  and isPass != ''"> and is_pass = #{isPass}</if>
+            <if test="clazzId != null  and clazzId != ''"> and (cuda = #{clazzId} or clazz_id = #{clazzId})</if>
         </where>
     </select>
 
@@ -61,14 +63,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectAsrResult1ListByOwner" parameterType="AsrResult1" resultMap="AsrResult1Result">
         <include refid="selectAsrResult1Vo"/>
         <where>
-            <if test="audioPath != null  and audioPath != ''"> and audio_path = #{audioPath}</if>
+            <if test="audioPath != null  and audioPath != ''"> and audio_path like concat('%',#{audioPath}, '%')</if>
             <if test="result != null  and result != ''"> and result like concat('%', #{result}, '%')</if>
+            <if test="qaSum != null  and qaSum != ''"> and qa_sum like concat('%', #{qaSum}, '%')</if>
             <if test="taskOwner != null  and taskOwner != ''"> and task_owner = #{taskOwner}</if>
             <if test="cuda != null  and cuda != ''"> and cuda = #{cuda}</if>
             <if test="isMark != null  and isMark != ''"> and is_mark = #{isMark}</if>
             <if test="isDelete != null  and isDelete != '' and isDelete !='否'.toString" > and is_delete = #{isDelete}</if>
             <if test="taskId != null  and taskId != ''"> and task_id = #{taskId}</if>
             <if test="isPass != null  and isPass != ''"> and is_pass = #{isPass}</if>
+            <if test="clazzId != null  and clazzId != ''"> and (cuda = #{clazzId} or clazz_id = #{clazzId})</if>
         </where>
 
     </select>

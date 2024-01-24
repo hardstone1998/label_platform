@@ -60,6 +60,7 @@ public class AsrResult1Controller extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(AsrResult1 asrResult1)
     {
+        System.out.println("asrResult1::"+asrResult1);
         startPage();
         List<AsrResult1> list = asrResult1Service.selectAsrResult1List(asrResult1);
         return getDataTable(list);

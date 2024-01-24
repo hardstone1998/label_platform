@@ -160,13 +160,13 @@
         :show-overflow-tooltip="true"
       />
       <el-table-column
-        label="审核后文本"
+        label="标注后文本"
         align="center"
         prop="afterText"
         :show-overflow-tooltip="true"
       />
       <el-table-column
-        label="标注文本"
+        label="审核后文本"
         align="center"
         prop="verityText"
         :show-overflow-tooltip="true"
@@ -201,7 +201,7 @@
       <el-table-column
         label="标注时间"
         align="center"
-        prop="updateTime"
+        prop="labelTime"
         width="150"
       >
         <template slot-scope="scope">
@@ -213,7 +213,7 @@
       <el-table-column
         label="审核时间"
         align="center"
-        prop="updateTime"
+        prop="verityTime"
         width="150"
       >
         <template slot-scope="scope">

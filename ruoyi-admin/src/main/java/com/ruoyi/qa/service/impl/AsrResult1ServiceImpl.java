@@ -8,16 +8,19 @@ import java.util.stream.Stream;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.ruoyi.qa.domain.*;
 import com.ruoyi.qa.mapper.Class1Mapper;
 import com.ruoyi.qa.mapper.QaRelationMapper;
+import com.ruoyi.system.mapper.SysUserMapper;
 import org.apache.poi.ss.usermodel.IconMultiStateFormatting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.qa.mapper.AsrResult1Mapper;
 import com.ruoyi.qa.service.IAsrResult1Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * extractService业务层处理
@@ -36,6 +39,9 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
 
     @Autowired
     private Class1Mapper class1Mapper;
+
+    @Autowired
+    private SysUserMapper sysUserMapper;
 
     /**
      * 查询extract
@@ -118,6 +124,7 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
      * @param asrResult1 extract
      * @return 结果
      */
+    @Transactional
     @Override
     public int updateAsrResult1(AsrResult1 asrResult1)
     {
@@ -136,13 +143,16 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
             qa_sum+=qa3+"\n";
         }
 
-
-
         asrResult1.setQaSum(qa_sum);
         asrResult1.setIsMark("是");
 
         String qaExtract = asrResult1.getMarkresult();
         asrResult1.setQaMark(qaExtract);
+        String taskOwner = asrResult1.getTaskOwner();
+        SysUser sysUser = sysUserMapper.selectUserByUserName(taskOwner);
+        asrResult1.setLabelUser(sysUser.getUserId());
+        asrResult1.setLabelTime(DateUtils.getNowDate());
+        asrResult1.setClazzId(Long.valueOf(asrResult1.getCuda()));
         System.out.println("cuda结果是----------》"+asrResult1.getCuda());
         return asrResult1Mapper.updateAsrResult1(asrResult1);
     }
@@ -316,6 +326,11 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
         //return null;
     }
 
+    /**
+     * 查询分类信息
+     *
+     * @return 结果
+     */
     @Override
     public ClassP getOptions() {
 

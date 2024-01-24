@@ -8,34 +8,34 @@
       v-show="showSearch"
       label-width="68px"
     >
-      <el-form-item label="模糊分类" prop="audioPath">
+      <el-form-item label="音频名字" prop="audioPath">
         <el-input
-          v-model="queryParams.result"
-          placeholder="请输入关键字（如：预约）"
+          v-model="queryParams.audioPath"
+          placeholder="模糊搜索"
+          clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
 
-      <el-form-item label="问题分类">
-        <el-cascader
-          v-model="getvalue"
-          placeholder="选择分类"
-          :options="options"
-          :props="props"
-          @change="handleChange2"
-        ></el-cascader>
+      <el-form-item label="搜索文本" prop="qaSum">
+        <el-input
+          v-model="queryParams.qaSum"
+          placeholder="文本搜索搜索"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
       </el-form-item>
 
+      <el-form-item label="问题分类" prop="clazzList" >
+        <el-cascader
+          v-model="queryParams.clazzId"
+          placeholder="选择分类"
+          :options="formatClazzList(clazzList)"
+          @change="handleChange2"
+          :style="{width: '300px'}"
+        ></el-cascader>
+      </el-form-item>
       <el-form-item label="是否标注" prop="isMark">
-        <!-- <el-dropdown @command="handleCommandMark">
-          <span class="el-dropdown-link">
-            是否已标注<i class="el-icon-arrow-down el-icon--right"></i>
-          </span>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="a">是</el-dropdown-item>
-            <el-dropdown-item command="b">否</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown> -->
         <el-select  v-model="queryParams.isMark" placeholder="是否已标注">
           <el-option
             v-for="mark in isMark"
@@ -69,6 +69,7 @@
         </el-select>
       </el-form-item>
 
+
       <el-form-item>
         <el-button
           type="primary"
@@ -84,31 +85,38 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['qa:extract:export']"
-          >导出</el-button
-        >
-      </el-col>
-      <right-toolbar
-        :showSearch.sync="showSearch"
-        @queryTable="getList"
-      ></right-toolbar>
-    </el-row>
+    <el-col :span="1.5">
+      <el-button
+        type="warning"
+        plain
+        icon="el-icon-download"
+        size="mini"
+        @click="showExportDialog"
+        v-hasPermi="['verity:asr:export']"
+      >
+        导出
+      </el-button>
+    </el-col>
+    <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+      </el-row>
+      <el-dialog title="导出设置" :visible.sync="exportDialogVisible">
+        <el-form :model="exportForm" label-width="80px">
+          <el-form-item label="文件路径">
+            <el-input v-model="exportForm.exportFilePath" placeholder="请输入文件路径"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="exportDialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="handleExport">确定</el-button>
+        </div>
+      </el-dialog>
 
     <el-table
       v-loading="loading"
-      :data="extractList"
+      :data="verityQaList"
       @selection-change="handleSelectionChange"
       ref="filterTable"
     >
-      <!-- <el-table-column type="selection" width="55" align="center" /> -->
-      <!-- <el-table-column label="主键" align="center" prop="id" /> -->
       <el-table-column
         label="音频路径"
         align="center"
@@ -116,33 +124,25 @@
         :show-overflow-tooltip="true"
       />
       <el-table-column
-        label="执行结果"
+        label="标注人"
         align="center"
-        prop="result"
+        prop="taskOwner"
         :show-overflow-tooltip="true"
       />
-      <el-table-column
-        label="标注前Q&A"
-        align="center"
-        prop="qaExtract"
-        :show-overflow-tooltip="true"
-      />
-
       <el-table-column
         label="标注后Q&A"
         align="center"
         prop="qaSum"
         :show-overflow-tooltip="true"
       />
-      <!-- <el-table-column label="音频长度" align="center" prop="audioTime" /> -->
-      <!-- <el-table-column label="类别" align="center" prop="cuda" /> -->
-      <el-table-column label="类别" align="center" prop="cuda">
-        <template label="类别" align="center" slot-scope="scope">
-          {{ selectClazzLabel(options,scope.row.cuda) }}
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="isMark" label="是否已标注" width="100">
+      <el-table-column
+        label="审核后文本"
+        align="center"
+        prop="verityText"
+        :show-overflow-tooltip="true"
+      />
+      
+      <el-table-column prop="isMark" label="是否标注" width="100">
         <template slot-scope="scope">
           <el-tag
             :type="scope.row.isMark === '是' ? 'primary' : 'info'"
@@ -151,22 +151,44 @@
           >
         </template>
       </el-table-column>
-      <!-- 
+      <el-table-column prop="isPass" label="是否通过" width="100">
+        <template slot-scope="scope">
+          <el-tag
+            :type="scope.row.isPass === '是' ? 'primary' : 'info'"
+            disable-transitions
+            >{{ scope.row.isPass }}</el-tag
+          >
+        </template>
+      </el-table-column>
       <el-table-column
-        label="是否标注"
+        label="字符错误率"
         align="center"
-        prop="isMark"
+        prop="accuracy"
         :show-overflow-tooltip="true"
-      /> -->
+      />
+      
+
       <el-table-column
-        label="修改时间"
+        label="标注时间"
         align="center"
-        prop="updateTime"
-        width="180"
+        prop="labelTime"
+        width="150"
       >
         <template slot-scope="scope">
           <span>{{
-            parseTime(scope.row.updateTime, "{y}-{m}-{d}   {h}:{i}:{s}")
+            parseTime(scope.row.labelTime, "{y}-{m}-{d}   {h}:{i}:{s}")
+          }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="审核时间"
+        align="center"
+        prop="verityTime"
+        width="150"
+      >
+        <template slot-scope="scope">
+          <span>{{
+            parseTime(scope.row.verityTime, "{y}-{m}-{d}   {h}:{i}:{s}")
           }}</span>
         </template>
       </el-table-column>
@@ -181,14 +203,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            >标注</el-button
-          >
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            >舍弃</el-button
+            >审核</el-button
           >
         </template>
       </el-table-column>
@@ -202,7 +217,7 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改extract对话框 -->
+    <!-- 审核界面-->
     <el-dialog
       title="Q&A标注"
       :visible.sync="open"
@@ -296,107 +311,11 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-
-    <!-- <el-dialog
-      title="提示"
-      :visible.sync="dialogVisible2"
-      width="30%"
-      :before-close="handleClose2"
-    >
-      <span>是否关联QA1?</span>
-
-      <span slot="footer" class="dialog-footer">
-        <div>
-          <p class="floating-text">已关联数据：</p>
-        </div>
-        <el-table :data="gridData">
-          <el-table-column
-            property="qa1"
-            label="QA1"
-            align="center"
-            :show-overflow-tooltip="true"
-          ></el-table-column>
-          <el-table-column
-            property="qa2"
-            label="QA2"
-            align="center"
-            :show-overflow-tooltip="true"
-          ></el-table-column>
-          <el-table-column
-            label="操作"
-            align="center"
-            class-name="small-padding fixed-width"
-          >
-            <template slot-scope="scope">
-              <el-button
-                size="mini"
-                type="text"
-                icon="el-icon-delete"
-                @click="handleDeleteRel(scope.row)"
-                v-hasPermi="['qa:relation:remove']"
-                >删除</el-button
-              >
-            </template>
-          </el-table-column>
-          
-        </el-table>
-        <el-button @click="dialogVisible2 = false">取 消</el-button>
-        <el-button type="primary" @click="handleRelUpdate()">确 定</el-button>
-      </span>
-    </el-dialog> -->
-    <!-- <el-dialog
-      title="提示"
-      :visible.sync="dialogVisible3"
-      width="20%"
-      :before-close="handleClose3"
-    >
-      <span>是否关联QA2?</span>
-
-      <span slot="footer" class="dialog-footer">
-        <div>
-          <p class="floating-text">已关联数据：</p>
-        </div>
-        <el-table :data="gridData">
-          <el-table-column
-            property="qa1"
-            align="center"
-            label="QA1"
-            :show-overflow-tooltip="true"
-          ></el-table-column>
-          <el-table-column
-            property="qa2"
-            align="center"
-            label="QA2"
-            :show-overflow-tooltip="true"
-          ></el-table-column>
-          <el-table-column
-            property="qa3"
-            align="center"
-            label="QA3"
-            :show-overflow-tooltip="true"
-          ></el-table-column>
-          <el-table-column
-            label="操作"
-            align="center"
-            :show-overflow-tooltip="true"
-          >
-            <el-button
-              size="mini"
-              type="text"
-              icon="el-icon-delete"
-              @click="handleDelete(scope.row)"
-              >删除</el-button
-            >
-          </el-table-column>
-        </el-table>
-        <el-button @click="dialogVisible3 = false">取 消</el-button>
-        <el-button type="primary" @click="handleRelUpdate2()">确 定</el-button>
-      </span>
-    </el-dialog> -->
   </div>
 </template>
 
 <script>
+
 import {
   listExtract,
   getExtract,
@@ -405,29 +324,40 @@ import {
   optionsExtract,
   updateExtract,
 } from "@/api/qa/extract";
-
 import {
-  listRelation,
-  getRelation,
-  delRelation,
-  addRelation,
-  updateRelation,
-} from "@/api/qa/relation";
-import {allByUser} from "@/api/task/user";
+  updateVerityQa
+}  from "@/api/verity/qa"
+// import {
+//   optionsExtract
+// } from "@/api/qa/extract";
+
+// import {addTag, updateTag } from "@/api/asr/tag";
+import markAsr from "@/views/markAsr.vue";
+import {allByUser} from "@/api/task/user"
+import { setCanvasCreator } from "echarts";
+
 export default {
-  name: "Extract",
+  name: "VerityAsr",
+
+  components: { markAsr },
   data() {
     return {
-      isPass: [
-        {
-          id : 0,
-          name: "不通过"
-        },
-        {
-          id : 1,
-          name: "通过"
-        }
-      ],
+      selectvalue: "",
+      sevalue: [], //标签选择值
+      getvalue:"",
+      gridData: [],
+      audioName: "",
+      formatCurrentTime: 0,
+      formatTotalTime: 0,
+      isPlay: false, // 控制icon切换
+      totalTime: 0, // 播放总时间--秒
+      audioURL: "",
+      options: [],
+      props:{
+        value:"id"
+      },
+      verityQaList: [],
+      
       isMark: [
         {
           id:"否",
@@ -438,24 +368,48 @@ export default {
           name: "是"
       }
       ],
-      taskList: [],
-      props:{
-        value:"id"
+      isUse: [
+        {
+          id:"否",
+          name: "否"
       },
-      getvalue:"",
-      audioURL: "",
-      isPlay: false, // 控制icon切换
-      totalTime: 0, // 播放总时间--秒
-      currentTime: 0, // 当前播放时间--秒
+      {
+          id:"是",
+          name: "是"
+      }
+      ],
+      clazzList: [],
+      isPass: [
+        {
+          id : 0,
+          name: "不通过"
+        },
+        {
+          id : 1,
+          name: "通过"
+        }
+      ],
+      taskList: [],
+      // ... your existing data properties ...
+      exportDialogVisible: false,
+      exportForm: {
+        exportFilePath: "", // user-input file path
+      },
+      checkAll: false,
+      checkedCities: [],
       sevalue: [], //标签选择值
-      options: [],
-      selectvalue: "",
-      gridData: [],
-      res_id: 0,
-      dialogVisible2: false,
-      dialogVisible3: false,
+      cities: [],
+      isIndeterminate: true,
       // 遮罩层
+      isPopupVisible: false,
+      dynamicTags: [],
+      inputVisible: false,
+      inputValue: "",
+      audio_name_1: "",
+      stopAudio: false,
+      markText: "",
       loading: true,
+      closeTag: null,
       // 选中数组
       ids: [],
       // 非单个禁用
@@ -466,64 +420,73 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // extract表格数据
-      extractList: [],
+      // 标注表格数据
+      verityAsrList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
-      audioName: "",
-      formatCurrentTime: 0,
-      formatTotalTime: 0,
+      opentagadd:false,
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
         audioPath: null,
-        result: null,
-        qaExtract: null,
-        taskOwner: null,
-        isDelete: "否",
-        cuda:"",
+        qaSum : null,
+        isMark: null,
+        clazzId: null,
+        isPass: null,
+        taskId :null,
       },
+      verity: null,
       // 表单参数
+      verityForm:{},
       form: {},
-      rel_form: {},
+      formadd:{},
+      rules:{},
+
       // 表单校验
-      rules: {},
-      isPlaying: false,
-      audioElement: null,
+      rulesadd: {
+        tagName: [
+           { required: true, message: "标签名字不能为空", trigger: "blur" }
+         ],
+      }
     };
+  },
+  computed: {
+    computedValue: {
+      get() {
+        if (this.form.afterText === null || this.form.afterText === "") {
+          return this.form.afterText;
+        } else {
+          return this.form.afterText;
+        }
+        // return this.form.afterText === null
+        //   ? this.form.preText
+        //   : this.form.afterText;
+      },
+      set(newValue) {
+        if (this.form.afterText === "") {
+          this.form.afterText = newValue;
+        } else {
+          this.form.afterText = newValue;
+        }
+      },
+    },
   },
   created() {
     this.getList();
     this.getOptions();
-    this.getTaskList();
+    this.getClazz();
   },
 
   methods: {
-
-    selectClazzLabel(array,targetId) {
-    if(targetId ==undefined ||targetId == null){
-      return null;
-    }
-   targetId = parseInt(targetId)
-    for (const item of array) {
-      if (item.id === targetId) {
-        return item.label;
-      }
-
-      if (item.children && item.children.length > 0) {
-        const label = this.selectClazzLabel(item.children,targetId);
-        if (label) {
-          return label;
-        }
-      }
-    }
-    // 如果没有找到匹配的 id，可以返回 null 或其他适当的值
-    return null;
-  },
-
+    // 控制音乐暂停
+    pause() {
+      const audio = this.$refs.audio2;
+      audio.pause();
+      this.isPlay = false;
+    },
     sentenceTrim(){
       this.form.qa1 = this.form.qa1.replaceAll(" ","").replaceAll(",","，").replaceAll("?","？").replaceAll(".","。").replaceAll("/n","").replaceAll("，，","，").replaceAll("。。","。").replaceAll("？？","？").replaceAll("，。","，").replaceAll(":","：").replaceAll("客户：","客户问：").replaceAll("客服：","客服答：").replaceAll("客户询问：","客户问：").replaceAll("客服回答：","客服答：");
       this.form.qa2 = this.form.qa2.replaceAll(" ","").replaceAll(",","，").replaceAll("?","？").replaceAll(".","。").replaceAll("/n","").replaceAll("，，","，").replaceAll("。。","。").replaceAll("？？","？").replaceAll("，。","，").replaceAll(":","：").replaceAll("客户：","客户问：").replaceAll("客服：","客服答：").replaceAll("客户询问：","客户问：").replaceAll("客服回答：","客服答：");
@@ -538,49 +501,11 @@ export default {
         this.form.qa3 = "";
       }
     },
-
-    getTaskList(){
-      var userName = this.$store.state.user.name;
-      console.log(userName);
-      allByUser(userName).then((response) => {
-        this.taskList = response.rows.map((row) => { return { taskId: row.taskId, taskName: row.taskName }; }); 
-        console.log(this.taskList);
-      });
-      
-    },
-
-    handleChange2(value) {
-     
-      this.getvalue=value[value.length-1]
-      this.queryParams.cuda=this.getvalue
-     // console.log("查询的分类id：",this.getvalue);
-      },
-
-    handleChange(value) {
-      this.sevalue=value;
-
-      this.selectvalue=this.sevalue[this.sevalue.length-1]
-      //console.log(this.sevalue);
-      },
-
-
-
     // 控制音乐播放
     play() {
       const audio = this.$refs.audio2;
       audio.play();
       this.isPlay = true;
-    },
-    // 控制音乐暂停
-    pause() {
-      const audio = this.$refs.audio2;
-      audio.pause();
-      this.isPlay = false;
-    },
-    // 音乐缓存完毕，获取时间
-    loadingFinish() {
-      const totalTime = this.$refs.audio2.duration;
-      this.totalTime = totalTime;
     },
     // range--拖动进度条得到的回调
     onChange() {
@@ -592,8 +517,6 @@ export default {
       const audio = this.$refs.audio2;
       audio.currentTime = timeToGo;
     },
-
-
     // audio--进度变化的时候的回调--改变文字
     update() {
       const audio = this.$refs.audio2;
@@ -607,134 +530,135 @@ export default {
         ((this.currentTime / this.totalTime) * 100).toFixed(1) + "%";
       this.$refs.range.style.backgroundSize = `${persentage} 100%`;
     },
-
-    //辅助函数，将秒变成分秒的形式--用在计算属性中
-    formatTime(value) {
-      let second = 0;
-      let minute = 0;
-      minute = parseInt(value / 60);
-      second = parseInt(value % 60);
-      // 补0
-      minute = minute < 10 ? "0" + minute : minute;
-      second = second < 10 ? "0" + second : second;
-      return minute + ":" + second;
+    // 音乐缓存完毕，获取时间
+    loadingFinish() {
+      const totalTime = this.$refs.audio2.duration;
+      this.totalTime = totalTime;
     },
-    // 通过url获取filename
-    getFilename() {
-     // console.log(this.form.audioPath);
-      const parts = this.form.audioPath.split("/");
-      const audioName = parts[parts.length - 1];
-    
-      this.$refs.audio.src = "audio/" + audioName;
-      return audioName;
-    },
+  formatClazzList(clazzList) { 
+  // 将 clazzList 格式化为适用于 el-cascader 的 options 数据 
+  return clazzList.map(clazz => ({ 
+      value: clazz.id, 
+      label: clazz.label, // 可根据实际情况调整 label 属性 
+      children: formatChildren(clazz.children)
+  }));
+  
+  function formatChildren(children) { 
+    if (!children || children.length === 0) {
+        return undefined;  // 如果子类为空，返回 undefined 或者可以根据实际需求返回其他合适的值
+      }
+      return children.map(child => ({
+          value: child.id, 
+          label: child.label, 
+          children: formatChildren(child.children)
+      })); 
+    }
+  },
+  handleChange2(value) {
+     
+     this.getvalue=value[value.length-1]
+     this.queryParams.cuda=this.getvalue
+    // console.log("查询的分类id：",this.getvalue);
+     },
 
-    /** 删除按钮操作 */
-    handleDeleteRel(row) {
-      const ids = row.id || this.ids;
-      this.$modal
-        .confirm('是否确认删除编号为"' + ids + '"的数据项？')
-        .then(function () {
-          return delRelation(ids);
-        })
-        .then(() => {
-          this.getList();
-          this.$modal.msgSuccess("删除成功");
-          this.dialogVisible = false;
-          this.dialogVisible2 = false;
-          this.open = false;
-        })
-        .catch(() => {});
-    },
+   handleChange(value) {
+     this.sevalue=value;
 
-    handleRelUpdate() {
-      this.rel_form.asrResultId = this.res_id;
-      this.rel_form.qa1 = this.form.qa1;
-      this.rel_form.qa2 = this.form.qa2;
-      // this.rel_form.qa3=this.form.qa3
-      // this.rel_form.qa4=this.form.qa4
-      // this.rel_form.qa5=this.form.qa5
+     this.selectvalue=this.sevalue[this.sevalue.length-1]
+     //console.log(this.sevalue);
+     },
 
-      updateRelation(this.rel_form).then((response) => {
-        this.$modal.msgSuccess("添加成功");
-        this.rel_form.id == null;
-        this.dialogVisible2 = false;
-        this.getRelList();
-        this.gridData = [];
-        this.open = false;
+    getClazz(){
+      var userName = this.$store.state.user.name;
+      console.log(userName);
+      allByUser(userName).then((response) => {
+        this.taskList = response.rows.map((row) => { return { taskId: row.taskId, taskName: row.taskName }; }); 
+        console.log(this.taskList);
       });
+      
     },
 
-    handleRelUpdate2() {
-      this.rel_form.asrResultId = this.res_id;
-      this.rel_form.qa1 = this.form.qa1;
-      this.rel_form.qa2 = this.form.qa2;
-      this.rel_form.qa3 = this.form.qa3;
-      // this.rel_form.qa4=this.form.qa4
-      // this.rel_form.qa5=this.form.qa5
-      this.rel_form.id = this.res_id;
-
-      updateRelation(this.rel_form).then((response) => {
-        this.$modal.msgSuccess("添加成功");
-        this.rel_form.id == null;
-        this.dialogVisible3 = false;
-        this.getRelList();
-        this.gridData = [];
-        this.open = false;
-      });
-    },
-
-    handleClose2(done) {
-      this.$confirm("确认关闭管理2？")
-        .then((_) => {
-          done();
-        })
-        .catch((_) => {});
-    },
-
-    handleClose3(done) {
-      this.$confirm("确认关闭管理3？")
-        .then((_) => {
-          done();
-        })
-        .catch((_) => {});
-    },
-
-    getRelList() {
-      listRelation(this.queryParams).then((response) => {
-        this.relationList = response.rows;
-        this.total = response.total;
-        this.loading = false;
-      });
-    },
-
-    /** 查询extract列表 */
+    handleCheckedCitiesChange(value) {
+        let checkedCount = value.length;
+        this.checkAll = checkedCount === this.cities.length;
+        this.isIndeterminate = checkedCount > 0 && checkedCount < this.cities.length;
+      },
+    /** 查询标注列表 */
     getList() {
       this.loading = true;
       this.queryParams.taskOwner = this.$store.state.user.name;
       console.log(this.queryParams);
       listExtract(this.queryParams).then((response) => {
-        this.extractList = response.rows;
+        this.verityQaList = response.rows;
        // console.log("返回结果",response.rows)
         this.total = response.total;
         this.loading = false;
       });
     },
-
     getOptions() {
-      optionsExtract(this.queryParams).then((response) => {
+      optionsExtract().then((response) => {
        // this.extractList = response.rows;
-       this.options =response.data.options;
+       console.log(response.data);
+       this.clazzList =response.data.options;
         //this.total = response.total;
         //this.loading = false;
       });
     },
+    addTags(){
+      this.opentagadd=true;
+    },
+    canceltagadd(){
+      this.opentagadd = false;
 
+    },
+    handleClose(tag) {
+      this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
+    },
 
+    showInput() {
+      this.inputVisible = true;
+      this.$nextTick((_) => {
+        this.$refs.saveTagInput.$refs.input.focus();
+      });
+    },
+
+    handleInputConfirm() {
+      let inputValue = this.inputValue;
+      if (inputValue) {
+        this.dynamicTags.push(inputValue);
+      }
+      this.inputVisible = false;
+      this.inputValue = "";
+    },
+
+    // loadNewAudio() {
+    //   //console.log("监听到tag关闭了",this.form.audioName)
+    //   //console.log(this.stopAudio)
+    //   if (this.stopAudio === true) {
+    //     this.$nextTick(() => {
+    //       this.$refs.getChild.reloadAudio();
+    //     });
+    //   } else {
+    //     // console.log("子组件-----》",this.audio_name_1)
+    //     this.$nextTick(() => {
+    //       this.$refs.getChild.reloadAudio2(this.audio_name_1);
+    //     });
+    //   }
+    // },
+    stopAudioPlayback() {
+      this.stopAudio = true;
+    },
+
+    showPopup() {
+      this.isPopupVisible = true;
+    },
+    closePopup() {
+      this.isPopupVisible = false;
+    },
     // 取消按钮
     cancel() {
-      this.sevalue = [];
       this.open = false;
+      this.stopAudio = true;
       this.reset();
     },
     // 表单重置
@@ -752,18 +676,47 @@ export default {
         updateTime: null,
         taskOwner: null,
       };
-      (this.gridData = []), this.resetForm("form");
+      this.resetForm("form");
     },
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
       this.getList();
     },
+    // handleCommandUse(command) {
+    //   if (command === "b") {
+    //     this.queryParams.isUse = "否";
+    //   } else {
+    //     this.queryParams.isUse = "是";
+    //   }
+    //   this.queryParams.pageNum = 1;
+    //   this.getList();
+    // },
+
+    // handleCommandMark(command) {
+    //   if (command === "b") {
+    //     this.queryParams.isMask = "否";
+    //   } else {
+    //     this.queryParams.isMask = "是";
+    //   }
+    //   this.queryParams.pageNum = 1;
+    //   this.getList();
+    // },
+    handleClickMark() {},
     /** 重置按钮操作 */
     resetQuery() {
-      this.queryParams.cuda="";
-      this.queryParams.result="";
-      this.getvalue="";
+      this.queryParams = {
+        pageNum: 1,
+        pageSize: 10,
+        audioName: null,
+        afterText : null,
+        isUse: null,
+        isMark: null,
+        clazzId: null,
+        selectedTask: null,
+        isPass: null,
+        taskId: null,
+      };
       this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -777,7 +730,7 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加extract";
+      this.title = "添加标注";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -803,18 +756,34 @@ export default {
         }, 1);
         this.gridData.push(this.form.qaRelation);
         this.open = true;
-        this.title = "修改extract";
+        this.title = "QA审核";
       });
     },
-
+    //辅助函数，将秒变成分秒的形式--用在计算属性中
+    formatTime(value) {
+      let second = 0;
+      let minute = 0;
+      minute = parseInt(value / 60);
+      second = parseInt(value % 60);
+      // 补0
+      minute = minute < 10 ? "0" + minute : minute;
+      second = second < 10 ? "0" + second : second;
+      return minute + ":" + second;
+    },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.id != null) {
+            this.form.qa4 = this.form.qa1;
+            this.form.qa5 = this.form.qa2;
+            this.form.qa6 = this.form.qa3;
+            this.form.qa1 = null;
+            this.form.qa2 = null;
+            this.form.qa3 = null;
+            this.form.result = null;
             this.form.cuda=this.selectvalue.toString();
-            updateExtract(this.form).then((response) => {
-           
+            updateVerityQa(this.form).then((response) => {
              // console.log("提交数据",this.form)
               this.$modal.msgSuccess("修改成功");
               this.open = false;
@@ -835,123 +804,78 @@ export default {
     handleDelete(row) {
       const ids = row.id || this.ids;
       this.$modal
-        .confirm('是否确认删除extract编号为"' + ids + '"的数据项？')
+        .confirm('是否确认舍弃编号为"' + ids + '"的音频数据？')
         .then(function () {
-          return delExtract(ids);
+          return delVerityAsr(ids);
         })
         .then(() => {
           this.getList();
-          this.$modal.msgSuccess("删除成功");
+          this.$modal.msgSuccess("设置成功");
         })
         .catch(() => {});
     },
-    /** 导出按钮操作 */
+    showExportDialog() {
+      this.exportDialogVisible = true;
+    },
+
+
     handleExport() {
+      // Validate exportForm.exportFilePath if needed
+      if (this.exportForm.exportFilePath.trim() === "") {
+        this.$message.error("请输入文件路径");
+        return;
+      }
+
+      
+
+      // Perform the export with the user-input file path
       this.download(
-        "qa/extract/export",
+        "verity/asr/export",
         {
           ...this.queryParams,
+          exportFilePath: this.exportForm.exportFilePath,
         },
-        `qa_${new Date().getTime()}.json`
+        `verity_asr_${new Date().getTime()}.json`
       );
+
+      // Close the export dialog
+      this.exportDialogVisible = false;
     },
+    
   },
+  // watch: {
+    //当关闭时，强制重新加载子组件
+    // stopAudio() {
+      // console.log("this.stopAudio,watch",this.stopAudio)
+      // this.loadNewAudio();
+  //   },
+  // },
 };
 </script>
-<style scoped>
-.el-col {
-  border-radius: 4px;
-}
-.bg-purple-dark {
-  background: #99a9bf;
-}
-.bg-purple {
-  background: #d3dce6;
-}
-.bg-purple-light {
-  background: #e5e9f2;
-}
-.grid-content {
-  border-radius: 4px;
-  min-height: 36px;
-}
-.row-bg {
-  padding: 10px 0;
-  background-color: #f9fafc;
-}
+<style>
 .el-tooltip__popper {
   max-width: 30%;
 }
-.floating-text {
-  float: left; /* 让文本左浮动 */
-  margin-right: 10px; /* 可选：增加一些右边距以分隔文本和其他内容 */
-}
-
-.audio-container {
-  padding: 8px 16px;
-  width: 100%;
-  background: #f5f6f8;
-  border-radius: 2px;
-  display: flex;
-}
-.left {
-  margin-right: 16px;
-}
-
-.icon {
-  display: inline-block;
-  width: 28px;
-  height: 28px;
-  border: 2px solid #10a9ff;
-  border-radius: 50%;
-
-  text-align: center;
-  font-size: 16px;
-  line-height: 28px;
-
-}
-.icon:hover {
+.el-dropdown-link {
   cursor: pointer;
+  color: #409eff;
 }
-.play-icon {
-  position: relative;
-  left: 2px;
+.el-icon-arrow-down {
+  font-size: 12px;
 }
-.flex-between {
-  display: flex;
-  justify-content: space-between;
-  align-content: center;
+.el-tag + .el-tag {
+  margin-left: 10px;
 }
-.right {
-  flex: 1;
+.button-new-tag {
+  margin-left: 10px;
+  height: 32px;
+  line-height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
-.words {
-  margin-bottom: -1px;
-}
-.name {
-  font-size: 14px;
-  color: #333333;
-  line-height: 14px;
-}
-.time {
-  font-size: 14px;
-  color: #666666;
-  line-height: 14px;
-}
-
-input[type="range"] {
-  outline: none;
-
-  width: 100% !important;
-  background: -webkit-linear-gradient(#10a9ff, #10a9ff) no-repeat, #dddddd; /*背景颜色，俩个颜色分别对应上下*/
-  background-size: 0% 100%; /*设置左右宽度比例，这里可以设置为拖动条属性*/
-  height: 2px; /*横条的高度，细的真的比较好看嗯*/
-}
-/*拖动块的样式*/
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none; /*清除系统默认样式*/
-  height: 10px; /*拖动块高度*/
-  width: 3px; /*拖动块宽度*/
-  background: #10a9ff; /*拖动块背景*/
+.input-new-tag {
+  width: 90px;
+  margin-left: 10px;
+  vertical-align: bottom;
 }
 </style>
