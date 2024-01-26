@@ -4,6 +4,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.asr.domain.VoiceAnnotation;
+import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.system.mapper.SysUserMapper;
 import com.ruoyi.verity.service.IVerityAsrService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,9 @@ public class VerityAsrController extends BaseController
     @Autowired
     private IVerityAsrService verityAsrService;
 
+    @Autowired
+    private SysUserMapper sysUserMapper;
+
     /**
      * 查询【请填写功能名称】列表
      */
@@ -42,6 +47,10 @@ public class VerityAsrController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(VoiceAnnotation voiceAnnotation)
     {
+        String taskOwner = voiceAnnotation.getTaskOwner();
+        SysUser sysUser = sysUserMapper.selectUserByUserName(taskOwner);
+        voiceAnnotation.setVerityUser(sysUser.getUserId());
+        voiceAnnotation.setTaskOwner(null);
         startPage();
         List<VoiceAnnotation> list = verityAsrService.selectVerityAsrList(voiceAnnotation);
         return getDataTable(list);
@@ -63,7 +72,7 @@ public class VerityAsrController extends BaseController
     /**
      * 获取【请填写功能名称】详细信息
      */
-    @PreAuthorize("@ss.hasPermi('verity:asr:query')")
+//    @PreAuthorize("@ss.hasPermi('verity:asr:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -73,7 +82,7 @@ public class VerityAsrController extends BaseController
     /**
      * 新增【请填写功能名称】
      */
-    @PreAuthorize("@ss.hasPermi('verity:asr:add')")
+//    @PreAuthorize("@ss.hasPermi('verity:asr:add')")
     @Log(title = "【请填写功能名称】", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody VoiceAnnotation voiceAnnotation)
@@ -84,7 +93,7 @@ public class VerityAsrController extends BaseController
     /**
      * 修改【请填写功能名称】
      */
-    @PreAuthorize("@ss.hasPermi('verity:asr:edit')")
+//    @PreAuthorize("@ss.hasPermi('verity:asr:edit')")
     @Log(title = "【请填写功能名称】", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody VoiceAnnotation voiceAnnotation)

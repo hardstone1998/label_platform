@@ -82,7 +82,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="verityUser != null "> and verity_user = #{verityUser}</if>
             <if test="isPass != null "> and is_pass = #{isPass}</if>
         </where>
-
     </select>
 
     <insert id="insertVoiceAnnotation" parameterType="VoiceAnnotation" useGeneratedKeys="true" keyProperty="id">

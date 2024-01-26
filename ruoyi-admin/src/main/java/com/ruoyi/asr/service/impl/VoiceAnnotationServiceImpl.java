@@ -262,7 +262,8 @@ public class VoiceAnnotationServiceImpl implements IVoiceAnnotationService
                 audioName = filePath + "/" +audioName;
             }
 
-            exportASRResJson.setAudio(new ExportASRResJson.Audio(audioName,afterText));
+            exportASRResJson.setAudio(new ExportASRResJson.Audio(audioName));
+            exportASRResJson.setSentence(afterText);
             exportResJsons.add(exportASRResJson);
         }
 

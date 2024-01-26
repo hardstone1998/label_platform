@@ -54,13 +54,12 @@ public class VerityAsrServiceImpl implements IVerityAsrService
     @Override
     public List<VoiceAnnotation> selectVerityAsrList(VoiceAnnotation voiceAnnotation)
     {
-        System.out.println(voiceAnnotation);
-        String taskOwner = voiceAnnotation.getTaskOwner();
-        if ("admin".equals(taskOwner)){
-            return verityAsrMapper.selectVoiceAnnotationList(voiceAnnotation);
+
+
+        if (1L == voiceAnnotation.getVerityUser()){
+            System.out.println("admin");
+            return verityAsrMapper.selectVoiceAnnotationList(new VoiceAnnotation());
         }else {
-            SysUser sysUser = sysUserMapper.selectUserByUserName(taskOwner);
-            voiceAnnotation.setVerityUser(sysUser.getUserId());
             return verityAsrMapper.selectVoiceAnnotationListByOwner(voiceAnnotation);
         }
     }

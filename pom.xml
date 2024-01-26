@@ -6,12 +6,13 @@
 
     <groupId>com.zhuorui</groupId>
     <artifactId>label_platform</artifactId>
-    <version>1.0.0</version>
+    <version>${label_platform.version}</version>
 
     <name>标注平台</name>
     <description>asr和qa的标注平台</description>
 
     <properties>
+        <label_platform.version>1.0.2</label_platform.version>
         <ruoyi.version>3.8.5</ruoyi.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>

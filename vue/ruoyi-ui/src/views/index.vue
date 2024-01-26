@@ -395,7 +395,7 @@ import {
 
 import {addTag, updateTag } from "@/api/asr/tag";
 import markAsr from "./markAsr.vue";
-import {allByUser} from "@/api/task/user"
+import {allTask} from "@/api/task/allocation"
 import { setCanvasCreator } from "echarts";
 
 export default {
@@ -587,8 +587,10 @@ export default {
     getTaskList(){
       var userName = this.$store.state.user.name;
       console.log(userName);
-      allByUser(userName).then((response) => {
-        this.taskList = response.rows.map((row) => { return { taskId: row.taskId, taskName: row.taskName }; }); 
+      allTask(userName).then((response) => {
+        this.taskList = response.rows.map((row) => { return { taskId: row.id, taskName: row.name }; }); 
+        console.log(response.rows);
+        console.log("---------------------------");
         console.log(this.taskList);
       });
       

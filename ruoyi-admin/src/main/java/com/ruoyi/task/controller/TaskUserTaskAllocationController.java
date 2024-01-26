@@ -48,6 +48,7 @@ public class TaskUserTaskAllocationController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(TaskUserTaskAllocation taskUserTaskAllocation)
     {
+        System.out.println("被调用：：list");
         String responsiblePersonName = taskUserTaskAllocation.getResponsiblePersonName();
         if(responsiblePersonName!=null &&!"admin".equals(responsiblePersonName)){
             SysUser sysUser = sysUserService.selectUserByUserName(responsiblePersonName);

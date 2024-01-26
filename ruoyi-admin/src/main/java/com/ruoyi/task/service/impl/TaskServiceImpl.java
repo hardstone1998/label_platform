@@ -120,7 +120,7 @@ public class TaskServiceImpl implements ITaskService
                 class1.setValue(taskAllocationUser.getSevalue());
                 List<Class1> class1s = class1Mapper.selectClass1List(class1);
                 Long class1Id = 1L;
-                int task_id = task1.getId();
+                int taskId = task1.getId();
                 if(class1s.size()!=0){
                     class1Id = class1s.get(0).getId();
                 }
@@ -128,7 +128,7 @@ public class TaskServiceImpl implements ITaskService
                     VoiceAnnotation voiceAnnotation = new VoiceAnnotation();
                     voiceAnnotation.setLabelUser(userId);
                     voiceAnnotation.setUpdateNum(taskAllocationUser.getTaskQuantity());
-                    voiceAnnotation.setTaskId((long)task_id);
+                    voiceAnnotation.setTaskId((long)taskId);
                     voiceAnnotation.setTaskOwner(user.getUserName());
                     voiceAnnotation.setClazzId(class1Id);
                     voiceAnnotationMapper.updateVoiceAnnotationByClazzId(voiceAnnotation);
@@ -137,7 +137,7 @@ public class TaskServiceImpl implements ITaskService
                     AsrResult1 asrResult1 = new AsrResult1();
                     asrResult1.setLabelUser(userId);
                     asrResult1.setUpdateNum(taskAllocationUser.getTaskQuantity());
-                    asrResult1.setTaskId(task_id);
+                    asrResult1.setTaskId(taskId);
                     asrResult1.setTaskOwner(user.getUserName());
                     asrResult1.setClazzId(class1Id);
                     asrResult1Mapper.updateAsrResult1ByClazzId(asrResult1);
@@ -145,11 +145,14 @@ public class TaskServiceImpl implements ITaskService
                     throw new RuntimeException("类型错误");
                 }
                 TaskUserTaskAllocation taskUserTaskAllocation = new TaskUserTaskAllocation();
-                taskUserTaskAllocation.setTaskId((long)task_id);
+                taskUserTaskAllocation.setTaskId((long)taskId);
                 taskUserTaskAllocation.setUserId(userId);
-                taskUserTaskAllocationMapper.insertTaskUserTaskAllocation(taskUserTaskAllocation);
+                List<TaskUserTaskAllocation> taskUserTaskAllocations = taskUserTaskAllocationMapper.selectTaskUserTaskAllocationList(taskUserTaskAllocation);
+                if (taskUserTaskAllocations.size()==0)
+                    taskUserTaskAllocationMapper.insertTaskUserTaskAllocation(taskUserTaskAllocation);
                 num++;
             }
+
         }
         log.info("任务分配完成");
         return num;

@@ -59,9 +59,11 @@ public class TaskController extends BaseController
     @PostMapping("/all")
     public TableDataInfo all(String responsiblePersonName)
     {
-        if(responsiblePersonName!=null ||responsiblePersonName.length()==0)return null;
+
+        if(responsiblePersonName==null ||responsiblePersonName.length()==0)return null;
         Task task = new Task();
         List<Task> list = null;
+
         if ("admin".equals(responsiblePersonName)) {
             list = taskService.selectTaskList(task);
         }else {
