@@ -296,6 +296,7 @@ export default {
       this.reset();
       this.isPopupVisible = true;
       const id = row.id || this.ids;
+      this.form.id = id;
       this.form.labelUserId = row.userId;
       this.form.taskId = row.taskId;
       this.form.taskName = row.taskName;

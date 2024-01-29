@@ -15,6 +15,9 @@ public class VerityTaskAllocationReq extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
+
+    private Long id;
+
     /** 任务id */
     private Long taskId;
 

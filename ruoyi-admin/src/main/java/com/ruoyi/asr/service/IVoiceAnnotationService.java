@@ -49,10 +49,26 @@ public interface IVoiceAnnotationService
     /**
      * 修改标注
      *
+     * @param voiceAnnotation 标注
+     * @return 结果
+     */
+    public int updateVoiceAnnotationByTaskAndLabelUser(VoiceAnnotation voiceAnnotation);
+
+    /**
+     * 修改标注 增加
+     *
      * @param addVerityUser 标注
      * @return 结果
      */
     public int addVerity(AddVerityUser addVerityUser);
+
+    /**
+     * 修改标注 减少
+     *
+     * @param addVerityUser 标注
+     * @return 结果
+     */
+    public int subtractVerity(AddVerityUser addVerityUser);
 
     /**
      * 批量删除标注

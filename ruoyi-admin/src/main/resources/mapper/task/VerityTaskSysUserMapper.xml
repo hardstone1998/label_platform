@@ -64,13 +64,30 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateVerityTaskSysUser" parameterType="VerityTaskSysUser">
         update verity_task_sys_user
         <trim prefix="SET" suffixOverrides=",">
-            <if test="verityTaskId != null">verity_task_id = #{verityTaskId},</if>
-            <if test="labelUserId != null">label_user_id = #{labelUserId},</if>
+            <if test="labelUserId != null and labelUserId !=''">label_user_id = #{labelUserId},</if>
             <if test="verityUserId != null">verity_user_id = #{verityUserId},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="reqUser != null">req_user = #{reqUser},</if>
+            <if test="extractNum != null">extract_num = #{extractNum},</if>
         </trim>
         where id = #{id}
+    </update>
+
+    <update id="updateVerityTaskSysUserByTaskIdAndLabelUserId" parameterType="VerityTaskSysUser">
+        update verity_task_sys_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="labelUserId != null and labelUserId !=''">label_user_id = #{labelUserId},</if>
+            <if test="verityUserId != null">verity_user_id = #{verityUserId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="reqUser != null">req_user = #{reqUser},</if>
+            <if test="extractNum != null">extract_num = #{extractNum},</if>
+        </trim>
+        <where>
+            <if test="labelUserId != null and labelUserId !=''"> and label_user_id = #{labelUserId}</if>
+            <if test="taskId != null"> and task_id = #{taskId}</if>
+        </where>
     </update>
 
     <delete id="deleteVerityTaskSysUserById" parameterType="Long">

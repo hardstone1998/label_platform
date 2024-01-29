@@ -197,6 +197,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         limit #{verityNum}
     </update>
 
+    <!--    subtractVerity-->
+    <update id="subtractVerity" parameterType="com.ruoyi.task.domain.AddVerityUser">
+        update voice_annotation
+        set
+            verity_user = null
+        <where>
+            <if test="verityUser != null"> and verity_user = #{verityUser}</if>
+            <if test="labelUser != null "> and label_user = #{labelUser}</if>
+            <if test="taskId != null "> and task_id = #{taskId}</if>
+        </where>
+        limit #{verityNum}
+    </update>
+
     <update id="updateVoiceAnnotationByClazzId" parameterType="com.ruoyi.asr.domain.VoiceAnnotation">
         update voice_annotation
         <trim prefix="SET" suffixOverrides=",">
@@ -229,6 +242,35 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         limit
         <if test="updateNum != null">#{updateNum}</if>
     </update>
+
+<!--    updateVoiceAnnotationByTaskAndLabelUser-->
+    <update id="updateVoiceAnnotationByTaskAndLabelUser" parameterType="com.ruoyi.asr.domain.VoiceAnnotation">
+        update voice_annotation
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="audioPath != null">audio_path = #{audioPath},</if>
+            <if test="audioName != null">audio_name = #{audioName},</if>
+            <if test="afterText != null">after_text = #{afterText},</if>
+            <if test="isUse != null">is_use = #{isUse},</if>
+            <if test="isMark != null">is_mask = #{isMark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="clazzId != null">clazz_id = #{clazzId},</if>
+            <if test="verityUser != null">verity_user = #{verityUser},</if>
+            <if test="labelTime != null">label_time = #{labelTime},</if>
+            <if test="verityTime != null">verity_time = #{verityTime},</if>
+            <if test="isPass != null">is_pass = #{isPass},</if>
+            <if test="verity != null">verity = #{verity},</if>
+            <if test="accuracy != null">accuracy = #{accuracy},</if>
+            <if test="verityText != null">verity_text = #{verityText},</if>
+        </trim>
+        <where>
+            <if test="taskId != null"> and task_id = #{taskId}</if>
+            <if test="taskOwner != null"> and task_owner = #{taskOwner}</if>
+            <if test="labelUser != null"> and label_user = #{labelUser}</if>
+        </where>
+    </update>
+
+
 
 
     <delete id="deleteVoiceAnnotationById" parameterType="Long">

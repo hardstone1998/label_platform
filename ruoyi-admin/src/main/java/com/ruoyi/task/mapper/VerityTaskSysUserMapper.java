@@ -44,6 +44,9 @@ public interface VerityTaskSysUserMapper
      */
     public int updateVerityTaskSysUser(VerityTaskSysUser verityTaskSysUser);
 
+
+    public int updateVerityTaskSysUserByTaskIdAndLabelUserId(VerityTaskSysUser verityTaskSysUser);
+
     /**
      * 删除【请填写功能名称】
      *

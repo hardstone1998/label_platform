@@ -395,7 +395,8 @@ import {
 
 import {addTag, updateTag } from "@/api/asr/tag";
 import markAsr from "./markAsr.vue";
-import {allTask} from "@/api/task/allocation"
+// import {allTask} from "@/api/task/allocation"
+import {allByUser} from "@/api/task/user"
 import { setCanvasCreator } from "echarts";
 
 export default {
@@ -587,13 +588,13 @@ export default {
     getTaskList(){
       var userName = this.$store.state.user.name;
       console.log(userName);
-      allTask(userName).then((response) => {
-        this.taskList = response.rows.map((row) => { return { taskId: row.id, taskName: row.name }; }); 
-        console.log(response.rows);
-        console.log("---------------------------");
-        console.log(this.taskList);
+      // todo 显示存在问题
+      // allTask(userName).then((response) => {
+      //   this.taskList = response.rows.map((row) => { return { taskId: row.id, taskName: row.name }; }); 
+      // });
+      allByUser(userName).then((response) => {
+        this.taskList = response.rows.map((row) => { return { taskId: row.taskId, taskName: row.taskName }; }); 
       });
-      
     },
 
     handleCheckedCitiesChange(value) {
@@ -764,7 +765,8 @@ export default {
       this.stopAudio = false;
       // this.form.clazzId = this.queryParams.clazzId;
       const id = row.id || this.ids;
-      
+      console.log("---------------------")
+      console.log( this.audio_name_1)
       getAnnotation(id).then((response) => {
         this.form = response.data;
         // this.cities = response.data.dynamicTags;

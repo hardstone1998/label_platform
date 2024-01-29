@@ -58,7 +58,12 @@ public interface VoiceAnnotationMapper
 
     public int addVerityUser(AddVerityUser addVerityUser);
 
+    public int subtractVerity(AddVerityUser addVerityUser);
+
     public int updateVoiceAnnotationByClazzId(VoiceAnnotation voiceAnnotation);
+
+
+    public int updateVoiceAnnotationByTaskAndLabelUser(VoiceAnnotation voiceAnnotation);
 
     /**
      * 删除标注

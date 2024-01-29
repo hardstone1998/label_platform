@@ -775,12 +775,6 @@ export default {
       this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.id != null) {
-            this.form.qa4 = this.form.qa1;
-            this.form.qa5 = this.form.qa2;
-            this.form.qa6 = this.form.qa3;
-            this.form.qa1 = null;
-            this.form.qa2 = null;
-            this.form.qa3 = null;
             this.form.result = null;
             this.form.cuda=this.selectvalue.toString();
             updateVerityQa(this.form).then((response) => {
