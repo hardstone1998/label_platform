@@ -541,8 +541,8 @@ export default {
 
     getTaskList(){
       var userName = this.$store.state.user.name;
-      console.log(userName);
-      allByUser(userName).then((response) => {
+      var qa = 1;
+      allByUser(userName,qa).then((response) => {
         this.taskList = response.rows.map((row) => { return { taskId: row.taskId, taskName: row.taskName }; }); 
         console.log(this.taskList);
       });

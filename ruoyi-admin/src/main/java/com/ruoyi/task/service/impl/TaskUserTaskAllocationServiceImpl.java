@@ -58,11 +58,13 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
      *
      * @param taskUserTaskAllocation 任务用户
      * @return 任务用户
+     * todo
      */
     @Override
     public List<TaskUserTaskAllocation> selectTaskUserTaskAllocationList(TaskUserTaskAllocation taskUserTaskAllocation)
     {
         List<TaskUserTaskAllocation> taskUserTaskAllocations = taskUserTaskAllocationMapper.selectTaskUserTaskAllocationList(taskUserTaskAllocation);
+        System.out.println("taskUserTaskAllocations:::"+taskUserTaskAllocations);
         for (TaskUserTaskAllocation t:taskUserTaskAllocations) {
             VerityTaskSysUser verityTaskSysUser = new VerityTaskSysUser();
             verityTaskSysUser.setTaskId(t.getTaskId());
@@ -162,10 +164,13 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
 
         VerityTaskSysUser verityTaskSysUser = new VerityTaskSysUser();
         long id = verityTaskAllocationReq.getId();
-        VerityTaskSysUser verityTaskSysUser1 = verityTaskSysUserService.selectVerityTaskSysUserById(id);
-        verityTaskSysUser.setId(id);
-//        verityTaskSysUser.setTaskId(verityTaskAllocationReq.getTaskId());
-//        verityTaskSysUser.setLabelUserId(verityTaskAllocationReq.getLabelUserId());
+        VerityTaskSysUser verityTaskSysUserSearch =new VerityTaskSysUser();
+        verityTaskSysUserSearch.setTaskId(verityTaskAllocationReq.getTaskId());
+        verityTaskSysUserSearch.setLabelUserId(verityTaskAllocationReq.getLabelUserId());
+        VerityTaskSysUser verityTaskSysUser1 = verityTaskSysUserService.selectVerityTaskSysUserList(verityTaskSysUserSearch).get(0);
+//        verityTaskSysUser.setId(id);
+        verityTaskSysUser.setTaskId(verityTaskAllocationReq.getTaskId());
+        verityTaskSysUser.setLabelUserId(verityTaskAllocationReq.getLabelUserId());
         verityTaskSysUser.setVerityUserId(verityTaskAllocationReq.getVerityUserId());
 //        verityTaskSysUser.setCreateTime(DateUtils.getNowDate());
 //        verityTaskSysUser.setUpdateTime(DateUtils.getNowDate());
@@ -173,10 +178,7 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
         SysUser sysUser = sysUserService.selectUserByUserName(reqUser);
         verityTaskSysUser.setReqUser(sysUser.getUserId());
         verityTaskSysUser.setExtractNum(verityNum);
-        System.out.println("-----------------------------");
-        System.out.println(verityTaskSysUser);
-//        todo
-        int i = verityTaskSysUserService.updateVerityTaskSysUser(verityTaskSysUser);
+        int i = verityTaskSysUserService.updateVerityTaskSysUserByTaskIdAndLabelUserId(verityTaskSysUser);
 
         if (verityTaskSysUser1.getVerityUserId() != verityTaskSysUser.getVerityUserId()){
             VoiceAnnotation v = new VoiceAnnotation();
@@ -185,6 +187,7 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
             v.setLabelUser(verityTaskAllocationReq.getLabelUserId());
             voiceAnnotationService.updateVoiceAnnotationByTaskAndLabelUser(v);
         }
+
         if (verityTaskAllocationReq.getVerityNum() >verityTaskSysUser1.getExtractNum()){
             AddVerityUser addVerityUser = new AddVerityUser();
             addVerityUser.setLabelUser(verityTaskAllocationReq.getLabelUserId());
@@ -198,7 +201,7 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
             addVerityUser.setTaskId(verityTaskAllocationReq.getTaskId());
             addVerityUser.setVerityUser(verityTaskAllocationReq.getVerityUserId());
             addVerityUser.setVerityNum(verityTaskSysUser1.getExtractNum()-verityTaskAllocationReq.getVerityNum());
-            voiceAnnotationService.addVerity(addVerityUser);
+            voiceAnnotationService.subtractVerity(addVerityUser);
         }
 
 

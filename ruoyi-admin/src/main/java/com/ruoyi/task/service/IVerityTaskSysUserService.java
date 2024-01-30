@@ -46,6 +46,14 @@ public interface IVerityTaskSysUserService
     public int updateVerityTaskSysUser(VerityTaskSysUser verityTaskSysUser);
 
     /**
+     * 修改【请填写功能名称】
+     *
+     * @param verityTaskSysUser 【请填写功能名称】
+     * @return 结果
+     */
+    public int updateVerityTaskSysUserByTaskIdAndLabelUserId(VerityTaskSysUser verityTaskSysUser);
+
+    /**
      * 批量删除【请填写功能名称】
      *
      * @param ids 需要删除的【请填写功能名称】主键集合

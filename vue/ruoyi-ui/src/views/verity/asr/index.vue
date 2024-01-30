@@ -274,12 +274,19 @@
           >
           </el-input>
         </el-form-item>
+        <el-form-item label="是否通过：" prop="verityText">
+          <el-button type="primary" 
+        @click="pass"
+        >通 过</el-button>
+        <el-button @click="noPass">不通过</el-button>
+        </el-form-item>
         <el-form-item label="标注：" prop="verityText">
           <el-input
             type="textarea"
             :rows="4"
             v-model="computedValue"
             placeholder="审核内容"
+            :readonly = canChange
           />
           <el-button type="primary" @click="sentenceTrim(computedValue)">标注整理</el-button>
         </el-form-item>
@@ -289,16 +296,16 @@
             placeholder="选择问题分类"
             :options="formatClazzList(clazzList)"
             @change="handleChange"
+            :disabled = canChange
         ></el-cascader>
         </el-form-item>
 
-        <el-form-item label="审核意见：" prop="verity">
+        <el-form-item label="审核意见：" prop="verity" :hidden=canChange>
           <el-input
             v-model="verity"
             type="textarea"
             :rows="1"
             placeholder="审核意见"
-            
           />
         </el-form-item>
         
@@ -338,7 +345,7 @@ export default {
   components: { markAsr },
   data() {
     return {
-      
+      canChange: true,//是否能更改
       isMark: [
         {
           id:"否",
@@ -464,6 +471,17 @@ export default {
   },
 
   methods: {
+
+    pass(){
+      this.submitForm();
+    },
+
+    noPass() {
+      this.canChange = false;
+    },
+    noPass() {
+      this.canChange = false;
+    },
   formatClazzList(clazzList) { 
   // 将 clazzList 格式化为适用于 el-cascader 的 options 数据 
   return clazzList.map(clazz => ({ 
@@ -493,10 +511,9 @@ export default {
 
     getClazz(){
       var userName = this.$store.state.user.name;
-      console.log(userName);
-      allByUser(userName).then((response) => {
+      var asr = 0
+      allByUser(userName,asr).then((response) => {
         this.taskList = response.rows.map((row) => { return { taskId: row.taskId, taskName: row.taskName }; }); 
-        console.log(this.taskList);
       });
       
     },
@@ -657,7 +674,7 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      
+      this.canChange = true;
       this.audio_name_1 = row.audioName;
       //发送一个请求，根据id查对应的标签名字
       this.sevalue = []
@@ -668,9 +685,10 @@ export default {
       const id = row.id || this.ids;
       getVerityAsr(id).then((response) => {
         this.form = response.data;
-        this.cities = response.data.dynamicTags;
-        this.checkedCities=response.data.selectTags;
+        console.log(response.data);
+        // this.checkedCities=response.data.selectTags;
         this.verityForm.afterText = this.form.afterText;
+        this.sevalue = response.data.clazzId;
         this.open = true;
         this.title = "添加标签";
         

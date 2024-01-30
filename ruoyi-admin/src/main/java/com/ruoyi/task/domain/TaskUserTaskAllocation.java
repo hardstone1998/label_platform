@@ -68,4 +68,6 @@ public class TaskUserTaskAllocation extends BaseEntity
 
     private String verityNum;
 
+    private Integer clazz;
+
 }

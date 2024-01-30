@@ -61,12 +61,16 @@ public class TaskUserTaskAllocationController extends BaseController
 
     /**
      * 查询用户全部任务
+     * todo 存在问题
      */
     @GetMapping("/allByUser")
-    public TableDataInfo allByUser(String userName)
+    public TableDataInfo allByUser(String userName,Integer qaOrAsr)
     {
         TaskUserTaskAllocation taskUserTaskAllocation = new TaskUserTaskAllocation();
-        taskUserTaskAllocation.setUserName(userName);
+        if (!"admin".equals(userName)){
+            taskUserTaskAllocation.setUserName(userName);
+        }
+        taskUserTaskAllocation.setClazz(qaOrAsr);
         List<TaskUserTaskAllocation> list = taskUserTaskAllocationService.selectTaskUserTaskAllocationList(taskUserTaskAllocation);
         System.out.println(list);
         return getDataTable(list);

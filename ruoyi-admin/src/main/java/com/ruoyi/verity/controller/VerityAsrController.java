@@ -91,14 +91,13 @@ public class VerityAsrController extends BaseController
     }
 
     /**
-     * 修改【请填写功能名称】
+     * asr审核
      */
 //    @PreAuthorize("@ss.hasPermi('verity:asr:edit')")
-    @Log(title = "【请填写功能名称】", businessType = BusinessType.UPDATE)
+    @Log(title = "asr审核", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody VoiceAnnotation voiceAnnotation)
     {
-
         return toAjax(verityAsrService.updateVerityAsr(voiceAnnotation));
     }
 

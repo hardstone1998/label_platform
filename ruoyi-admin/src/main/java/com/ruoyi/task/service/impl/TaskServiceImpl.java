@@ -173,9 +173,7 @@ public class TaskServiceImpl implements ITaskService
         Long clazz =task.getClazz();
         task1.setClazz(clazz);
         String task_name = task.getName();
-        if (task_name ==null || task_name.length()==0){
-            throw new RuntimeException("任务名为空");
-        }
+        if (task_name ==null || task_name.length()==0)throw new RuntimeException("任务名为空");
         task1.setName(task_name);
         task1.setDesc(task.getDesc());
         task1.setCreateTime(DateUtils.getNowDate());
@@ -187,7 +185,17 @@ public class TaskServiceImpl implements ITaskService
         if (taskAllocationUser.isEmpty()) throw new RuntimeException("不存在用户信息");
         TaskAllocationUser taskAllocationUser1 = taskAllocationUser.get(0);
         if (i<=0)throw new RuntimeException("不存在用户信息");
-        if (0L ==id){
+//        添加任务用户关联标
+        List<Long> selectedUsers = taskAllocationUser1.getSelectedUsers();
+        //todo
+        for (Long user :selectedUsers){
+            TaskUserTaskAllocation taskUserTaskAllocation = new TaskUserTaskAllocation();
+            taskUserTaskAllocation.setTaskId((long)taskId);
+            taskUserTaskAllocation.setUserId(user);
+            taskUserTaskAllocationMapper.insertTaskUserTaskAllocation(taskUserTaskAllocation);
+        }
+
+        if (0L == id){
             equalityAllocation(clazz,taskId,taskAllocationUser1);
         }else if(1L == id){
             sequenceAllocation(clazz,taskId,taskAllocationUser1);

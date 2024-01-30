@@ -10,11 +10,14 @@ export function listUser(query) {
 }
 
 // 查询【请填写功能名称】列表
-export function allByUser(userName) {
+export function allByUser(userName,qaOrAsr) {
   return request({
     url: '/task/user/allByUser',
     method: 'get',
-    params: { "userName": userName }
+    params: { 
+      "userName": userName,
+      "qaOrAsr" : qaOrAsr
+  }
   })
 }
 

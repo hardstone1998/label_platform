@@ -70,6 +70,12 @@ public class VerityTaskSysUserServiceImpl implements IVerityTaskSysUserService
         return verityTaskSysUserMapper.updateVerityTaskSysUser(verityTaskSysUser);
     }
 
+    @Override
+    public int updateVerityTaskSysUserByTaskIdAndLabelUserId(VerityTaskSysUser verityTaskSysUser) {
+        verityTaskSysUser.setUpdateTime(DateUtils.getNowDate());
+        return verityTaskSysUserMapper.updateVerityTaskSysUserByTaskIdAndLabelUserId(verityTaskSysUser);
+    }
+
     /**
      * 批量删除【请填写功能名称】
      *

@@ -54,11 +54,9 @@ public class VerityAsrServiceImpl implements IVerityAsrService
     @Override
     public List<VoiceAnnotation> selectVerityAsrList(VoiceAnnotation voiceAnnotation)
     {
-
-
         if (1L == voiceAnnotation.getVerityUser()){
-            System.out.println("admin");
-            return verityAsrMapper.selectVoiceAnnotationList(new VoiceAnnotation());
+            voiceAnnotation.setVerityUser(null);
+            return verityAsrMapper.selectVoiceAnnotationList(voiceAnnotation);
         }else {
             return verityAsrMapper.selectVoiceAnnotationListByOwner(voiceAnnotation);
         }
@@ -78,9 +76,9 @@ public class VerityAsrServiceImpl implements IVerityAsrService
     }
 
     /**
-     * 修改【请填写功能名称】
+     * 审核逻辑
      *
-     * @param voiceAnnotation 【请填写功能名称】
+     * @param voiceAnnotation 审核请求
      * @return 结果
      */
     @Transactional
@@ -96,10 +94,8 @@ public class VerityAsrServiceImpl implements IVerityAsrService
         String verityText = voiceAnnotation.getVerityText();
         int accuracy = LevenshteinDistance.calculateDistance(afterText, verityText);
         voiceAnnotation.setAccuracy((long) accuracy);
-        System.out.println(errorRate);
         double accuracyRate = (1.0*accuracy)/afterText.length();
         voiceAnnotation.setIsPass(accuracyRate>errorRate? 0 : 1);
-        System.out.println(voiceAnnotation);
         return verityAsrMapper.updateVoiceAnnotation(voiceAnnotation);
     }
 

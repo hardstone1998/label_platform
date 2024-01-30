@@ -203,7 +203,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         set
             verity_user = null
         <where>
-            <if test="verityUser != null"> and verity_user = #{verityUser}</if>
             <if test="labelUser != null "> and label_user = #{labelUser}</if>
             <if test="taskId != null "> and task_id = #{taskId}</if>
         </where>
