@@ -5,6 +5,7 @@ import java.util.List;
 import com.ruoyi.asr.domain.CountData;
 import com.ruoyi.asr.domain.VoiceAnnotation;
 import com.ruoyi.task.domain.AddVerityUser;
+import com.ruoyi.tool.domain.LabelStatistics;
 
 /**
  * 标注Service接口
@@ -90,7 +91,7 @@ public interface IVoiceAnnotationService
 
     String selectVoiceAnnotationJsonList(VoiceAnnotation voiceAnnotation,String filePath);
 
-    int selectVoiceAnnotationCount(VoiceAnnotation voiceAnnotation);
+    LabelStatistics selectVoiceAnnotationCount(VoiceAnnotation voiceAnnotation);
 
     int selectVoiceAnnotationVerityCount(VoiceAnnotation voiceAnnotation);
 

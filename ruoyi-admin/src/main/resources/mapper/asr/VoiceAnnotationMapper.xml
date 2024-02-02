@@ -69,14 +69,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 <!--    selectVoiceAnnotationCount-->
-    <select id="selectVoiceAnnotationCount"  resultType="int">
-        select count(1) from voice_annotation
+    <select id="selectVoiceAnnotationCount"  resultType="LabelStatistics">
+        SELECT count(1) labelNum,sum(CASE WHEN is_mask = '是' THEN 1 ELSE 0 END) labeledNum,sum(CASE WHEN is_pass is not null THEN 1 ELSE 0 END) verityNum,sum(CASE WHEN is_pass = 1 THEN 1 ELSE 0 END) passNum,avg(accuracy/LENGTH(pre_text)) wordAccuracy,sum(CASE WHEN verity_user is not null THEN 1 ELSE 0 END) recallNum  FROM `voice_annotation`
         <where>
             <if test="taskOwner != null  and taskOwner != ''"> and task_owner = #{taskOwner}</if>
             <if test="labelUser != null "> and label_user = #{labelUser}</if>
             <if test="verityUser != null "> and verity_user = #{verityUser}</if>
             <if test="taskId != null "> and task_id = #{taskId}</if>
             <if test="isPass != null "> and is_pass = #{isPass}</if>
+            <if test="isMark != null "> and is_mask = #{isMark}</if>
         </where>
     </select>
 

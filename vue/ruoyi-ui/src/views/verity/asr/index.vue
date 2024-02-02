@@ -611,6 +611,7 @@ export default {
         isUse: null,
         isMark: null,
         createTime: null,
+        audioName: null,
         // dynamicTags: null,
         updateTime: null,
         sevalue: null,
@@ -675,7 +676,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.canChange = true;
-      this.audio_name_1 = row.audioName;
+      this.audio_name_1 ="../audio/"+ row.audioName;
       //发送一个请求，根据id查对应的标签名字
       this.sevalue = []
       // this.dynamicTags = [];
@@ -685,6 +686,7 @@ export default {
       const id = row.id || this.ids;
       getVerityAsr(id).then((response) => {
         this.form = response.data;
+        this.form.audioName ="../audio/" +this.form.audioName;
         console.log(response.data);
         // this.checkedCities=response.data.selectTags;
         this.verityForm.afterText = this.form.afterText;

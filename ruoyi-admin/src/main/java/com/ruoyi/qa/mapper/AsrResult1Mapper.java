@@ -2,6 +2,7 @@ package com.ruoyi.qa.mapper;
 
 import java.util.List;
 import com.ruoyi.qa.domain.AsrResult1;
+import com.ruoyi.tool.domain.LabelStatistics;
 
 /**
  * extractMapper接口
@@ -18,6 +19,15 @@ public interface AsrResult1Mapper
      * @return extract
      */
     public AsrResult1 selectAsrResult1ById(Long id);
+
+    //    selectAsrResult1Count
+    /**
+     * 查询统计
+     *
+     * @param asrResult1
+     * @return extract
+     */
+    public LabelStatistics selectAsrResult1Count(AsrResult1 asrResult1);
 
     /**
      * 查询extract列表
@@ -48,6 +58,10 @@ public interface AsrResult1Mapper
     public int updateAsrResult1(AsrResult1 asrResult1);
 
     public int updateAsrResult1ByClazzId(AsrResult1 asrResult1);
+
+
+
+
 
     /**
      * 删除extract

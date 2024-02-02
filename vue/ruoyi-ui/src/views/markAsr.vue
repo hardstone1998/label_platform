@@ -75,14 +75,22 @@ export default {
       if(this.audioName==null){
         //console.log("取消按钮")
       }else{        
-        //this.wavesurfer.load(require("../assets/audio/" + this.audioName));
-        this.wavesurfer.load("/mnt/vdc/mydata/nginx/html/audio/" + this.audioName);
+        // var audioPath = "/mnt/vdc/mydata/nginx/html/audio/" + this.audioName;
+        // this.wavesurfer.load(require("../assets/audio/" + this.audioName));
+        // this.wavesurfer.load(audioPath);
+        // this.wavesurfer.load("audio/"+ this.audioName);
+        this.wavesurfer.load(this.audioName);
       }
       
     },
     loadAudio2(audio_name_1){
-      //this.wavesurfer.load(require("../assets/audio/" + audio_name_1));
-      this.wavesurfer.load("/mnt/vdc/mydata/nginx/html/audio/" +audio_name_1);
+      // var audioPath = "/mnt/vdc/mydata/nginx/html/audio/" +audio_name_1;
+      // this.wavesurfer.load(require("../assets/audio/" + audio_name_1));
+      // this.wavesurfer.load(audioPath);
+      // this.wavesurfer.load("audio/" +audio_name_1);
+      console.log("audio_name_1:");
+      console.log(audio_name_1);
+      this.wavesurfer.load(audio_name_1);
     },
 
     playMusic() {

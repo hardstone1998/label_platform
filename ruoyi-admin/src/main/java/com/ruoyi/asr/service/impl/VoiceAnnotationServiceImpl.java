@@ -12,6 +12,7 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.qa.domain.ExportResJson;
 import com.ruoyi.system.mapper.SysUserMapper;
 import com.ruoyi.task.domain.AddVerityUser;
+import com.ruoyi.tool.domain.LabelStatistics;
 import org.apache.commons.io.output.AppendableOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -281,7 +282,7 @@ public class VoiceAnnotationServiceImpl implements IVoiceAnnotationService
     }
 
     @Override
-    public int selectVoiceAnnotationCount(VoiceAnnotation voiceAnnotation) {
+    public LabelStatistics selectVoiceAnnotationCount(VoiceAnnotation voiceAnnotation) {
         return voiceAnnotationMapper.selectVoiceAnnotationCount(voiceAnnotation);
     }
 

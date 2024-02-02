@@ -44,6 +44,7 @@ public class TaskUserTaskAllocationController extends BaseController
     /**
      * 查询用户任务列表
      */
+    @Log(title = "查询用户任务列表", businessType = BusinessType.EXPORT)
 //    @PreAuthorize("@ss.hasPermi('task:user:list')")
     @GetMapping("/list")
     public TableDataInfo list(TaskUserTaskAllocation taskUserTaskAllocation)
@@ -61,7 +62,6 @@ public class TaskUserTaskAllocationController extends BaseController
 
     /**
      * 查询用户全部任务
-     * todo 存在问题
      */
     @GetMapping("/allByUser")
     public TableDataInfo allByUser(String userName,Integer qaOrAsr)

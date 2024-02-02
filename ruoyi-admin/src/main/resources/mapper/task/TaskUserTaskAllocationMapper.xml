@@ -28,13 +28,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectTaskUserTaskAllocationList" parameterType="TaskUserTaskAllocation" resultMap="TaskUserTaskAllocationResult">
         <include refid="selectTaskUserTaskAllocationVo"/>
         <where>
+            <if test="userName != null "> and u.user_name = #{userName}</if>
+            <if test="taskName != null "> and t.task_name = #{taskName}</if>
             <if test="taskId != null "> and tu.task_id = #{taskId}</if>
             <if test="userId != null "> and tu.user_id = #{userId}</if>
             <if test="userName != null "> and u.user_name = #{userName}</if>
             <if test="wordAccuracy != null "> and tu.word_accuracy = #{wordAccuracy}</if>
             <if test="numberAccuracy != null "> and tu.number_accuracy = #{numberAccuracy}</if>
             <if test="responsiblePersonId != null "> and t.responsible_person_id = #{responsiblePersonId}</if>
-            <if test="clazz != null "> and t.clazz = #{clazz}</if>
+            <if test="taskClazz != null "> and t.clazz = #{taskClazz}</if>
         </where>
     </select>
 

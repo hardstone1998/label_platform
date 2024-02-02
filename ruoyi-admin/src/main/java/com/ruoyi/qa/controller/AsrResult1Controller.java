@@ -117,9 +117,13 @@ public class AsrResult1Controller extends BaseController
         AsrResult1 asrResult1 = asrResult1Service.selectAsrResult1ById(id);
 
         List<Long> paths = new ArrayList<>();
-        if(asrResult1.getCuda()!=null && !"0".equals(asrResult1.getCuda())) {
+        if(asrResult1.getCuda()!=null && !"0".equals(asrResult1.getCuda()) && !"".equals(asrResult1.getCuda())) {
             Long clas = Long.parseLong(asrResult1.getCuda());
             List<Long> parentPath = findParentPath(clas, paths);
+            Collections.reverse(parentPath);
+            asrResult1.setClassPath(parentPath);
+        }else if (asrResult1.getClazzId()!=null && asrResult1.getClazzId()!=0L){
+            List<Long> parentPath = findParentPath(asrResult1.getClazzId(), paths);
             Collections.reverse(parentPath);
             asrResult1.setClassPath(parentPath);
         }

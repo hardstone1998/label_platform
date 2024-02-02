@@ -36,7 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectAsrResult1Vo">
-        select id, audio_path, result, cuda, audio_time, exec_time, create_time, qa_extract, qa_mark, qa_1,qa_2,qa_3,qa_4,qa_5,qa_sum,update_time, is_delete,is_mark,task_owner from asr_result_1
+        select id, audio_path, result, cuda, audio_time, exec_time, create_time, qa_extract, qa_mark, qa_1,qa_2,qa_3,qa_4,qa_5,qa_6,qa_sum,update_time, is_delete,is_mark,task_owner,task_id,clazz_id,label_user,verity_user,label_time,verity_time,is_pass,verity_feedback,accuracy,verity_clazz_id from asr_result_1
     </sql>
 
     <select id="selectAsrResult1List" parameterType="AsrResult1" resultMap="AsrResult1Result">
@@ -58,6 +58,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectAsrResult1ById" parameterType="Long" resultMap="AsrResult1Result">
         <include refid="selectAsrResult1Vo"/>
         where id = #{id}
+    </select>
+
+<!--    selectAsrResult1Count-->
+    <select id="selectAsrResult1Count" parameterType="Long" resultType="LabelStatistics">
+        SELECT count(1) labelNum,sum(CASE WHEN is_mark = '是' THEN 1 ELSE 0 END) labeledNum,sum(CASE WHEN is_pass is not null THEN 1 ELSE 0 END) verityNum,sum(CASE WHEN is_pass = 1 THEN 1 ELSE 0 END) passNum,avg(accuracy/LENGTH(qa_sum)) wordAccuracy,sum(CASE WHEN verity_user is not null THEN 1 ELSE 0 END) recallNum  FROM `asr_result_1`
+        <where>
+            <if test="audioPath != null  and audioPath != ''"> and audio_path like concat('%',#{audioPath}, '%')</if>
+            <if test="result != null  and result != ''"> and result like concat('%', #{result}, '%')</if>
+            <if test="qaSum != null  and qaSum != ''"> and qa_sum like concat('%', #{qaSum}, '%')</if>
+            <if test="taskOwner != null  and taskOwner != ''"> and task_owner = #{taskOwner}</if>
+            <if test="cuda != null  and cuda != ''"> and cuda = #{cuda}</if>
+            <if test="isMark != null  and isMark != ''"> and is_mark = #{isMark}</if>
+            <if test="isDelete != null  and isDelete != '' and isDelete !='否'.toString" > and is_delete = #{isDelete}</if>
+            <if test="taskId != null  and taskId != ''"> and task_id = #{taskId}</if>
+            <if test="isPass != null  and isPass != ''"> and is_pass = #{isPass}</if>
+            <if test="clazzId != null  and clazzId != ''"> and (cuda = #{clazzId} or clazz_id = #{clazzId})</if>
+        </where>
     </select>
 
     <select id="selectAsrResult1ListByOwner" parameterType="AsrResult1" resultMap="AsrResult1Result">
@@ -149,25 +166,33 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateAsrResult1" parameterType="AsrResult1">
         update asr_result_1
         <trim prefix="SET" suffixOverrides=",">
-            <if test="audioPath != null">audio_path = #{audioPath},</if>
-            <if test="result != null">result = #{result},</if>
-            <if test="cuda != null">cuda = #{cuda},</if>
+            <if test="audioPath != null and audioPath != ''">audio_path = #{audioPath},</if>
+            <if test="result != null and result != ''">result = #{result},</if>
+            <if test="cuda != null  and cuda != ''">cuda = #{cuda},</if>
             <if test="audioTime != null">audio_time = #{audioTime},</if>
             <if test="execTime != null">exec_time = #{execTime},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
-            <if test="qa1 != null">qa_1 = #{qa1},</if>
-            <if test="qa2 != null">qa_2 = #{qa2},</if>
-            <if test="qa3 != null">qa_3 = #{qa3},</if>
-            <if test="qa4 != null">qa_4 = #{qa4},</if>
-            <if test="qa5 != null">qa_5 = #{qa5},</if>
-            <if test="isMark != null">is_mark = #{isMark},</if>
-            <if test="qaSum != null">qa_sum = #{qaSum},</if>
-
-            <if test="qaMark != null">qa_mark = #{qaMark},</if>
-            <if test="updateTime != null">update_time = #{updateTime},</if>
-            <if test="taskOwner != null">task_owner = #{taskOwner},</if>
+            <if test="qa1 != null and qa1 != ''">qa_1 = #{qa1},</if>
+            <if test="qa2 != null and qa2 != ''">qa_2 = #{qa2},</if>
+            <if test="qa3 != null and qa3 != ''">qa_3 = #{qa3},</if>
+            <if test="qa4 != null and qa4 != ''">qa_4 = #{qa4},</if>
+            <if test="qa5 != null and qa5 != ''">qa_5 = #{qa5},</if>
+            <if test="qa6 != null and qa6 != ''">qa_5 = #{qa5},</if>
+            <if test="isMark != null and isMark != ''">is_mark = #{isMark},</if>
+            <if test="qaSum != null and qaSum != ''">qa_sum = #{qaSum},</if>
+            <if test="qaMark != null and qaMark != ''">qa_mark = #{qaMark},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="taskOwner != null and taskOwner != ''">task_owner = #{taskOwner},</if>
             <if test="taskId != null">task_id = #{taskId},</if>
             <if test="clazzId != null">clazz_id = #{clazzId},</if>
+            <if test="labelUser != null">label_user = #{labelUser},</if>
+            <if test="verityUser != null">verity_user = #{verityUser},</if>
+            <if test="labelTime != null">label_time = #{labelTime},</if>
+            <if test="verityTime != null">verity_time = #{verityTime},</if>
+            <if test="isPass != null">is_pass = #{isPass},</if>
+            <if test="verityFeedback != null">verity_feedback = #{verityFeedback},</if>
+            <if test="accuracy != null">accuracy = #{accuracy},</if>
+            <if test="verityClazzId != null">verity_clazz_id = #{verityClazzId},</if>
         </trim>
         where id = #{id}
     </update>

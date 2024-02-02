@@ -467,6 +467,7 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
+      audioName:null,
       // 标注表格数据
       annotationList: [],
       // 弹出层标题
@@ -588,10 +589,6 @@ export default {
     getTaskList(){
       var userName = this.$store.state.user.name;
       console.log(userName);
-      // todo 显示存在问题
-      // allTask(userName).then((response) => {
-      //   this.taskList = response.rows.map((row) => { return { taskId: row.id, taskName: row.name }; }); 
-      // });
       allByUser(userName).then((response) => {
         this.taskList = response.rows.map((row) => { return { taskId: row.taskId, taskName: row.taskName }; }); 
       });
@@ -756,7 +753,7 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.audio_name_1 = row.audioName;
+      this.audio_name_1 ="audio/" + row.audioName;
       //发送一个请求，根据id查对应的标签名字
       // this.sevalue = []
       // this.dynamicTags = [];
@@ -765,15 +762,19 @@ export default {
       this.stopAudio = false;
       // this.form.clazzId = this.queryParams.clazzId;
       const id = row.id || this.ids;
-      console.log("---------------------")
-      console.log( this.audio_name_1)
+      // console.log("---------------------")
+      // console.log( this.audio_name_1)
       getAnnotation(id).then((response) => {
+        
         this.form = response.data;
+        this.form.audioName  = "audio/" + this.form.audioName
         // this.cities = response.data.dynamicTags;
         // this.checkedCities=response.data.selectTags;
-        console.log(response);
+        this.audioName = this.form.audioName;
+        // console.log(response);
         this.open = true;
         this.title = "添加标签";
+        console.log( this.audioName);
       });
     },
     /** 提交按钮 */

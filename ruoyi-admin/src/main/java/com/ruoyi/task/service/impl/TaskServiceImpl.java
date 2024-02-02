@@ -137,7 +137,7 @@ public class TaskServiceImpl implements ITaskService
                     AsrResult1 asrResult1 = new AsrResult1();
                     asrResult1.setLabelUser(userId);
                     asrResult1.setUpdateNum(taskAllocationUser.getTaskQuantity());
-                    asrResult1.setTaskId(taskId);
+                    asrResult1.setTaskId((long)taskId);
                     asrResult1.setTaskOwner(user.getUserName());
                     asrResult1.setClazzId(class1Id);
                     asrResult1Mapper.updateAsrResult1ByClazzId(asrResult1);
@@ -187,7 +187,6 @@ public class TaskServiceImpl implements ITaskService
         if (i<=0)throw new RuntimeException("不存在用户信息");
 //        添加任务用户关联标
         List<Long> selectedUsers = taskAllocationUser1.getSelectedUsers();
-        //todo
         for (Long user :selectedUsers){
             TaskUserTaskAllocation taskUserTaskAllocation = new TaskUserTaskAllocation();
             taskUserTaskAllocation.setTaskId((long)taskId);
@@ -254,7 +253,7 @@ public class TaskServiceImpl implements ITaskService
                     AsrResult1 asrResult1 = new AsrResult1();
                     asrResult1.setLabelUser(userId);
                     asrResult1.setUpdateNum(minAvg);
-                    asrResult1.setTaskId(taskId);
+                    asrResult1.setTaskId((long)taskId);
                     asrResult1.setTaskOwner(user.getUserName());
                     asrResult1.setClazzId(unallocation.getClazzId());
                     asrResult1Mapper.updateAsrResult1ByClazzId(asrResult1);
@@ -301,7 +300,7 @@ public class TaskServiceImpl implements ITaskService
                     AsrResult1 asrResult1 = new AsrResult1();
                     asrResult1.setLabelUser(userId);
                     asrResult1.setUpdateNum(Math.min(taskQuantity,num));
-                    asrResult1.setTaskId(taskId);
+                    asrResult1.setTaskId((long)taskId);
                     asrResult1.setTaskOwner(user.getUserName());
                     asrResult1.setClazzId(unallocation.getClazzId());
                     asrResult1Mapper.updateAsrResult1ByClazzId(asrResult1);

@@ -66,6 +66,9 @@ public class TaskUserTaskAllocation extends BaseEntity
 
     private String labelNum;
 
+    /** 标注完成的数量 */
+    private String labeledNum;
+
     private String verityNum;
 
     private Integer clazz;

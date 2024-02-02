@@ -3,26 +3,36 @@ package com.ruoyi.qa.service;
 import java.util.List;
 import com.ruoyi.qa.domain.AsrResult1;
 import com.ruoyi.qa.domain.ClassP;
+import com.ruoyi.tool.domain.LabelStatistics;
 
 /**
  * extractService接口
- * 
+ *
  * @author ruoyi
  * @date 2023-07-13
  */
-public interface IAsrResult1Service 
+public interface IAsrResult1Service
 {
     /**
      * 查询extract
-     * 
+     *
      * @param id extract主键
      * @return extract
      */
     public AsrResult1 selectAsrResult1ById(Long id);
 
+//    selectAsrResult1Count
+    /**
+     * 统计qa标注情况
+     *
+     * @param asrResult1 asrResult1条件
+     * @return extract
+     */
+    public LabelStatistics selectAsrResult1Count(AsrResult1 asrResult1);
+
     /**
      * 查询extract列表
-     * 
+     *
      * @param asrResult1 extract
      * @return extract集合
      */
@@ -30,7 +40,7 @@ public interface IAsrResult1Service
 
     /**
      * 新增extract
-     * 
+     *
      * @param asrResult1 extract
      * @return 结果
      */
@@ -38,7 +48,7 @@ public interface IAsrResult1Service
 
     /**
      * 修改extract
-     * 
+     *
      * @param asrResult1 extract
      * @return 结果
      */
@@ -46,7 +56,7 @@ public interface IAsrResult1Service
 
     /**
      * 批量删除extract
-     * 
+     *
      * @param ids 需要删除的extract主键集合
      * @return 结果
      */
@@ -54,7 +64,7 @@ public interface IAsrResult1Service
 
     /**
      * 删除extract信息
-     * 
+     *
      * @param id extract主键
      * @return 结果
      */

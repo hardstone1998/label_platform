@@ -7,6 +7,8 @@ import com.ruoyi.asr.mapper.VoiceAnnotationMapper;
 import com.ruoyi.asr.service.IVoiceAnnotationService;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.qa.domain.AsrResult1;
+import com.ruoyi.qa.service.IAsrResult1Service;
 import com.ruoyi.system.service.ISysUserService;
 import com.ruoyi.task.domain.AddVerityUser;
 import com.ruoyi.task.domain.TaskUserTaskAllocation;
@@ -15,6 +17,7 @@ import com.ruoyi.task.domain.VerityTaskSysUser;
 import com.ruoyi.task.mapper.TaskUserTaskAllocationMapper;
 import com.ruoyi.task.service.ITaskUserTaskAllocationService;
 import com.ruoyi.task.service.IVerityTaskSysUserService;
+import com.ruoyi.tool.domain.LabelStatistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +41,9 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
     private IVoiceAnnotationService voiceAnnotationService;
 
     @Autowired
+    private IAsrResult1Service asrResult1Service;
+
+    @Autowired
     private ISysUserService sysUserService;
 
 
@@ -58,13 +64,12 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
      *
      * @param taskUserTaskAllocation 任务用户
      * @return 任务用户
-     * todo
+     * todo 尚未测试
      */
     @Override
     public List<TaskUserTaskAllocation> selectTaskUserTaskAllocationList(TaskUserTaskAllocation taskUserTaskAllocation)
     {
         List<TaskUserTaskAllocation> taskUserTaskAllocations = taskUserTaskAllocationMapper.selectTaskUserTaskAllocationList(taskUserTaskAllocation);
-        System.out.println("taskUserTaskAllocations:::"+taskUserTaskAllocations);
         for (TaskUserTaskAllocation t:taskUserTaskAllocations) {
             VerityTaskSysUser verityTaskSysUser = new VerityTaskSysUser();
             verityTaskSysUser.setTaskId(t.getTaskId());
@@ -73,22 +78,37 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
             if(verityTaskSysUsers.size()>0){
                 t.setVerityUser(verityTaskSysUsers.get(0).getVerityUserName());
             }
-            VoiceAnnotation voiceAnnotation =new VoiceAnnotation();
-            voiceAnnotation.setLabelUser(t.getUserId());
-            voiceAnnotation.setTaskId(t.getTaskId());
-            voiceAnnotation.setIsMark("是");
-            int labelNum = voiceAnnotationService.selectVoiceAnnotationCount(voiceAnnotation);
-            int verityNum = voiceAnnotationService.selectVoiceAnnotationVerityCount(voiceAnnotation);
-            t.setLabelNum(String.valueOf(labelNum));
-            t.setVerityNum(String.valueOf(verityNum));
-            Double wordAccuracy = voiceAnnotationService.selectVoiceAnnotationWordAccuracy(voiceAnnotation);
-            t.setWordAccuracy(wordAccuracy);
-            voiceAnnotation.setIsPass(1);
-            int passNum = voiceAnnotationService.selectVoiceAnnotationCount(voiceAnnotation);
-            if (labelNum>0)
-                t.setNumberAccuracy(1.0*passNum/labelNum);
-            int recall = voiceAnnotationService.selectVoiceAnnotationRecall(voiceAnnotation);
-            t.setRecallNum(recall);
+            Long taskClazz = t.getTaskClazz();
+            LabelStatistics labelStatistics = null;
+            if (0L == taskClazz){
+                VoiceAnnotation voiceAnnotation =new VoiceAnnotation();
+                voiceAnnotation.setLabelUser(t.getUserId());
+                voiceAnnotation.setTaskId(t.getTaskId());
+                labelStatistics = voiceAnnotationService.selectVoiceAnnotationCount(voiceAnnotation);
+                voiceAnnotation.setIsMark("是");
+//                labeledNum = voiceAnnotationService.selectVoiceAnnotationCount(voiceAnnotation);
+//                verityNum = voiceAnnotationService.selectVoiceAnnotationVerityCount(voiceAnnotation);
+//                wordAccuracy = voiceAnnotationService.selectVoiceAnnotationWordAccuracy(voiceAnnotation);
+                voiceAnnotation.setIsPass(1);
+//                passNum = voiceAnnotationService.selectVoiceAnnotationCount(voiceAnnotation);
+//                recall = voiceAnnotationService.selectVoiceAnnotationRecall(voiceAnnotation);
+            }else if(1L == taskClazz){
+                AsrResult1 asrResult1 = new AsrResult1();
+                asrResult1.setLabelUser(t.getUserId());
+                asrResult1.setTaskId(t.getTaskId());
+                asrResult1Service.selectAsrResult1Count(asrResult1);
+            }
+
+            if (labelStatistics!=null){
+                t.setLabelNum(String.valueOf(labelStatistics.getLabelNum()));
+                t.setVerityNum(String.valueOf(labelStatistics.getVerityNum()));
+                t.setWordAccuracy(labelStatistics.getWordAccuracy());
+                if (labelStatistics.getLabelNum()>0)
+                    t.setNumberAccuracy(1.0*labelStatistics.getPassNum()/labelStatistics.getLabelNum());
+                t.setRecallNum(labelStatistics.getRecallNum());
+                t.setLabeledNum(String.valueOf(labelStatistics.getLabeledNum()));
+            }
+
         }
         return taskUserTaskAllocations;
     }
@@ -146,6 +166,7 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
      *
      * @param verityTaskAllocationReq
      * @return 结果
+     * todo 无分配qa审核逻辑
      */
     @Override
     @Transactional
@@ -153,13 +174,16 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
         VoiceAnnotation voiceAnnotation = new VoiceAnnotation();
         voiceAnnotation.setLabelUser(verityTaskAllocationReq.getLabelUserId());
         voiceAnnotation.setTaskId(verityTaskAllocationReq.getTaskId());
-        int num = voiceAnnotationService.selectVoiceAnnotationCount(voiceAnnotation);
+        System.out.println(voiceAnnotation);
+        int num = voiceAnnotationService.selectVoiceAnnotationCount(voiceAnnotation).getLabelNum();
         Long verityNum = verityTaskAllocationReq.getVerityNum();
         if (verityNum==null || verityNum == 0){
             Double verityPercentage = verityTaskAllocationReq.getVerityPercentage();
             if (verityPercentage == null ||verityPercentage==0)throw new RuntimeException("审核数量为空");
             verityTaskAllocationReq.setVerityNum((long) (num*verityPercentage));
         }
+        System.out.println(num);
+        System.out.println(verityNum);
         if (num<verityNum)throw new RuntimeException("分配审核数量大于实际标注数量");
 
         VerityTaskSysUser verityTaskSysUser = new VerityTaskSysUser();

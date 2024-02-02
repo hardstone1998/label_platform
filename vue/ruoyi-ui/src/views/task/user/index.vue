@@ -18,12 +18,14 @@
         />
       </el-form-item>
       <el-form-item label="任务类型" prop="taskClazz">
-        <el-input
-          v-model="queryParams.wordAccuracy"
-          placeholder="请输入字符准确率"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.taskClazz" placeholder="任务类型">
+          <el-option
+            v-for="task in taskClazz"
+            :key="task.id"
+            :label="task.name"
+            :value="task.id"
+          />
+        </el-select>
       </el-form-item>
 
       <el-form-item label="创建时间"  prop="beginTime,endTime">
@@ -73,10 +75,11 @@
       <el-table-column label="审核人" align="center" prop="verityUser" />
       <el-table-column label="任务类型" align="center" prop="taskClazz" />
       <el-table-column label="标注数量" align="center" prop="labelNum" />
+      <el-table-column label="标注完成数量" align="center" prop="labeledNum" />
       <el-table-column label="审核数量" align="center" prop="verityNum" />
       <el-table-column label="个数准确率" align="center" prop="numberAccuracy" />
       <el-table-column label="字符准确率" align="center" prop="wordAccuracy" />
-      <el-table-column label="召回数量" align="center" prop="recallNum" />
+      <!-- <el-table-column label="召回数量" align="center" prop="recallNum" /> -->
       <el-table-column label="任务创建时间" align="center" prop="createTime" />
       <el-table-column
         label="操作"
@@ -168,7 +171,21 @@ export default {
   name: "TaskUserTaskAllocation",
   data() {
     return {
+      taskClazz: [
+        {
+          id: 0,
+          name: "ASR"
+      },
+      {
+          id: 1,
+          name: "QA"
+      }
+      ],
       userList: [
+      {
+          id: 106,
+          nickname: 'user26'
+        },
         {
           id: 131,
           nickname: 'user26'
@@ -257,7 +274,7 @@ export default {
         pageSize: 10,
         taskName: null,
         userName: null,
-        clazz: null,
+        taskClazz: null,
         verityUserId:null,
         responsiblePersonId: null,
         beginTime:null,
@@ -288,7 +305,8 @@ export default {
         verityUserId: null,
         verityNum: null,
         verityPercentage: null,
-        reqUser:null
+        reqUser:null,
+        taskClazz:null
       };
     },
     /** 分配审核操作 */

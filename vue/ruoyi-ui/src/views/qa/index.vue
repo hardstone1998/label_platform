@@ -283,14 +283,21 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
 
-        <el-cascader
+          <el-cascader 
+            v-model="sevalue"
+            placeholder="选择问题分类"
+            :options="formatClazzList(clazzList)"
+            @change="handleChange"
+        ></el-cascader>
+
+        <!-- <el-cascader
           v-model="sevalue"
           placeholder="选择问题分类"
           
           :options="options"
           :props="props"
           @change="handleChange"
-        ></el-cascader>
+        ></el-cascader> -->
 
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
@@ -418,6 +425,7 @@ export default {
   name: "Extract",
   data() {
     return {
+      clazzList: [],
       isPass: [
         {
           id : 0,
@@ -503,6 +511,28 @@ export default {
 
   methods: {
 
+    
+
+    formatClazzList(clazzList) { 
+  // 将 clazzList 格式化为适用于 el-cascader 的 options 数据 
+  return clazzList.map(clazz => ({ 
+      value: clazz.id, 
+      label: clazz.label, // 可根据实际情况调整 label 属性 
+      children: formatChildren(clazz.children)
+  }));
+  
+  function formatChildren(children) { 
+    if (!children || children.length === 0) {
+        return undefined;  // 如果子类为空，返回 undefined 或者可以根据实际需求返回其他合适的值
+      }
+      return children.map(child => ({
+          value: child.id, 
+          label: child.label, 
+          children: formatChildren(child.children)
+      })); 
+    }
+  },
+
     selectClazzLabel(array,targetId) {
     if(targetId ==undefined ||targetId == null){
       return null;
@@ -550,16 +580,17 @@ export default {
     },
 
     handleChange2(value) {
-     
-      this.getvalue=value[value.length-1]
-      this.queryParams.cuda=this.getvalue
+      this.queryParams.clazzId=value[value.length-1]
+      // this.getvalue=value[value.length-1]
+      // this.queryParams.cuda=this.getvalue
      // console.log("查询的分类id：",this.getvalue);
       },
 
     handleChange(value) {
-      this.sevalue=value;
+      this.form.clazzId = value[value.length-1]
+      // this.sevalue=value;
 
-      this.selectvalue=this.sevalue[this.sevalue.length-1]
+      // this.selectvalue=this.sevalue[this.sevalue.length-1]
       //console.log(this.sevalue);
       },
 
@@ -722,13 +753,24 @@ export default {
     },
 
     getOptions() {
-      optionsExtract(this.queryParams).then((response) => {
+      optionsExtract().then((response) => {
        // this.extractList = response.rows;
+       console.log(response.data);
+       this.clazzList =response.data.options;
        this.options =response.data.options;
         //this.total = response.total;
         //this.loading = false;
       });
     },
+
+    // getOptions() {
+    //   optionsExtract(this.queryParams).then((response) => {
+    //    // this.extractList = response.rows;
+    //    this.options =response.data.options;
+    //     //this.total = response.total;
+    //     //this.loading = false;
+    //   });
+    // },
 
 
     // 取消按钮
@@ -785,11 +827,11 @@ export default {
       this.res_id = row.id;
       const id = row.id || this.ids;
       getExtract(id).then((response) => {
-        
+
         this.form = response.data;
-        this.sevalue=response.data.classPath
-      //  console.log(response.data)
-  
+        this.sevalue = response.data.clazzId;
+       console.log(response.data)
+        console.log(this.sevalue)
        // this.options=response.data.options;
         const parts = this.form.audioPath.split("/");
         this.audioName = parts[parts.length - 1];
@@ -812,8 +854,9 @@ export default {
       this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.id != null) {
-            console.log(this.selectvalue);
             this.form.cuda=this.selectvalue.toString();
+            // this.form.clazzId=this.sevalue;
+            console.log(this.form);
             updateExtract(this.form).then((response) => {
            
              // console.log("提交数据",this.form)

@@ -91,7 +91,12 @@ public class AsrResult1 extends BaseEntity
     }
 
     public void setClassPath(List<Long> classPath) {
-        this.classPath = classPath.toArray(new Long[0]);
+        if (classPath==null){
+            this.classPath = null;
+        }else {
+            this.classPath = classPath.toArray(new Long[0]);
+        }
+
     }
 
     private JSONObject qaRelation;
@@ -99,7 +104,7 @@ public class AsrResult1 extends BaseEntity
     /** 标注任务所属人 */
     private String taskOwner;
 
-    private Integer taskId;
+    private Long taskId;
 
     private Long clazzId;
 

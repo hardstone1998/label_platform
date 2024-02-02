@@ -15,6 +15,7 @@ import com.ruoyi.qa.domain.*;
 import com.ruoyi.qa.mapper.Class1Mapper;
 import com.ruoyi.qa.mapper.QaRelationMapper;
 import com.ruoyi.system.mapper.SysUserMapper;
+import com.ruoyi.tool.domain.LabelStatistics;
 import org.apache.poi.ss.usermodel.IconMultiStateFormatting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -69,6 +70,11 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
             asrResult1.setMarkresult(asrResult1.getQaMark());
         }
         return asrResult1;
+    }
+
+    @Override
+    public LabelStatistics selectAsrResult1Count(AsrResult1 asrResult1) {
+        return asrResult1Mapper.selectAsrResult1Count(asrResult1);
     }
 
 
@@ -133,13 +139,13 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
         String qa2 = asrResult1.getQa2();
         String qa3 = asrResult1.getQa3();
         String qa_sum="";
-        if (!qa1.equals("")){
+        if (qa1!=null&&!qa1.equals("")){
             qa_sum+=qa1+"\n";
         }
-        if (!qa2.equals("")){
+        if (qa2!=null&&!qa2.equals("")){
             qa_sum+=qa2+"\n";
         }
-        if(!qa3.equals("")){
+        if(qa3!=null&&!qa3.equals("")){
             qa_sum+=qa3+"\n";
         }
 
@@ -152,7 +158,8 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
         SysUser sysUser = sysUserMapper.selectUserByUserName(taskOwner);
         asrResult1.setLabelUser(sysUser.getUserId());
         asrResult1.setLabelTime(DateUtils.getNowDate());
-        asrResult1.setClazzId(Long.valueOf(asrResult1.getCuda()));
+        if (asrResult1.getClazzId()!=null) asrResult1.setCuda(asrResult1.getClazzId().toString());
+        asrResult1.setLabelTime(DateUtils.getNowDate());
         System.out.println("cuda结果是----------》"+asrResult1.getCuda());
         return asrResult1Mapper.updateAsrResult1(asrResult1);
     }
