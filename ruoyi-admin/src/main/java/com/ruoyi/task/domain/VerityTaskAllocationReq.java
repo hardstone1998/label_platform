@@ -21,6 +21,9 @@ public class VerityTaskAllocationReq extends BaseEntity
     /** 任务id */
     private Long taskId;
 
+    /** 任务类型 */
+    private Integer taskClazz;
+
     /** 标注用户 */
     private Long labelUserId;
 

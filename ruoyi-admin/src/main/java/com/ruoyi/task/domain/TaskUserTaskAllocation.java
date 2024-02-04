@@ -62,7 +62,7 @@ public class TaskUserTaskAllocation extends BaseEntity
 
     private String responsiblePersonName;
 
-    private Long verityUser;
+    private String verityUser;
 
     private String labelNum;
 

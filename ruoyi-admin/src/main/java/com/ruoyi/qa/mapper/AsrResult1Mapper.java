@@ -2,6 +2,7 @@ package com.ruoyi.qa.mapper;
 
 import java.util.List;
 import com.ruoyi.qa.domain.AsrResult1;
+import com.ruoyi.task.domain.AddVerityUser;
 import com.ruoyi.tool.domain.LabelStatistics;
 
 /**
@@ -60,6 +61,11 @@ public interface AsrResult1Mapper
     public int updateAsrResult1ByClazzId(AsrResult1 asrResult1);
 
 
+    public int updateVoiceAnnotationByTaskAndLabelUser(AsrResult1 asrResult1);
+
+    public int addVerityUser(AddVerityUser addVerityUser);
+
+    public int subtractVerity(AddVerityUser addVerityUser);
 
 
 

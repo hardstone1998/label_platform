@@ -71,9 +71,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="cuda != null  and cuda != ''"> and cuda = #{cuda}</if>
             <if test="isMark != null  and isMark != ''"> and is_mark = #{isMark}</if>
             <if test="isDelete != null  and isDelete != '' and isDelete !='否'.toString" > and is_delete = #{isDelete}</if>
-            <if test="taskId != null  and taskId != ''"> and task_id = #{taskId}</if>
-            <if test="isPass != null  and isPass != ''"> and is_pass = #{isPass}</if>
-            <if test="clazzId != null  and clazzId != ''"> and (cuda = #{clazzId} or clazz_id = #{clazzId})</if>
+            <if test="taskId != null"> and task_id = #{taskId}</if>
+            <if test="isPass != null"> and is_pass = #{isPass}</if>
+            <if test="labelUser != null"> and label_user = #{labelUser}</if>
+            <if test="clazzId != null"> and (cuda = #{clazzId} or clazz_id = #{clazzId})</if>
         </where>
     </select>
 
@@ -95,8 +96,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     <select id="selectAsrResult1ListByJson" parameterType="AsrResult1" resultMap="AsrResult1Result">
                select id, audio_path,  qa_1,qa_2,qa_3,qa_4,qa_5,task_owner from asr_result_1
-        where is_delete="否" and is_mark="是"
-
+        <where>
+            <if test="audioPath != null  and audioPath != ''"> and audio_path like concat('%',#{audioPath}, '%')</if>
+            <if test="result != null  and result != ''"> and result like concat('%', #{result}, '%')</if>
+            <if test="qaSum != null  and qaSum != ''"> and qa_sum like concat('%', #{qaSum}, '%')</if>
+            <if test="cuda != null  and cuda != ''"> and cuda = #{cuda}</if>
+            <if test="taskId != null  and taskId != ''"> and task_id = #{taskId}</if>
+            <if test="isPass != null  and isPass != ''"> and is_pass = #{isPass}</if>
+            <if test="clazzId != null  and clazzId != ''"> and (cuda = #{clazzId} or clazz_id = #{clazzId})</if>
+        </where>
+        and is_delete="否" and is_mark="是"
     </select>
 
     <insert id="insertAsrResult1" parameterType="AsrResult1" useGeneratedKeys="true" keyProperty="id">
@@ -112,6 +121,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="qaMark != null">qa_mark,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="taskOwner != null">task_owner,</if>
+
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="audioPath != null">#{audioPath},</if>
@@ -163,6 +173,38 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="updateNum != null">#{updateNum}</if>
     </update>
 
+<!--    updateVoiceAnnotationByTaskAndLabelUser-->
+    <update id="updateVoiceAnnotationByTaskAndLabelUser" parameterType="AsrResult1">
+        update asr_result_1
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="audioPath != null">audio_path = #{audioPath},</if>
+            <if test="result != null">result = #{result},</if>
+            <if test="cuda != null">cuda = #{cuda},</if>
+            <if test="audioTime != null">audio_time = #{audioTime},</if>
+            <if test="execTime != null">exec_time = #{execTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="qa1 != null">qa_1 = #{qa1},</if>
+            <if test="qa2 != null">qa_2 = #{qa2},</if>
+            <if test="qa3 != null">qa_3 = #{qa3},</if>
+            <if test="qa4 != null">qa_4 = #{qa4},</if>
+            <if test="qa5 != null">qa_5 = #{qa5},</if>
+            <if test="isMark != null">is_mark = #{isMark},</if>
+            <if test="qaSum != null">qa_sum = #{qaSum},</if>
+
+            <if test="qaMark != null">qa_mark = #{qaMark},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="taskOwner != null">task_owner = #{taskOwner},</if>
+            <if test="clazzId != null">clazz_id = #{clazzId},</if>
+            <if test="verityUser != null">verity_user = #{verityUser},</if>
+        </trim>
+        <where>
+            <if test="taskId != null"> and task_id = #{taskId}</if>
+            <if test="taskOwner != null"> and task_owner = #{taskOwner}</if>
+            <if test="labelUser != null"> and label_user = #{labelUser}</if>
+        </where>
+        and verity_user is null
+    </update>
+
     <update id="updateAsrResult1" parameterType="AsrResult1">
         update asr_result_1
         <trim prefix="SET" suffixOverrides=",">
@@ -172,14 +214,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="audioTime != null">audio_time = #{audioTime},</if>
             <if test="execTime != null">exec_time = #{execTime},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
-            <if test="qa1 != null and qa1 != ''">qa_1 = #{qa1},</if>
-            <if test="qa2 != null and qa2 != ''">qa_2 = #{qa2},</if>
-            <if test="qa3 != null and qa3 != ''">qa_3 = #{qa3},</if>
-            <if test="qa4 != null and qa4 != ''">qa_4 = #{qa4},</if>
-            <if test="qa5 != null and qa5 != ''">qa_5 = #{qa5},</if>
-            <if test="qa6 != null and qa6 != ''">qa_5 = #{qa5},</if>
+            <if test="qa1 != null ">qa_1 = #{qa1},</if>
+            <if test="qa2 != null ">qa_2 = #{qa2},</if>
+            <if test="qa3 != null ">qa_3 = #{qa3},</if>
+            <if test="qa4 != null ">qa_4 = #{qa4},</if>
+            <if test="qa5 != null ">qa_5 = #{qa5},</if>
+            <if test="qa6 != null ">qa_6 = #{qa6},</if>
             <if test="isMark != null and isMark != ''">is_mark = #{isMark},</if>
-            <if test="qaSum != null and qaSum != ''">qa_sum = #{qaSum},</if>
+            <if test="qaSum != null">qa_sum = #{qaSum},</if>
             <if test="qaMark != null and qaMark != ''">qa_mark = #{qaMark},</if>
             <if test="updateTime != null ">update_time = #{updateTime},</if>
             <if test="taskOwner != null and taskOwner != ''">task_owner = #{taskOwner},</if>
@@ -195,6 +237,33 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="verityClazzId != null">verity_clazz_id = #{verityClazzId},</if>
         </trim>
         where id = #{id}
+    </update>
+
+    <!--    addVerityUser-->
+    <update id="addVerityUser" parameterType="com.ruoyi.task.domain.AddVerityUser">
+        update asr_result_1
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="verityUser != null">verity_user = #{verityUser}</if>
+        </trim>
+        <where>
+            <if test="labelUser != null "> and label_user = #{labelUser}</if>
+            <if test="taskId != null "> and task_id = #{taskId}</if>
+        </where>
+        and verity_user is null
+        limit #{verityNum}
+    </update>
+
+    <!--    subtractVerity-->
+    <update id="subtractVerity" parameterType="com.ruoyi.task.domain.AddVerityUser">
+        update asr_result_1
+        set
+        verity_user = null
+        <where>
+            <if test="labelUser != null "> and label_user = #{labelUser}</if>
+            <if test="taskId != null "> and task_id = #{taskId}</if>
+        </where>
+        and verity_user is not null
+        limit #{verityNum}
     </update>
 
     <delete id="deleteAsrResult1ById" parameterType="Long">

@@ -1,0 +1,5 @@
+SELECT count(1) label_num,sum(CASE WHEN is_mark = '是' THEN 1 ELSE 0 END) labeled_num,sum(CASE WHEN is_pass is not null THEN 1 ELSE 0 END) verity_num,sum(CASE WHEN is_pass = 1 THEN 1 ELSE 0 END) pass_num,avg(accuracy/LENGTH(qa_sum)) word_accuracy,sum(CASE WHEN verity_user is not null THEN 1 ELSE 0 END) recall_num  FROM `asr_result_1` where label_user = 131 and task_id = 33
+
+SELECT *  FROM `asr_result_1` where label_user = 131 and task_id = 49
+
+SELECT count(1) label_num,sum(CASE WHEN is_mask = '是' THEN 1 ELSE 0 END) labeled_num,sum(CASE WHEN is_pass is not null THEN 1 ELSE 0 END) verity_num,sum(CASE WHEN is_pass = 1 THEN 1 ELSE 0 END) pass_num,avg(accuracy/LENGTH(pre_text)) word_accuracy,sum(CASE WHEN verity_user is not null THEN 1 ELSE 0 END) recall_num  FROM `voice_annotation` where label_user = 132 and task_id = 33

@@ -64,7 +64,6 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
      *
      * @param taskUserTaskAllocation 任务用户
      * @return 任务用户
-     * todo 尚未测试
      */
     @Override
     public List<TaskUserTaskAllocation> selectTaskUserTaskAllocationList(TaskUserTaskAllocation taskUserTaskAllocation)
@@ -76,7 +75,8 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
             verityTaskSysUser.setLabelUserId(t.getUserId());
             List<VerityTaskSysUser> verityTaskSysUsers = verityTaskSysUserService.selectVerityTaskSysUserList(verityTaskSysUser);
             if(verityTaskSysUsers.size()>0){
-                t.setVerityUser(verityTaskSysUsers.get(0).getVerityUserName());
+                SysUser sysUser = sysUserService.selectUserById(verityTaskSysUsers.get(0).getVerityUserId());
+                t.setVerityUser(sysUser.getUserName());
             }
             Long taskClazz = t.getTaskClazz();
             LabelStatistics labelStatistics = null;
@@ -96,7 +96,7 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
                 AsrResult1 asrResult1 = new AsrResult1();
                 asrResult1.setLabelUser(t.getUserId());
                 asrResult1.setTaskId(t.getTaskId());
-                asrResult1Service.selectAsrResult1Count(asrResult1);
+                labelStatistics = asrResult1Service.selectAsrResult1Count(asrResult1);
             }
 
             if (labelStatistics!=null){
@@ -166,69 +166,169 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
      *
      * @param verityTaskAllocationReq
      * @return 结果
-     * todo 无分配qa审核逻辑
+     * todo 修改时存在错误
      */
     @Override
     @Transactional
     public int verityAllocation(VerityTaskAllocationReq verityTaskAllocationReq) {
-        VoiceAnnotation voiceAnnotation = new VoiceAnnotation();
-        voiceAnnotation.setLabelUser(verityTaskAllocationReq.getLabelUserId());
-        voiceAnnotation.setTaskId(verityTaskAllocationReq.getTaskId());
-        System.out.println(voiceAnnotation);
-        int num = voiceAnnotationService.selectVoiceAnnotationCount(voiceAnnotation).getLabelNum();
-        Long verityNum = verityTaskAllocationReq.getVerityNum();
-        if (verityNum==null || verityNum == 0){
-            Double verityPercentage = verityTaskAllocationReq.getVerityPercentage();
-            if (verityPercentage == null ||verityPercentage==0)throw new RuntimeException("审核数量为空");
-            verityTaskAllocationReq.setVerityNum((long) (num*verityPercentage));
-        }
-        System.out.println(num);
-        System.out.println(verityNum);
-        if (num<verityNum)throw new RuntimeException("分配审核数量大于实际标注数量");
+        if (verityTaskAllocationReq.getTaskClazz()!=null && verityTaskAllocationReq.getTaskClazz()==0){
+            VoiceAnnotation voiceAnnotation = new VoiceAnnotation();
+            voiceAnnotation.setLabelUser(verityTaskAllocationReq.getLabelUserId());
+            voiceAnnotation.setTaskId(verityTaskAllocationReq.getTaskId());
+            int num = voiceAnnotationService.selectVoiceAnnotationCount(voiceAnnotation).getLabelNum();
+            Long verityNum = verityTaskAllocationReq.getVerityNum();
+            if (verityNum==null || verityNum == 0){
+                Double verityPercentage = verityTaskAllocationReq.getVerityPercentage();
+                if (verityPercentage == null ||verityPercentage==0)throw new RuntimeException("审核数量为空");
+                verityTaskAllocationReq.setVerityNum((long) (num*verityPercentage));
+            }
+            if (num<verityNum)throw new RuntimeException("分配审核数量大于实际标注数量");
 
-        VerityTaskSysUser verityTaskSysUser = new VerityTaskSysUser();
-        long id = verityTaskAllocationReq.getId();
-        VerityTaskSysUser verityTaskSysUserSearch =new VerityTaskSysUser();
-        verityTaskSysUserSearch.setTaskId(verityTaskAllocationReq.getTaskId());
-        verityTaskSysUserSearch.setLabelUserId(verityTaskAllocationReq.getLabelUserId());
-        VerityTaskSysUser verityTaskSysUser1 = verityTaskSysUserService.selectVerityTaskSysUserList(verityTaskSysUserSearch).get(0);
-//        verityTaskSysUser.setId(id);
-        verityTaskSysUser.setTaskId(verityTaskAllocationReq.getTaskId());
-        verityTaskSysUser.setLabelUserId(verityTaskAllocationReq.getLabelUserId());
-        verityTaskSysUser.setVerityUserId(verityTaskAllocationReq.getVerityUserId());
+            VerityTaskSysUser verityTaskSysUser = new VerityTaskSysUser();
+            long id = verityTaskAllocationReq.getId();
+            VerityTaskSysUser verityTaskSysUserSearch =new VerityTaskSysUser();
+            verityTaskSysUserSearch.setTaskId(verityTaskAllocationReq.getTaskId());
+            verityTaskSysUserSearch.setLabelUserId(verityTaskAllocationReq.getLabelUserId());
+            List<VerityTaskSysUser> verityTaskSysUsers = verityTaskSysUserService.selectVerityTaskSysUserList(verityTaskSysUserSearch);
+            VerityTaskSysUser verityTaskSysUser1 = null;
+            if (verityTaskSysUsers!=null && verityTaskSysUsers.size()>0){
+                verityTaskSysUser1 = verityTaskSysUsers.get(0);
+                //        verityTaskSysUser.setId(id);
+                verityTaskSysUser.setTaskId(verityTaskAllocationReq.getTaskId());
+                verityTaskSysUser.setLabelUserId(verityTaskAllocationReq.getLabelUserId());
+                verityTaskSysUser.setVerityUserId(verityTaskAllocationReq.getVerityUserId());
 //        verityTaskSysUser.setCreateTime(DateUtils.getNowDate());
 //        verityTaskSysUser.setUpdateTime(DateUtils.getNowDate());
-        String reqUser = verityTaskAllocationReq.getReqUser();
-        SysUser sysUser = sysUserService.selectUserByUserName(reqUser);
-        verityTaskSysUser.setReqUser(sysUser.getUserId());
-        verityTaskSysUser.setExtractNum(verityNum);
-        int i = verityTaskSysUserService.updateVerityTaskSysUserByTaskIdAndLabelUserId(verityTaskSysUser);
+                String reqUser = verityTaskAllocationReq.getReqUser();
+                SysUser sysUser = sysUserService.selectUserByUserName(reqUser);
+                verityTaskSysUser.setReqUser(sysUser.getUserId());
+                verityTaskSysUser.setExtractNum(verityNum);
+                int i = verityTaskSysUserService.updateVerityTaskSysUserByTaskIdAndLabelUserId(verityTaskSysUser);
+            }else {
+                VerityTaskSysUser verityTaskSysUser2 = new VerityTaskSysUser();
+                verityTaskSysUser2.setLabelUserId(verityTaskAllocationReq.getLabelUserId());
+                verityTaskSysUser2.setTaskId(verityTaskAllocationReq.getTaskId());
+                verityTaskSysUser2.setVerityUserId(verityTaskAllocationReq.getVerityUserId());
+                verityTaskSysUser2.setCreateTime(DateUtils.getNowDate());
+                verityTaskSysUser2.setUpdateTime(DateUtils.getNowDate());
+                String reqUser = verityTaskAllocationReq.getReqUser();
+                SysUser sysUser = sysUserService.selectUserByUserName(reqUser);
+                verityTaskSysUser2.setReqUser(sysUser.getUserId());
+                verityTaskSysUser1 = verityTaskSysUser2;
+                verityTaskSysUser2.setExtractNum(verityNum);
+                verityTaskSysUserService.insertVerityTaskSysUser(verityTaskSysUser2);
+                verityTaskSysUser1.setExtractNum(0L);
+            }
 
-        if (verityTaskSysUser1.getVerityUserId() != verityTaskSysUser.getVerityUserId()){
-            VoiceAnnotation v = new VoiceAnnotation();
-            v.setVerityUser(verityTaskSysUser.getVerityUserId());
-            v.setTaskId(verityTaskAllocationReq.getTaskId());
-            v.setLabelUser(verityTaskAllocationReq.getLabelUserId());
-            voiceAnnotationService.updateVoiceAnnotationByTaskAndLabelUser(v);
+            Long reqNum = verityTaskAllocationReq.getVerityNum();
+            int verityNum1 = voiceAnnotationService.selectVoiceAnnotationCount(voiceAnnotation).getVerityNum();
+            System.out.println("---------");
+            System.out.println(verityNum1);
+            System.out.println(reqNum);
+            if (verityTaskSysUser1.getVerityUserId() != verityTaskSysUser.getVerityUserId()){
+                VoiceAnnotation v = new VoiceAnnotation();
+                v.setVerityUser(verityTaskSysUser.getVerityUserId());
+                v.setTaskId(verityTaskAllocationReq.getTaskId());
+                v.setLabelUser(verityTaskAllocationReq.getLabelUserId());
+                voiceAnnotationService.updateVoiceAnnotationByTaskAndLabelUser(v);
+            }
+
+            if (reqNum >verityNum1){
+                AddVerityUser addVerityUser = new AddVerityUser();
+                addVerityUser.setLabelUser(verityTaskAllocationReq.getLabelUserId());
+                addVerityUser.setTaskId(verityTaskAllocationReq.getTaskId());
+                addVerityUser.setVerityUser(verityTaskAllocationReq.getVerityUserId());
+                addVerityUser.setVerityNum(verityTaskAllocationReq.getVerityNum()-verityTaskSysUser1.getExtractNum());
+                voiceAnnotationService.addVerity(addVerityUser);
+            }else if (reqNum <verityNum1&&reqNum>0){
+                AddVerityUser addVerityUser = new AddVerityUser();
+                addVerityUser.setLabelUser(verityTaskAllocationReq.getLabelUserId());
+                addVerityUser.setTaskId(verityTaskAllocationReq.getTaskId());
+                addVerityUser.setVerityUser(verityTaskAllocationReq.getVerityUserId());
+                addVerityUser.setVerityNum(verityTaskSysUser1.getExtractNum()-verityTaskAllocationReq.getVerityNum());
+                voiceAnnotationService.subtractVerity(addVerityUser);
+            }
+            return 1;
+        } else if (verityTaskAllocationReq.getTaskClazz()!=null && verityTaskAllocationReq.getTaskClazz()==1) {
+            AsrResult1 asrResult1 = new AsrResult1();
+            asrResult1.setLabelUser(verityTaskAllocationReq.getLabelUserId());
+            asrResult1.setTaskId(verityTaskAllocationReq.getTaskId());
+            int num = asrResult1Service.selectAsrResult1Count(asrResult1).getLabelNum();
+            Long verityNum = verityTaskAllocationReq.getVerityNum();
+            if (verityNum==null || verityNum == 0){
+                Double verityPercentage = verityTaskAllocationReq.getVerityPercentage();
+                if (verityPercentage == null ||verityPercentage==0)throw new RuntimeException("审核数量为空");
+                verityTaskAllocationReq.setVerityNum((long) (num*verityPercentage));
+            }
+            if (num<verityNum)throw new RuntimeException("分配审核数量大于实际标注数量");
+
+            VerityTaskSysUser verityTaskSysUser = new VerityTaskSysUser();
+            long id = verityTaskAllocationReq.getId();
+            VerityTaskSysUser verityTaskSysUserSearch =new VerityTaskSysUser();
+            verityTaskSysUserSearch.setTaskId(verityTaskAllocationReq.getTaskId());
+            verityTaskSysUserSearch.setLabelUserId(verityTaskAllocationReq.getLabelUserId());
+            List<VerityTaskSysUser> verityTaskSysUsers = verityTaskSysUserService.selectVerityTaskSysUserList(verityTaskSysUserSearch);
+            VerityTaskSysUser verityTaskSysUser1 = null;
+            if (verityTaskSysUsers!=null && verityTaskSysUsers.size()>0){
+                verityTaskSysUser1 = verityTaskSysUsers.get(0);
+                verityTaskSysUser.setTaskId(verityTaskAllocationReq.getTaskId());
+                verityTaskSysUser.setLabelUserId(verityTaskAllocationReq.getLabelUserId());
+                verityTaskSysUser.setVerityUserId(verityTaskAllocationReq.getVerityUserId());
+                String reqUser = verityTaskAllocationReq.getReqUser();
+                SysUser sysUser = sysUserService.selectUserByUserName(reqUser);
+                verityTaskSysUser.setReqUser(sysUser.getUserId());
+                verityTaskSysUser.setExtractNum(verityNum);
+                verityTaskSysUserService.updateVerityTaskSysUserByTaskIdAndLabelUserId(verityTaskSysUser);
+            }else {
+                VerityTaskSysUser verityTaskSysUser2 = new VerityTaskSysUser();
+                verityTaskSysUser2.setLabelUserId(verityTaskAllocationReq.getLabelUserId());
+                verityTaskSysUser2.setTaskId(verityTaskAllocationReq.getTaskId());
+                verityTaskSysUser2.setVerityUserId(verityTaskAllocationReq.getVerityUserId());
+                verityTaskSysUser2.setCreateTime(DateUtils.getNowDate());
+                verityTaskSysUser2.setUpdateTime(DateUtils.getNowDate());
+                String reqUser = verityTaskAllocationReq.getReqUser();
+                SysUser sysUser = sysUserService.selectUserByUserName(reqUser);
+                verityTaskSysUser2.setReqUser(sysUser.getUserId());
+                verityTaskSysUser1 = verityTaskSysUser2;
+                verityTaskSysUser2.setExtractNum(verityNum);
+                verityTaskSysUserService.insertVerityTaskSysUser(verityTaskSysUser2);
+            }
+
+
+            if (verityTaskSysUser1.getVerityUserId() != verityTaskSysUser.getVerityUserId()){
+                AsrResult1 a = new AsrResult1();
+                a.setVerityUser(verityTaskSysUser.getVerityUserId());
+                a.setTaskId(verityTaskAllocationReq.getTaskId());
+                a.setLabelUser(verityTaskAllocationReq.getLabelUserId());
+                asrResult1Service.updateAsrResult1ByTaskAndLabelUser(a);
+            }
+            Long reqNum = verityTaskAllocationReq.getVerityNum();
+            int verityNum1 = asrResult1Service.selectAsrResult1Count(asrResult1).getVerityNum();
+            System.out.println("---------");
+            System.out.println(verityNum1);
+            System.out.println(reqNum);
+            if (reqNum >verityNum1){
+                AddVerityUser addVerityUser = new AddVerityUser();
+                addVerityUser.setLabelUser(verityTaskAllocationReq.getLabelUserId());
+                addVerityUser.setTaskId(verityTaskAllocationReq.getTaskId());
+                addVerityUser.setVerityUser(verityTaskAllocationReq.getVerityUserId());
+                addVerityUser.setVerityNum(reqNum-verityNum1);
+                System.out.println("增加："+addVerityUser);
+                asrResult1Service.addVerity(addVerityUser);
+            }else if (reqNum < verityNum1&&reqNum>=0){
+                AddVerityUser addVerityUser = new AddVerityUser();
+                addVerityUser.setLabelUser(verityTaskAllocationReq.getLabelUserId());
+                addVerityUser.setTaskId(verityTaskAllocationReq.getTaskId());
+                addVerityUser.setVerityUser(verityTaskAllocationReq.getVerityUserId());
+                addVerityUser.setVerityNum(verityNum1-reqNum);
+                System.out.println("减少："+addVerityUser);
+                asrResult1Service.subtractVerity(addVerityUser);
+            }
+            return 1;
         }
 
-        if (verityTaskAllocationReq.getVerityNum() >verityTaskSysUser1.getExtractNum()){
-            AddVerityUser addVerityUser = new AddVerityUser();
-            addVerityUser.setLabelUser(verityTaskAllocationReq.getLabelUserId());
-            addVerityUser.setTaskId(verityTaskAllocationReq.getTaskId());
-            addVerityUser.setVerityUser(verityTaskAllocationReq.getVerityUserId());
-            addVerityUser.setVerityNum(verityTaskAllocationReq.getVerityNum()-verityTaskSysUser1.getExtractNum());
-            voiceAnnotationService.addVerity(addVerityUser);
-        }else if (verityTaskAllocationReq.getVerityNum() <verityTaskSysUser1.getExtractNum()&&verityTaskAllocationReq.getVerityNum()>0){
-            AddVerityUser addVerityUser = new AddVerityUser();
-            addVerityUser.setLabelUser(verityTaskAllocationReq.getLabelUserId());
-            addVerityUser.setTaskId(verityTaskAllocationReq.getTaskId());
-            addVerityUser.setVerityUser(verityTaskAllocationReq.getVerityUserId());
-            addVerityUser.setVerityNum(verityTaskSysUser1.getExtractNum()-verityTaskAllocationReq.getVerityNum());
-            voiceAnnotationService.subtractVerity(addVerityUser);
-        }
 
+        return 0;
 
-        return i;
     }
 }

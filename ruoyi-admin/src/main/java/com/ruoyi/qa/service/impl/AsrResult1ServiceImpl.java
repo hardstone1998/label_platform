@@ -15,6 +15,7 @@ import com.ruoyi.qa.domain.*;
 import com.ruoyi.qa.mapper.Class1Mapper;
 import com.ruoyi.qa.mapper.QaRelationMapper;
 import com.ruoyi.system.mapper.SysUserMapper;
+import com.ruoyi.task.domain.AddVerityUser;
 import com.ruoyi.tool.domain.LabelStatistics;
 import org.apache.poi.ss.usermodel.IconMultiStateFormatting;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -164,6 +165,21 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
         return asrResult1Mapper.updateAsrResult1(asrResult1);
     }
 
+    @Override
+    public int updateAsrResult1ByTaskAndLabelUser(AsrResult1 asrResult1) {
+        return asrResult1Mapper.updateVoiceAnnotationByTaskAndLabelUser(asrResult1);
+    }
+
+    @Override
+    public int addVerity(AddVerityUser addVerityUser) {
+        return asrResult1Mapper.addVerityUser(addVerityUser);
+    }
+
+    @Override
+    public int subtractVerity(AddVerityUser addVerityUser) {
+        return asrResult1Mapper.subtractVerity(addVerityUser);
+    }
+
     /**
      * 批量删除extract
      *
@@ -186,6 +202,139 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
     public int deleteAsrResult1ById(Long id)
     {
         return asrResult1Mapper.deleteAsrResult1ById(id);
+    }
+
+    /**
+     * 导出方式2，自动关联qa1和qa2。同时qa1和qa2也会独立导出
+     *
+     * @param asrResult1 筛选信息
+     * @return 结果
+     */
+    @Override
+    public String selectAsrResult1JsonList2(AsrResult1 asrResult1) {
+        List<AsrResult1> asrResult1s = asrResult1Mapper.selectAsrResult1ListByJson(asrResult1);
+        ArrayList<ExportResJson> exportResJsons = new ArrayList<ExportResJson>();
+        for (AsrResult1 a:asrResult1s) {
+            String qa1 = null;
+            String qa2 = null;
+            String qa3 = null;
+//            如果审核过，则使用审核过的qa对
+            if (a.getQa4()!=null){
+                qa1 = a.getQa4();
+                qa2 = a.getQa5();
+                qa3 = a.getQa6();
+            }else {
+                qa1 = a.getQa1();
+                qa2 = a.getQa2();
+                qa3 = a.getQa3();
+            }
+//            加入前面的qa对如果为空，则进行前移的机制
+            if ((qa1==null||qa1=="")&&(qa2==null||qa2=="")&&(qa3==null||qa3=="")){
+                continue;
+            }
+            for (int i = 0; i < 2; i++) {
+                if (qa1==null||qa1==""){
+                    qa1 = qa2;
+                    qa2 = qa3;
+                }
+            }
+            ExportResJson exportResJsonQ1 = new ExportResJson();
+//            添加qa1
+            if (qa1!=null&&qa1!="") {
+                qa1 = qa1.replace("客户：", "客户问：").replace("客服：", "客服回答：").replace("客服答：", "客服回答：").replace("客户询问：", "客户问：");
+                int customerAskIndex = qa1.indexOf("客户问：");
+                int customerServiceReplyIndex = qa1.indexOf("客服回答：");
+                if (customerAskIndex != -1 && customerServiceReplyIndex != -1) {
+                    String customerQuestion = qa1.substring(customerAskIndex + 4, customerServiceReplyIndex).trim();
+                    String serviceReply = qa1.substring(customerServiceReplyIndex + 5).trim();
+                    exportResJsonQ1.setInstruction(customerQuestion);
+                    exportResJsonQ1.setInput("");
+                    exportResJsonQ1.setHistory(new ArrayList<>());
+                    exportResJsonQ1.setOutput(serviceReply);
+                    System.out.println("exportResJsonQ1::"+exportResJsonQ1);
+                    exportResJsons.add(exportResJsonQ1);
+
+                } else {
+                    System.out.println("---------未找到有效的客户问和客服回答内容。" + "当前id" + a.getId());
+                }
+            }
+//            添加qa2
+            if (qa2 !=null && !qa2.equals("")) {
+                ExportResJson exportResJsonQ2 = new ExportResJson();
+                qa2 = qa2.replace("客户：", "客户问：").replace("客服：", "客服回答：").replace("客服答：", "客服回答：").replace("客户询问：", "客户问：");
+                //先检查qa2和qa1有没有关联，有关联的话将qa1加入history
+                int customerAskIndex = qa2.indexOf("客户问：");
+                int customerServiceReplyIndex = qa2.indexOf("客服回答：");
+                if (customerAskIndex != -1 && customerServiceReplyIndex != -1) {
+                    String customerQuestion = qa2.substring(customerAskIndex + 4, customerServiceReplyIndex).trim();
+                    String serviceReply = qa2.substring(customerServiceReplyIndex + 5).trim();
+
+                    exportResJsonQ2.setInstruction(customerQuestion);
+                    exportResJsonQ2.setOutput(serviceReply);
+                    exportResJsonQ2.setInput("");
+                    String qa12 = qa1;
+                    int customer2 = qa12.indexOf("客户问：");
+                    int customerService2 = qa12.indexOf("客服回答：");
+                    if (customer2 != -1 && customerService2 != -1) {
+                        String customerQuestion1 = qa12.substring(customer2 + 4, customerService2).trim();
+                        String serviceReply1 = qa12.substring(customerService2 + 5).trim();
+                        ArrayList<String> objects = new ArrayList<>();
+                        objects.add(customerQuestion1);
+                        objects.add(serviceReply1);
+                        ArrayList<List<String>> lists2 = new ArrayList<>();
+                        lists2.add(objects);
+                        exportResJsonQ2.setHistory(lists2);
+                        exportResJsons.add(exportResJsonQ2);
+                    }
+                } else {
+                    System.out.println("未找到有效的客户问和客服回答内容。");
+                }
+            }
+
+            if (qa3 !=null && !qa3.equals("")){
+                ExportResJson exportResJsonQ3 = new ExportResJson();
+                qa3 = qa3.replace("客户：", "客户问：").replace("客服：","客服回答：").replace("客服答：","客服回答：").replace("客户询问：","客户问：");
+                int customerAskIndex = qa3.indexOf("客户问：");
+                int customerServiceReplyIndex = qa3.indexOf("客服回答：");
+                if (customerAskIndex != -1 && customerServiceReplyIndex != -1) {
+                    String customerQuestion = qa3.substring(customerAskIndex + 4, customerServiceReplyIndex).trim();
+                    String serviceReply = qa3.substring(customerServiceReplyIndex + 5).trim();
+                    String qa31 = qa1;
+                    String qa32 = qa2;
+                    int customerAskIndex31 = qa31.indexOf("客户问：");
+                    int customerServiceReplyIndex31 = qa31.indexOf("客服回答：");
+                    int customerAskIndex32 = qa32.indexOf("客户问：");
+                    int customerServiceReplyIndex32 = qa32.indexOf("客服回答：");
+                    exportResJsonQ3.setInstruction(customerQuestion);
+                    exportResJsonQ3.setOutput(serviceReply);
+                    exportResJsonQ3.setInput("");
+                    if (customerAskIndex31 != -1 && customerServiceReplyIndex31 != -1) {
+                        String customerQuestion1 = qa31.substring(customerAskIndex31 + 4, customerServiceReplyIndex31).trim();
+                        String serviceReply1 = qa31.substring(customerServiceReplyIndex31 + 5).trim();
+                        String customerQuestion32 = qa32.substring(customerAskIndex32 + 4, customerServiceReplyIndex32).trim();
+                        String serviceReply32 = qa32.substring(customerServiceReplyIndex32 + 5).trim();
+
+                        ArrayList<String> objects = new ArrayList<>();
+                        objects.add(customerQuestion1);
+                        objects.add(serviceReply1);
+                        ArrayList<String> objects2 = new ArrayList<>();
+                        objects2.add(customerQuestion32);
+                        objects2.add(serviceReply32);
+                        ArrayList<List<String>> lists2 = new ArrayList<>();
+                        lists2.add(objects);
+                        lists2.add(objects2);
+                        exportResJsonQ3.setHistory(lists2);
+                        exportResJsons.add(exportResJsonQ3);
+                    }
+                } else {
+                    System.out.println("未找到有效的客户问和客服回答内容。");
+                }
+            }
+        }
+        System.out.println("exportResJsons:::"+exportResJsons);
+        String s = JSONObject.toJSONString(exportResJsons);
+
+        return s;
     }
 
     @Override
@@ -226,8 +375,9 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
                 ExportResJson exportResJsonQ2 = new ExportResJson();
                 qa2 = qa2.replace("客户：", "客户问：").replace("客服：","客服回答：").replace("客服答：","客服回答：").replace("客户询问：","客户问：");
                 Long asrResId = asrResult1s.get(i).getId();
-//                QaRelation qaRelation = qaRelationMapper.selectQaRelationByASRId(asrResId);
-                QaRelation qaRelation = new QaRelation();
+                System.out.println(asrResId);
+                QaRelation qaRelation = qaRelationMapper.selectQaRelationByASRId(asrResId);
+//                QaRelation qaRelation = new QaRelation();
                 qaRelation.setQa1(qa1);
                 qaRelation.setQa2(qa2);
                 qaRelation.setQa2(qa3);
@@ -238,13 +388,13 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
                     String customerQuestion = qa2.substring(customerAskIndex + 4, customerServiceReplyIndex).trim();
                     String serviceReply = qa2.substring(customerServiceReplyIndex + 5).trim();
 
-//                    if (qaRelation!=null){
+                    if (qaRelation!=null){
                         if (qaRelation.getQa1() !=null && qaRelation.getQa2()!=null && qaRelation.getQa3()==null){
                             exportResJsonQ2.setInstruction(customerQuestion);
                             exportResJsonQ2.setOutput(serviceReply);
                             exportResJsonQ2.setInput("");
-                            String qa12 = qaRelation.getQa1();
-//                            String qa12 = qa1;
+//                            String qa12 = qaRelation.getQa1();
+                            String qa12 = qa1;
                             int customer2= qa12.indexOf("客户问：");
                             int customerService2 = qa12.indexOf("客服回答：");
                             if (customer2 != -1 && customerService2 != -1) {
@@ -259,13 +409,13 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
                                 exportResJsons.add(exportResJsonQ2);
                             }
                         }
-//                    }else {
-//                        exportResJsonQ2.setInstruction(customerQuestion);
-//                        exportResJsonQ2.setOutput(serviceReply);
-//                        exportResJsonQ2.setInput("");
-//                        exportResJsonQ2.setHistory(new ArrayList<>());
-//                        exportResJsons.add(exportResJsonQ2);
-//                    }
+                    }else {
+                        exportResJsonQ2.setInstruction(customerQuestion);
+                        exportResJsonQ2.setOutput(serviceReply);
+                        exportResJsonQ2.setInput("");
+                        exportResJsonQ2.setHistory(new ArrayList<>());
+                        exportResJsons.add(exportResJsonQ2);
+                    }
 
                 } else {
                     System.out.println("未找到有效的客户问和客服回答内容。");
@@ -277,22 +427,22 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
                 int customerAskIndex = qa3.indexOf("客户问：");
                 int customerServiceReplyIndex = qa3.indexOf("客服回答：");
                 Long asrResId = asrResult1s.get(i).getId();
-//                QaRelation qaRelation = qaRelationMapper.selectQaRelationByASRId(asrResId);
-                QaRelation qaRelation = new QaRelation();
+                QaRelation qaRelation = qaRelationMapper.selectQaRelationByASRId(asrResId);
+//                QaRelation qaRelation = new QaRelation();
                 qaRelation.setQa1(qa1);
                 qaRelation.setQa2(qa2);
                 qaRelation.setQa2(qa3);
                 if (customerAskIndex != -1 && customerServiceReplyIndex != -1) {
-                    System.out.println(customerAskIndex);
-                    System.out.println(customerServiceReplyIndex);
+//                    System.out.println(customerAskIndex);
+//                    System.out.println(customerServiceReplyIndex);
                     String customerQuestion = qa3.substring(customerAskIndex + 4, customerServiceReplyIndex).trim();
                     String serviceReply = qa3.substring(customerServiceReplyIndex + 5).trim();
-//                    if (qaRelation!=null){
+                    if (qaRelation!=null){
                         if (qaRelation.getQa1() !=null && qaRelation.getQa2()!=null && qaRelation.getQa3()!=null){
-                            String qa31 = qaRelation.getQa1();
-                            String qa32 = qaRelation.getQa2();
-//                            String qa31 = qa1;
-//                            String qa32 = qa2;
+//                            String qa31 = qaRelation.getQa1();
+//                            String qa32 = qaRelation.getQa2();
+                            String qa31 = qa1;
+                            String qa32 = qa2;
                             int customerAskIndex31 = qa31.indexOf("客户问：");
                             int customerServiceReplyIndex31 = qa31.indexOf("客服回答：");
                             int customerAskIndex32 = qa32.indexOf("客户问：");
@@ -321,13 +471,13 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
 
                         }
 //
-//                    }else {
-//                        exportResJsonQ3.setInstruction(customerQuestion);
-//                        exportResJsonQ3.setOutput(serviceReply);
-//                        exportResJsonQ3.setInput("");
-//                        exportResJsonQ3.setHistory(new ArrayList<>());
-//                        exportResJsons.add(exportResJsonQ3);
-//                    }
+                    }else {
+                        exportResJsonQ3.setInstruction(customerQuestion);
+                        exportResJsonQ3.setOutput(serviceReply);
+                        exportResJsonQ3.setInput("");
+                        exportResJsonQ3.setHistory(new ArrayList<>());
+                        exportResJsons.add(exportResJsonQ3);
+                    }
 
 
 

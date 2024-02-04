@@ -29,7 +29,7 @@
       </el-form-item>
 
       <el-form-item label="创建时间"  prop="beginTime,endTime">
-        <el-date-picker clearable="clearTime"
+        <el-date-picker clearable=clearTime
           v-model="queryParams.queryStartTime"
           type="datetime"
           value-format="yyyy-MM-dd"
@@ -37,7 +37,7 @@
           >
         </el-date-picker>
         -
-        <el-date-picker clearable="clearTime"
+        <el-date-picker clearable=clearTime
           v-model="queryParams.queryEndTime"
           type="datetime"
           value-format="yyyy-MM-dd"
@@ -76,10 +76,10 @@
       <el-table-column label="任务类型" align="center" prop="taskClazz" />
       <el-table-column label="标注数量" align="center" prop="labelNum" />
       <el-table-column label="标注完成数量" align="center" prop="labeledNum" />
-      <el-table-column label="审核数量" align="center" prop="verityNum" />
+      <el-table-column label="召回数量" align="center" prop="recallNum" />
+      <el-table-column label="已审核数量" align="center" prop="verityNum" />
       <el-table-column label="个数准确率" align="center" prop="numberAccuracy" />
       <el-table-column label="字符准确率" align="center" prop="wordAccuracy" />
-      <!-- <el-table-column label="召回数量" align="center" prop="recallNum" /> -->
       <el-table-column label="任务创建时间" align="center" prop="createTime" />
       <el-table-column
         label="操作"
@@ -115,7 +115,7 @@
       :close-on-press-escape="false"
       append-to-body
     >
-      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+      <el-form ref="form" :model="form"  label-width="100px">
         <el-form-item  label="标注人" prop="form.labelUser">
           <el-input
             :rows="6"
@@ -184,7 +184,7 @@ export default {
       userList: [
       {
           id: 106,
-          nickname: 'user26'
+          nickname: '王达'
         },
         {
           id: 131,
@@ -319,6 +319,7 @@ export default {
       this.form.taskId = row.taskId;
       this.form.taskName = row.taskName;
       this.form.labelUser = row.userName;
+      this.form.taskClazz = row.taskClazz;
       this.open = true;
       this.title = "分配审核";
     },
@@ -348,6 +349,7 @@ export default {
       // this.reset();
       const id = row.id || this.ids
       getUser(id).then(response => {
+        console.log(response.data);
         this.form = response.data;
         this.open = true;
         this.title = "修改【请填写功能名称】";

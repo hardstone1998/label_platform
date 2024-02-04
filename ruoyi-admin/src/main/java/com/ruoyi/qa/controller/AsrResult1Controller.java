@@ -82,7 +82,8 @@ public class AsrResult1Controller extends BaseController
     @PostMapping("/export")
     public void export(HttpServletResponse response, AsrResult1 asrResult1)
     {
-        String jsonData = asrResult1Service.selectAsrResult1JsonList(asrResult1);
+//        String jsonData = asrResult1Service.selectAsrResult1JsonList(asrResult1);
+        String jsonData = asrResult1Service.selectAsrResult1JsonList2(asrResult1);
         String formattedJsonData = formatJson(jsonData);
         try (FileWriter fileWriter = new FileWriter("data.json")) {
             fileWriter.write(formattedJsonData);
