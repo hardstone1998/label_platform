@@ -54,5 +54,7 @@ public class Task extends BaseEntity
     @Excel(name = "个数准确率")
     private Long numberAccuracy;
 
+    /** 任务负责人 */
+    @Excel(name = "任务负责人")
     private Long responsiblePersonId;
 }

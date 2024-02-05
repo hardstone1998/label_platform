@@ -107,6 +107,7 @@ public class TaskServiceImpl implements ITaskService
         task1.setDesc(task.getDesc());
         task1.setCreateTime(DateUtils.getNowDate());
         task1.setUpdateTime(DateUtils.getNowDate());
+        task1.setResponsiblePersonId(task.getResponsiblePersonId());
 
         int i = taskMapper.insertTask(task1);
         if (i<=0)throw new RuntimeException("任务插入失败");
@@ -178,6 +179,7 @@ public class TaskServiceImpl implements ITaskService
         task1.setDesc(task.getDesc());
         task1.setCreateTime(DateUtils.getNowDate());
         task1.setUpdateTime(DateUtils.getNowDate());
+        task1.setResponsiblePersonId(task.getResponsiblePersonId());
 
         int i = taskMapper.insertTask(task1);
         int taskId = task1.getId();

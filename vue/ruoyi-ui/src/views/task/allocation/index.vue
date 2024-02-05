@@ -332,6 +332,16 @@
       <el-form-item label="任务类型" prop="clazz">
         <el-input v-model="form.clazz" placeholder="请输入任务类型" readonly />
       </el-form-item>
+      <el-form-item label="任务负责人" prop="responsiblePersonId">
+        <el-select v-model="form.responsiblePersonId" placeholder="请选择任务负责人">
+          <el-option
+            v-for="user in userList"
+            :key="user.id"
+            :label="user.nickname"
+            :value="user.id"
+          />
+        </el-select>
+      </el-form-item>
     </el-form>
 
     <!-- User and Task Assignment Section -->
@@ -392,12 +402,22 @@
   <!-- 一键分配对话框 -->
   <el-dialog :title="task_title" :visible.sync="taskOpen" width="80%"  append-to-body>
     <!-- Task Form -->
-    <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+    <el-form ref="form" :model="form" :rules="rules" label-width="100px">
       <el-form-item label="任务名" prop="name">
         <el-input v-model="form.name" placeholder="请输入任务名" />
       </el-form-item>
       <el-form-item label="任务描述" prop="desc">
         <el-input v-model="form.desc" type="textarea" placeholder="请输入内容" />
+      </el-form-item>
+      <el-form-item label="任务负责人" prop="responsiblePersonId">
+      <el-select v-model="form.responsiblePersonId" placeholder="请选择用户">
+          <el-option
+            v-for="user in userList"
+            :key="user.id"
+            :label="user.nickname"
+            :value="user.id"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="分配方式" prop="way">
         <el-select v-model="way" placeholder="请选择分配方式" disabled>
@@ -694,7 +714,8 @@ export default {
         name: null,
         desc: null,
         clazz: null,
-        userTaskRows: null
+        userTaskRows: null,
+        responsiblePersonId: null
       };
       this.resetForm("form");
     },
@@ -736,6 +757,7 @@ export default {
             updateTask(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
+              this.taskOpen = false;
               this.getList();
             });
           } else {
@@ -743,6 +765,7 @@ export default {
             addTask(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
+              this.taskOpen = false;
               this.getList();
             });
           }

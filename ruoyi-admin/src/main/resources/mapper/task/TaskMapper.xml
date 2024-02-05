@@ -48,6 +48,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="numberAccuracy != null">number_accuracy,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
+            <if test="responsiblePersonId != null">responsible_person_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="name != null and name != ''">#{name},</if>
@@ -59,6 +60,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="numberAccuracy != null">#{numberAccuracy},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
+            <if test="responsiblePersonId != null">#{responsiblePersonId},</if>
          </trim>
     </insert>
 

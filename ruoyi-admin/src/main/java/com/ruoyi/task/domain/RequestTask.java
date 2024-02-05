@@ -27,4 +27,8 @@ public class RequestTask {
     private Long clazz;
 
     private List<TaskAllocationUser> taskAllocationUser;
+
+    /** 任务负责人 */
+    @Excel(name = "任务负责人")
+    private Long responsiblePersonId;
 }
