@@ -9,9 +9,13 @@ import com.ruoyi.qa.mapper.Class1Mapper;
 import com.ruoyi.qa.mapper.QaRelationMapper;
 import com.ruoyi.qa.service.IAsrResult1Service;
 import com.ruoyi.system.mapper.SysUserMapper;
+import com.ruoyi.system.service.ISysUserService;
+import com.ruoyi.task.service.IVerityTaskSysUserService;
 import com.ruoyi.verity.mapper.VerityQaMapper;
 import com.ruoyi.verity.service.IVerityQaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,9 +38,15 @@ public class VerityQaServiceImpl implements IVerityQaService
     @Autowired
     private QaRelationMapper qaRelationMapper;
 
+    @Value("${label.verity.qa-error-num}")
+    public int qaErrorNum;
+
 
     @Autowired
     private SysUserMapper sysUserMapper;
+
+    @Autowired
+    private ISysUserService sysUserService;
 
     /**
      * 查询extract
@@ -53,7 +63,7 @@ public class VerityQaServiceImpl implements IVerityQaService
         if (qaRelation!=null){
             String s = JSONObject.toJSONString(qaRelation);
             JSONObject jsonObject = JSONObject.parseObject(s);
-            asrResult1.setQaRelation(jsonObject);
+//            asrResult1.setQaRelation(jsonObject);
         }
         String qaMark = asrResult1.getQaMark();
 
@@ -90,11 +100,10 @@ public class VerityQaServiceImpl implements IVerityQaService
     public List<AsrResult1> selectVerityQaList(AsrResult1 asrResult1)
     {
 
-        if (asrResult1.getTaskOwner().equals("admin")){
+        if (1L==asrResult1.getVerityUser()){
             List<AsrResult1> asrResult1s = verityQaMapper.selectAsrResult1List(asrResult1);
             return asrResult1s;
         }else {
-            System.out.println(asrResult1);
             return verityQaMapper.selectAsrResult1ListByOwner(asrResult1);
         }
 
@@ -118,40 +127,48 @@ public class VerityQaServiceImpl implements IVerityQaService
      *
      * @param asrResult1 extract
      * @return 结果
-     * todo
      */
     @Transactional
     @Override
     public int updateVerityQa(AsrResult1 asrResult1)
     {
-        System.out.println("asrResult1:"+asrResult1);
-        asrResult1.setUpdateTime(DateUtils.getNowDate());
-        String qa1 = asrResult1.getQa1();
-        String qa2 = asrResult1.getQa2();
-        String qa3 = asrResult1.getQa3();
-        String qa_sum="";
-        if (!qa1.equals("")){
-            qa_sum+=qa1+"\n";
+        System.out.println(asrResult1);
+        AsrResult1 asrResult11 = new AsrResult1();
+        asrResult11.setUpdateTime(DateUtils.getNowDate());
+        asrResult11.setQa4(asrResult1.getQa1());
+        asrResult11.setQa5(asrResult1.getQa2());
+        asrResult11.setQa6(asrResult1.getQa6());
+        SysUser sysUser = sysUserService.selectUserByUserName(asrResult1.getReqUser());
+        asrResult11.setVerityUser(sysUser.getUserId());
+        asrResult11.setVerityTime(DateUtils.getNowDate());
+        asrResult11.setVerityFeedback(asrResult1.getVerityFeedback());
+        AsrResult1 asrResult12 = verityQaMapper.selectAsrResult1ById(asrResult1.getId());
+        int errNum = 0;
+        int qaNum = 0;
+        if (asrResult12.getQa1()!=null&&!"".equals(asrResult12.getQa1())){
+            qaNum++;
+            if (!asrResult12.getQa1().equals(asrResult11.getQa4()))
+            errNum++;
         }
-        if (!qa2.equals("")){
-            qa_sum+=qa2+"\n";
+        if (asrResult12.getQa2()!=null&&!"".equals(asrResult12.getQa2())){
+            qaNum++;
+            if (!asrResult12.getQa2().equals(asrResult11.getQa5()))
+                errNum++;
         }
-        if(!qa3.equals("")){
-            qa_sum+=qa3+"\n";
+        if (asrResult12.getQa3()!=null&&!"".equals(asrResult12.getQa3())){
+            qaNum++;
+            if (!asrResult12.getQa3().equals(asrResult11.getQa6()))
+                errNum++;
         }
-
-        asrResult1.setQaSum(qa_sum);
-        asrResult1.setIsMark("是");
-
-        String qaExtract = asrResult1.getMarkresult();
-        asrResult1.setQaMark(qaExtract);
-        String taskOwner = asrResult1.getTaskOwner();
-        SysUser sysUser = sysUserMapper.selectUserByUserName(taskOwner);
-        asrResult1.setLabelUser(sysUser.getUserId());
-        asrResult1.setLabelTime(DateUtils.getNowDate());
-        asrResult1.setClazzId(Long.valueOf(asrResult1.getCuda()));
-        System.out.println("cuda结果是----------》"+asrResult1.getCuda());
-        return verityQaMapper.updateAsrResult1(asrResult1);
+        qaNum++;
+        if (asrResult1.getClazzId()!=asrResult12.getClazzId()){
+            errNum++;
+        }
+        asrResult11.setIsPass(qaErrorNum>=errNum?1:0);
+        asrResult11.setAccuracy((long) (100.0*(qaNum-errNum)/qaNum));
+        asrResult11.setVerityClazzId(asrResult1.getClazzId());
+        asrResult11.setId(asrResult1.getId());
+        return verityQaMapper.updateAsrResult1(asrResult11);
     }
 
     /**

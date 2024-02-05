@@ -114,4 +114,5 @@ label:
   update:
     directory: 'AudioPath'
   verity:
-    error-rate: 0.0
+    asr-error-rate: 0.0
+    qa-error-num: 0

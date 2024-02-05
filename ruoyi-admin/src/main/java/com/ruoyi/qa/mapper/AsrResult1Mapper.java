@@ -61,7 +61,8 @@ public interface AsrResult1Mapper
     public int updateAsrResult1ByClazzId(AsrResult1 asrResult1);
 
 
-    public int updateVoiceAnnotationByTaskAndLabelUser(AsrResult1 asrResult1);
+    public int updateAsrResult1VerityUser(AsrResult1 asrResult1);
+    public int updateAsrResult1ByTaskAndLabelUser(AsrResult1 asrResult1);
 
     public int addVerityUser(AddVerityUser addVerityUser);
 

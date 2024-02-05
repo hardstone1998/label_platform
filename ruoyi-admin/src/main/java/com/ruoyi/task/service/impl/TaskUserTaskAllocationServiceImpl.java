@@ -166,7 +166,6 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
      *
      * @param verityTaskAllocationReq
      * @return 结果
-     * todo 修改时存在错误
      */
     @Override
     @Transactional
@@ -221,7 +220,7 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
             }
 
             Long reqNum = verityTaskAllocationReq.getVerityNum();
-            int verityNum1 = voiceAnnotationService.selectVoiceAnnotationCount(voiceAnnotation).getVerityNum();
+            int verityNum1 = voiceAnnotationService.selectVoiceAnnotationCount(voiceAnnotation).getRecallNum();
             System.out.println("---------");
             System.out.println(verityNum1);
             System.out.println(reqNum);
@@ -230,7 +229,7 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
                 v.setVerityUser(verityTaskSysUser.getVerityUserId());
                 v.setTaskId(verityTaskAllocationReq.getTaskId());
                 v.setLabelUser(verityTaskAllocationReq.getLabelUserId());
-                voiceAnnotationService.updateVoiceAnnotationByTaskAndLabelUser(v);
+                voiceAnnotationService.updateVoiceAnnotationVerityUser(v);
             }
 
             if (reqNum >verityNum1){
@@ -300,10 +299,10 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
                 a.setVerityUser(verityTaskSysUser.getVerityUserId());
                 a.setTaskId(verityTaskAllocationReq.getTaskId());
                 a.setLabelUser(verityTaskAllocationReq.getLabelUserId());
-                asrResult1Service.updateAsrResult1ByTaskAndLabelUser(a);
+                asrResult1Service.updateAsrResult1VerityUser(a);
             }
             Long reqNum = verityTaskAllocationReq.getVerityNum();
-            int verityNum1 = asrResult1Service.selectAsrResult1Count(asrResult1).getVerityNum();
+            int verityNum1 = asrResult1Service.selectAsrResult1Count(asrResult1).getRecallNum();
             System.out.println("---------");
             System.out.println(verityNum1);
             System.out.println(reqNum);

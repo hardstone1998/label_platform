@@ -182,9 +182,14 @@ export default {
       }
       ],
       userList: [
-      {
+        
+        {
           id: 106,
           nickname: '王达'
+        },
+        {
+          id: 130,
+          nickname: 'user25'
         },
         {
           id: 131,

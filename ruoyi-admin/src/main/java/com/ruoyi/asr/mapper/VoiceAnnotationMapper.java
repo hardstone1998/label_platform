@@ -64,6 +64,9 @@ public interface VoiceAnnotationMapper
     public int updateVoiceAnnotationByClazzId(VoiceAnnotation voiceAnnotation);
 
 
+//    updateVoiceAnnotationVerityUser
+    public int updateVoiceAnnotationVerityUser(VoiceAnnotation voiceAnnotation);
+
     public int updateVoiceAnnotationByTaskAndLabelUser(VoiceAnnotation voiceAnnotation);
 
     /**

@@ -244,6 +244,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="updateNum != null">#{updateNum}</if>
     </update>
 
+    <update id="updateVoiceAnnotationVerityUser" parameterType="com.ruoyi.asr.domain.VoiceAnnotation">
+        update voice_annotation
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="verityUser != null">verity_user = #{verityUser},</if>
+        </trim>
+        <where>
+            <if test="taskId != null"> and task_id = #{taskId}</if>
+            <if test="taskOwner != null"> and task_owner = #{taskOwner}</if>
+            <if test="labelUser != null"> and label_user = #{labelUser}</if>
+        </where>
+        and verity_user is not null
+    </update>
+
 <!--    updateVoiceAnnotationByTaskAndLabelUser-->
     <update id="updateVoiceAnnotationByTaskAndLabelUser" parameterType="com.ruoyi.asr.domain.VoiceAnnotation">
         update voice_annotation

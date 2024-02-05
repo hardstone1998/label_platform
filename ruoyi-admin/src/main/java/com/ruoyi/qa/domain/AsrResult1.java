@@ -99,7 +99,7 @@ public class AsrResult1 extends BaseEntity
 
     }
 
-    private JSONObject qaRelation;
+//    private JSONObject qaRelation;
 
     /** 标注任务所属人 */
     private String taskOwner;
@@ -125,6 +125,8 @@ public class AsrResult1 extends BaseEntity
     private Long accuracy;
 
     private Long verityClazzId;
+
+    private String reqUser;
     public String getQaSum() {
         return qaSum;
     }

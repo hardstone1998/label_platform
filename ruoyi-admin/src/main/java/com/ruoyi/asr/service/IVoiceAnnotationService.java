@@ -47,6 +47,15 @@ public interface IVoiceAnnotationService
      */
     public int updateVoiceAnnotation(VoiceAnnotation voiceAnnotation);
 
+//    updateVoiceAnnotationVerityUser
+    /**
+     * 修改审核用户
+     *
+     * @param voiceAnnotation 标注
+     * @return 结果
+     */
+    public int updateVoiceAnnotationVerityUser(VoiceAnnotation voiceAnnotation);
+
     /**
      * 修改标注
      *

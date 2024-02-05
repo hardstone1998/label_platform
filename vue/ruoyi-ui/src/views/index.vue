@@ -785,7 +785,6 @@ export default {
       // this.form.selectTags=this.checkedCities;
       this.$refs["form"].validate((valid) => {
         if (valid) {
-          
           console.log(this.form);
           updateAnnotation(this.form).then((response) => {
             this.$modal.msgSuccess("标注成功");

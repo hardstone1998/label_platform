@@ -192,6 +192,11 @@ public class VoiceAnnotationServiceImpl implements IVoiceAnnotationService
     }
 
     @Override
+    public int updateVoiceAnnotationVerityUser(VoiceAnnotation voiceAnnotation) {
+        return voiceAnnotationMapper.updateVoiceAnnotationVerityUser(voiceAnnotation);
+    }
+
+    @Override
     public int updateVoiceAnnotationByTaskAndLabelUser(VoiceAnnotation voiceAnnotation) {
         return voiceAnnotationMapper.updateVoiceAnnotationByTaskAndLabelUser(voiceAnnotation);
     }

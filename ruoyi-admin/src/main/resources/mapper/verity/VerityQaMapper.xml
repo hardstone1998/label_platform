@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.qa.mapper.AsrResult1Mapper">
+<mapper namespace="com.ruoyi.verity.mapper.VerityQaMapper">
 
     <resultMap type="AsrResult1" id="AsrResult1Result">
         <result property="id"    column="id"    />
@@ -91,6 +91,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="taskId != null  and taskId != ''"> and task_id = #{taskId}</if>
             <if test="isPass != null  and isPass != ''"> and is_pass = #{isPass}</if>
             <if test="clazzId != null  and clazzId != ''"> and (cuda = #{clazzId} or clazz_id = #{clazzId})</if>
+            <if test="verityUser != null  and verityUser != ''"> and verity_user = #{verityUser}</if>
         </where>
 
     </select>
@@ -173,21 +174,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="updateNum != null">#{updateNum}</if>
     </update>
 
-    <update id="updateAsrResult1VerityUser" parameterType="AsrResult1">
-        update asr_result_1
-        <trim prefix="SET" suffixOverrides=",">
-            <if test="verityUser != null">verity_user = #{verityUser},</if>
-        </trim>
-        <where>
-            <if test="taskId != null"> and task_id = #{taskId}</if>
-            <if test="taskOwner != null"> and task_owner = #{taskOwner}</if>
-            <if test="labelUser != null"> and label_user = #{labelUser}</if>
-        </where>
-        and verity_user is not null
-    </update>
-
 <!--    updateVoiceAnnotationByTaskAndLabelUser-->
-    <update id="updateAsrResult1ByTaskAndLabelUser" parameterType="AsrResult1">
+    <update id="updateVoiceAnnotationByTaskAndLabelUser" parameterType="AsrResult1">
         update asr_result_1
         <trim prefix="SET" suffixOverrides=",">
             <if test="audioPath != null">audio_path = #{audioPath},</if>
@@ -221,28 +209,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateAsrResult1" parameterType="AsrResult1">
         update asr_result_1
         <trim prefix="SET" suffixOverrides=",">
-            <if test="audioPath != null and audioPath != ''">audio_path = #{audioPath},</if>
-            <if test="result != null and result != ''">result = #{result},</if>
-            <if test="cuda != null  and cuda != ''">cuda = #{cuda},</if>
-            <if test="audioTime != null">audio_time = #{audioTime},</if>
-            <if test="execTime != null">exec_time = #{execTime},</if>
-            <if test="createTime != null">create_time = #{createTime},</if>
-            <if test="qa1 != null ">qa_1 = #{qa1},</if>
-            <if test="qa2 != null ">qa_2 = #{qa2},</if>
-            <if test="qa3 != null ">qa_3 = #{qa3},</if>
             <if test="qa4 != null ">qa_4 = #{qa4},</if>
             <if test="qa5 != null ">qa_5 = #{qa5},</if>
             <if test="qa6 != null ">qa_6 = #{qa6},</if>
-            <if test="isMark != null and isMark != ''">is_mark = #{isMark},</if>
-            <if test="qaSum != null">qa_sum = #{qaSum},</if>
-            <if test="qaMark != null and qaMark != ''">qa_mark = #{qaMark},</if>
             <if test="updateTime != null ">update_time = #{updateTime},</if>
-            <if test="taskOwner != null and taskOwner != ''">task_owner = #{taskOwner},</if>
-            <if test="taskId != null">task_id = #{taskId},</if>
-            <if test="clazzId != null">clazz_id = #{clazzId},</if>
-            <if test="labelUser != null">label_user = #{labelUser},</if>
             <if test="verityUser != null">verity_user = #{verityUser},</if>
-            <if test="labelTime != null">label_time = #{labelTime},</if>
             <if test="verityTime != null">verity_time = #{verityTime},</if>
             <if test="isPass != null">is_pass = #{isPass},</if>
             <if test="verityFeedback != null">verity_feedback = #{verityFeedback},</if>

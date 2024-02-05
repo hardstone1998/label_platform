@@ -30,7 +30,7 @@ public class VerityAsrServiceImpl implements IVerityAsrService
     @Autowired
     private SysUserMapper sysUserMapper;
 
-    @Value("${label.verity.error-rate}")
+    @Value("${label.verity.asr-error-rate}")
     public double errorRate;
 
     /**

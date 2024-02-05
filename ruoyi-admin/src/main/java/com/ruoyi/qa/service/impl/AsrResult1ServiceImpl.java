@@ -60,7 +60,7 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
         if (qaRelation!=null){
             String s = JSONObject.toJSONString(qaRelation);
             JSONObject jsonObject = JSONObject.parseObject(s);
-            asrResult1.setQaRelation(jsonObject);
+//            asrResult1.setQaRelation(jsonObject);
         }
         String qaMark = asrResult1.getQaMark();
 
@@ -167,7 +167,12 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
 
     @Override
     public int updateAsrResult1ByTaskAndLabelUser(AsrResult1 asrResult1) {
-        return asrResult1Mapper.updateVoiceAnnotationByTaskAndLabelUser(asrResult1);
+        return asrResult1Mapper.updateAsrResult1ByTaskAndLabelUser(asrResult1);
+    }
+
+    @Override
+    public int updateAsrResult1VerityUser(AsrResult1 asrResult1) {
+        return asrResult1Mapper.updateAsrResult1VerityUser(asrResult1);
     }
 
     @Override
@@ -296,7 +301,7 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
                 qa3 = qa3.replace("客户：", "客户问：").replace("客服：","客服回答：").replace("客服答：","客服回答：").replace("客户询问：","客户问：");
                 int customerAskIndex = qa3.indexOf("客户问：");
                 int customerServiceReplyIndex = qa3.indexOf("客服回答：");
-                if (customerAskIndex != -1 && customerServiceReplyIndex != -1) {
+                if (customerAskIndex > -1 && customerServiceReplyIndex > -1) {
                     String customerQuestion = qa3.substring(customerAskIndex + 4, customerServiceReplyIndex).trim();
                     String serviceReply = qa3.substring(customerServiceReplyIndex + 5).trim();
                     String qa31 = qa1;
@@ -305,10 +310,11 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
                     int customerServiceReplyIndex31 = qa31.indexOf("客服回答：");
                     int customerAskIndex32 = qa32.indexOf("客户问：");
                     int customerServiceReplyIndex32 = qa32.indexOf("客服回答：");
+//                    if (customerServiceReplyIndex32<customerAskIndex32)continue;
                     exportResJsonQ3.setInstruction(customerQuestion);
                     exportResJsonQ3.setOutput(serviceReply);
                     exportResJsonQ3.setInput("");
-                    if (customerAskIndex31 != -1 && customerServiceReplyIndex31 != -1) {
+                    if (customerAskIndex31 != -1 && customerServiceReplyIndex31 != -1&&customerAskIndex32 != -1 && customerServiceReplyIndex32 != -1) {
                         String customerQuestion1 = qa31.substring(customerAskIndex31 + 4, customerServiceReplyIndex31).trim();
                         String serviceReply1 = qa31.substring(customerServiceReplyIndex31 + 5).trim();
                         String customerQuestion32 = qa32.substring(customerAskIndex32 + 4, customerServiceReplyIndex32).trim();
@@ -331,7 +337,6 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
                 }
             }
         }
-        System.out.println("exportResJsons:::"+exportResJsons);
         String s = JSONObject.toJSONString(exportResJsons);
 
         return s;

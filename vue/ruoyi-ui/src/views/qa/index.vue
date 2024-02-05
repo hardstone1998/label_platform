@@ -555,9 +555,9 @@ export default {
   },
 
     sentenceTrim(){
-      this.form.qa1 = this.form.qa1.replaceAll(" ","").replaceAll(",","，").replaceAll("?","？").replaceAll(".","。").replaceAll("/n","").replaceAll("，，","，").replaceAll("。。","。").replaceAll("？？","？").replaceAll("，。","，").replaceAll(":","：").replaceAll("客户：","客户问：").replaceAll("客服：","客服答：").replaceAll("客户询问：","客户问：").replaceAll("客服回答：","客服答：");
-      this.form.qa2 = this.form.qa2.replaceAll(" ","").replaceAll(",","，").replaceAll("?","？").replaceAll(".","。").replaceAll("/n","").replaceAll("，，","，").replaceAll("。。","。").replaceAll("？？","？").replaceAll("，。","，").replaceAll(":","：").replaceAll("客户：","客户问：").replaceAll("客服：","客服答：").replaceAll("客户询问：","客户问：").replaceAll("客服回答：","客服答：");
-      this.form.qa3 = this.form.qa3.replaceAll(" ","").replaceAll(",","，").replaceAll("?","？").replaceAll(".","。").replaceAll("/n","").replaceAll("，，","，").replaceAll("。。","。").replaceAll("？？","？").replaceAll("，。","，").replaceAll(":","：").replaceAll("客户：","客户问：").replaceAll("客服：","客服答：").replaceAll("客户询问：","客户问：").replaceAll("客服回答：","客服答：");
+      this.form.qa1 = this.form.qa1.replaceAll(" ","").replaceAll(",","，").replaceAll("?","？").replaceAll("/n","").replaceAll("，，","，").replaceAll("。。","。").replaceAll("？？","？").replaceAll("，。","，").replaceAll(":","：").replaceAll("客户：","客户问：").replaceAll("客服：","客服答：").replaceAll("客户询问：","客户问：").replaceAll("客服回答：","客服答：");
+      this.form.qa2 = this.form.qa2.replaceAll(" ","").replaceAll(",","，").replaceAll("?","？").replaceAll("/n","").replaceAll("，，","，").replaceAll("。。","。").replaceAll("？？","？").replaceAll("，。","，").replaceAll(":","：").replaceAll("客户：","客户问：").replaceAll("客服：","客服答：").replaceAll("客户询问：","客户问：").replaceAll("客服回答：","客服答：");
+      this.form.qa3 = this.form.qa3.replaceAll(" ","").replaceAll(",","，").replaceAll("?","？").replaceAll("/n","").replaceAll("，，","，").replaceAll("。。","。").replaceAll("？？","？").replaceAll("，。","，").replaceAll(":","：").replaceAll("客户：","客户问：").replaceAll("客服：","客服答：").replaceAll("客户询问：","客户问：").replaceAll("客服回答：","客服答：");
       if(this.form.qa1==null||this.form.qa1==""){
         this.form.qa1 = this.form.qa2;
         this.form.qa2 = this.form.qa3;

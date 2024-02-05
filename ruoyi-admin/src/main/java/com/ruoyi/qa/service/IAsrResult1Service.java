@@ -64,6 +64,14 @@ public interface IAsrResult1Service
     public int updateAsrResult1ByTaskAndLabelUser(AsrResult1 asrResult1);
 
     /**
+     * 通过任务id和标注人审核人
+     *
+     * @param asrResult1 extract
+     * @return 结果
+     */
+    public int updateAsrResult1VerityUser(AsrResult1 asrResult1);
+
+    /**
      * 修改标注 增加
      *
      * @param addVerityUser 标注

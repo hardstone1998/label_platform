@@ -298,13 +298,11 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
 
-        <el-cascader
-          v-model="sevalue"
-          placeholder="选择问题分类"
-          
-          :options="options"
-          :props="props"
-          @change="handleChange"
+        <el-cascader 
+            v-model="sevalue"
+            placeholder="选择问题分类"
+            :options="formatClazzList(clazzList)"
+            @change="handleChange"
         ></el-cascader>
 
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -317,19 +315,20 @@
 <script>
 
 import {
-  listExtract,
-  getExtract,
+  listVerityQa,
   delExtract,
   addExtract,
-  optionsExtract,
   updateExtract,
+} from "@/api/verity/qa";
+import {
+  getExtract,
 } from "@/api/qa/extract";
 import {
   updateVerityQa
 }  from "@/api/verity/qa"
-// import {
-//   optionsExtract
-// } from "@/api/qa/extract";
+import {
+  optionsExtract
+} from "@/api/qa/extract";
 
 // import {addTag, updateTag } from "@/api/asr/tag";
 import markAsr from "@/views/markAsr.vue";
@@ -481,6 +480,25 @@ export default {
   },
 
   methods: {
+    formatClazzList(clazzList) { 
+    // 将 clazzList 格式化为适用于 el-cascader 的 options 数据 
+    return clazzList.map(clazz => ({ 
+        value: clazz.id, 
+        label: clazz.label, // 可根据实际情况调整 label 属性 
+        children: formatChildren(clazz.children)
+    }));
+    
+    function formatChildren(children) { 
+      if (!children || children.length === 0) {
+          return undefined;  // 如果子类为空，返回 undefined 或者可以根据实际需求返回其他合适的值
+        }
+        return children.map(child => ({
+            value: child.id, 
+            label: child.label, 
+            children: formatChildren(child.children)
+        })); 
+      }
+    },
     // 控制音乐暂停
     pause() {
       const audio = this.$refs.audio2;
@@ -555,18 +573,19 @@ export default {
     }
   },
   handleChange2(value) {
-     
-     this.getvalue=value[value.length-1]
-     this.queryParams.cuda=this.getvalue
-    // console.log("查询的分类id：",this.getvalue);
-     },
+      this.queryParams.clazzId=value[value.length-1]
+      // this.getvalue=value[value.length-1]
+      // this.queryParams.cuda=this.getvalue
+     // console.log("查询的分类id：",this.getvalue);
+      },
 
-   handleChange(value) {
-     this.sevalue=value;
+    handleChange(value) {
+      this.form.clazzId = value[value.length-1]
+      // this.sevalue=value;
 
-     this.selectvalue=this.sevalue[this.sevalue.length-1]
-     //console.log(this.sevalue);
-     },
+      // this.selectvalue=this.sevalue[this.sevalue.length-1]
+      //console.log(this.sevalue);
+      },
 
     getClazz(){
       var userName = this.$store.state.user.name;
@@ -588,7 +607,7 @@ export default {
       this.loading = true;
       this.queryParams.taskOwner = this.$store.state.user.name;
       console.log(this.queryParams);
-      listExtract(this.queryParams).then((response) => {
+      listVerityQa(this.queryParams).then((response) => {
         this.verityQaList = response.rows;
        // console.log("返回结果",response.rows)
         this.total = response.total;
@@ -740,10 +759,8 @@ export default {
       getExtract(id).then((response) => {
         
         this.form = response.data;
-        this.sevalue=response.data.classPath
-      //  console.log(response.data)
-  
-       // this.options=response.data.options;
+        this.sevalue=response.data.classPath;
+        this.form.qaSum = null;
         const parts = this.form.audioPath.split("/");
         this.audioName = parts[parts.length - 1];
         this.formatCurrentTime = this.formatTime(this.currentTime);
@@ -777,6 +794,7 @@ export default {
           if (this.form.id != null) {
             this.form.result = null;
             this.form.cuda=this.selectvalue.toString();
+            this.form.reqUser = this.$store.state.user.name;
             updateVerityQa(this.form).then((response) => {
              // console.log("提交数据",this.form)
               this.$modal.msgSuccess("修改成功");
