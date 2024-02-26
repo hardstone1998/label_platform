@@ -145,4 +145,8 @@ public class AsrResult1 extends BaseEntity
 
     private String isMark;
 
+    private String labelUserName;
+
+    private Integer insertBatchId;
+
 }

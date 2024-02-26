@@ -155,8 +155,8 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
 
         String qaExtract = asrResult1.getMarkresult();
         asrResult1.setQaMark(qaExtract);
-        String taskOwner = asrResult1.getTaskOwner();
-        SysUser sysUser = sysUserMapper.selectUserByUserName(taskOwner);
+        String labelUserName = asrResult1.getLabelUserName();
+        SysUser sysUser = sysUserMapper.selectUserByUserName(labelUserName);
         asrResult1.setLabelUser(sysUser.getUserId());
         asrResult1.setLabelTime(DateUtils.getNowDate());
         if (asrResult1.getClazzId()!=null) asrResult1.setCuda(asrResult1.getClazzId().toString());

@@ -29,6 +29,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="verity"    column="verity"    />
         <result property="accuracy"    column="accuracy"    />
         <result property="verityText"    column="verity_text"    />
+        <result property="insertBatchId"    column="insert_batch_id"    />
     </resultMap>
     <sql id="selectVoiceAnnotationVo">
         select id, audio_path, audio_name, pre_text, after_text, is_use, task_owner, is_mask, cer, tags, create_time, update_time, audio_time, audio_lenth, clazz_id, task_id, label_user, verity_user, label_time, verity_time, is_pass, verity, accuracy, verity_text from voice_annotation
@@ -46,6 +47,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="labelUser != null "> and label_user = #{labelUser}</if>
             <if test="verityUser != null "> and verity_user = #{verityUser}</if>
             <if test="isPass != null "> and is_pass = #{isPass}</if>
+            <if test="insertBatchId != null "> and insert_batch_id = #{insertBatchId}</if>
         </where>
     </select>
 
@@ -66,6 +68,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="labelUser != null "> and label_user = #{labelUser}</if>
             <if test="verityUser != null "> and verity_user = #{verityUser}</if>
             <if test="isPass != null "> and is_pass = #{isPass}</if>
+            <if test="insertBatchId != null "> and insert_batch_id = #{insertBatchId}</if>
         </where>
     </select>
 <!--    selectVoiceAnnotationCount-->
@@ -162,8 +165,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateVoiceAnnotation" parameterType="com.ruoyi.asr.domain.VoiceAnnotation">
         update voice_annotation
         <trim prefix="SET" suffixOverrides=",">
-            <if test="audioPath != null">audio_path = #{audioPath},</if>
-            <if test="audioName != null">audio_name = #{audioName},</if>
+<!--            <if test="audioPath != null">audio_path = #{audioPath},</if>-->
+<!--            <if test="audioName != null">audio_name = #{audioName},</if>-->
             <if test="afterText != null">after_text = #{afterText},</if>
             <if test="isUse != null">is_use = #{isUse},</if>
             <if test="taskOwner != null">task_owner = #{taskOwner},</if>
@@ -214,8 +217,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateVoiceAnnotationByClazzId" parameterType="com.ruoyi.asr.domain.VoiceAnnotation">
         update voice_annotation
         <trim prefix="SET" suffixOverrides=",">
-            <if test="audioPath != null">audio_path = #{audioPath},</if>
-            <if test="audioName != null">audio_name = #{audioName},</if>
+<!--            <if test="audioPath != null">audio_path = #{audioPath},</if>-->
+<!--            <if test="audioName != null">audio_name = #{audioName},</if>-->
             <if test="afterText != null">after_text = #{afterText},</if>
             <if test="isUse != null">is_use = #{isUse},</if>
             <if test="taskOwner != null">task_owner = #{taskOwner},</if>
@@ -261,8 +264,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateVoiceAnnotationByTaskAndLabelUser" parameterType="com.ruoyi.asr.domain.VoiceAnnotation">
         update voice_annotation
         <trim prefix="SET" suffixOverrides=",">
-            <if test="audioPath != null">audio_path = #{audioPath},</if>
-            <if test="audioName != null">audio_name = #{audioName},</if>
+<!--            <if test="audioPath != null">audio_path = #{audioPath},</if>-->
+<!--            <if test="audioName != null">audio_name = #{audioName},</if>-->
             <if test="afterText != null">after_text = #{afterText},</if>
             <if test="isUse != null">is_use = #{isUse},</if>
             <if test="isMark != null">is_mask = #{isMark},</if>

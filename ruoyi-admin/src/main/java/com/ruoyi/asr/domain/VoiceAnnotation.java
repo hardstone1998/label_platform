@@ -66,7 +66,6 @@ public class VoiceAnnotation extends BaseEntity
     private String labelUserName;
 
 
-
     private Date labelTime;
 
     private Date verityTime;
@@ -106,4 +105,6 @@ public class VoiceAnnotation extends BaseEntity
     private String verityText;
 
     private Long verityClazzId;
+
+    private Integer insertBatchId;
 }

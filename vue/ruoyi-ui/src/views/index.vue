@@ -103,6 +103,17 @@
         </el-select>
       </el-form-item>
 
+      <el-form-item label="插入批次" prop="insertBatch" >
+        <el-select v-model="queryParams.insertBatchId" placeholder="请选择插入批次">
+          <el-option
+            v-for="batch in insertBatch"
+            :key="batch.id"
+            :label="batch.name"
+            :value="batch.id"
+          />
+        </el-select>
+      </el-form-item>
+
 
       <el-form-item>
         <el-button
@@ -393,6 +404,7 @@ import {
   optionsExtract
 } from "@/api/qa/extract";
 
+import {listBatch } from "@/api/total/batch";
 import {addTag, updateTag } from "@/api/asr/tag";
 import markAsr from "./markAsr.vue";
 // import {allTask} from "@/api/task/allocation"
@@ -405,6 +417,7 @@ export default {
   components: { markAsr },
   data() {
     return {
+      insertBatch: [],
       isMark: [
         {
           id:"否",
@@ -488,6 +501,7 @@ export default {
         selectedTask: null,
         isPass: null,
         taskId :null,
+        insertBatchId :null
       },
       // 表单参数
       form: {},
@@ -527,9 +541,17 @@ export default {
     this.getList();
     this.getClazz();
     this.getTaskList();
+    this.searchAllBatches();
   },
 
   methods: {
+    //查询全部批次
+    searchAllBatches(){
+      listBatch().then((response) => {
+        this.insertBatch = response.rows;
+      });
+    },
+
     // 查询类别名称
     // 递归函数，根据 id 查找 label
   selectClazzLabel(array,targetId) {
@@ -780,6 +802,10 @@ export default {
     /** 提交按钮 */
     submitForm() {
       this.form.labelUserName = this.$store.state.user.name;
+      this.form.audioName = null;
+      this.form.audioPath = null;
+      this.form.dynamicTags = null;
+      this.form.selectTags = null;
       // this.form.sevalue = this.sevalue;
       // this.form.dynamicTags = this.dynamicTags;
       // this.form.selectTags=this.checkedCities;

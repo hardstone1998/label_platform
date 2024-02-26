@@ -141,7 +141,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateAsrResult1ByClazzId" parameterType="AsrResult1">
         update asr_result_1
         <trim prefix="SET" suffixOverrides=",">
-            <if test="audioPath != null">audio_path = #{audioPath},</if>
+<!--            <if test="audioPath != null">audio_path = #{audioPath},</if>-->
             <if test="result != null">result = #{result},</if>
             <if test="cuda != null">cuda = #{cuda},</if>
             <if test="audioTime != null">audio_time = #{audioTime},</if>
@@ -178,7 +178,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateVoiceAnnotationByTaskAndLabelUser" parameterType="AsrResult1">
         update asr_result_1
         <trim prefix="SET" suffixOverrides=",">
-            <if test="audioPath != null">audio_path = #{audioPath},</if>
+<!--            <if test="audioPath != null">audio_path = #{audioPath},</if>-->
             <if test="result != null">result = #{result},</if>
             <if test="cuda != null">cuda = #{cuda},</if>
             <if test="audioTime != null">audio_time = #{audioTime},</if>

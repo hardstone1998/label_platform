@@ -69,6 +69,17 @@
         </el-select>
       </el-form-item>
 
+      <el-form-item label="插入批次" prop="insertBatch" >
+        <el-select v-model="queryParams.insertBatchId" placeholder="请选择插入批次">
+          <el-option
+            v-for="batch in insertBatch"
+            :key="batch.id"
+            :label="batch.name"
+            :value="batch.id"
+          />
+        </el-select>
+      </el-form-item>
+
       <el-form-item>
         <el-button
           type="primary"
@@ -412,7 +423,7 @@ import {
   optionsExtract,
   updateExtract,
 } from "@/api/qa/extract";
-
+import {listBatch } from "@/api/total/batch";
 import {
   listRelation,
   getRelation,
@@ -425,6 +436,7 @@ export default {
   name: "Extract",
   data() {
     return {
+      insertBatch: [],
       clazzList: [],
       isPass: [
         {
@@ -493,6 +505,7 @@ export default {
         taskOwner: null,
         isDelete: "否",
         cuda:"",
+        insertBatchId :null
       },
       // 表单参数
       form: {},
@@ -507,9 +520,16 @@ export default {
     this.getList();
     this.getOptions();
     this.getTaskList();
+    this.searchAllBatches();
   },
 
   methods: {
+    //查询全部批次
+    searchAllBatches(){
+      listBatch().then((response) => {
+        this.insertBatch = response.rows;
+      });
+    },
 
     
 
@@ -803,6 +823,18 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.queryParams = {
+        pageNum: 1,
+        pageSize: 10,
+        audioPath: null,
+        result: null,
+        qaExtract: null,
+        taskOwner: null,
+        isDelete: "否",
+        cuda:"",
+        insertBatchId :null
+      };
+      
       this.queryParams.cuda="";
       this.queryParams.result="";
       this.getvalue="";
@@ -854,6 +886,7 @@ export default {
       this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.id != null) {
+            this.form.labelUserName = this.$store.state.user.name;
             this.form.cuda=this.selectvalue.toString();
             // this.form.clazzId=this.sevalue;
             console.log(this.form);

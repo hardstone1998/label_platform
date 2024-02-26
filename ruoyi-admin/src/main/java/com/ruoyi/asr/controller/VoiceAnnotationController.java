@@ -135,7 +135,6 @@ public class VoiceAnnotationController extends BaseController
     @PostMapping("/getData")
     public AjaxResult getData()
     {
-        System.out.println("获取统计数据......");
         return success(voiceAnnotationService.selectVoiceAnnotationData());
     }
 
