@@ -13,6 +13,9 @@ import com.ruoyi.qa.domain.ExportResJson;
 import com.ruoyi.system.mapper.SysUserMapper;
 import com.ruoyi.task.domain.AddVerityUser;
 import com.ruoyi.tool.domain.LabelStatistics;
+import com.ruoyi.total.domain.InsertBatch;
+import com.ruoyi.total.mapper.InsertBatchMapper;
+import com.ruoyi.total.service.IInsertBatchService;
 import org.apache.commons.io.output.AppendableOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,6 +42,9 @@ public class VoiceAnnotationServiceImpl implements IVoiceAnnotationService
 
     @Autowired
     private SysUserMapper sysUserMapper;
+
+    @Autowired
+    private InsertBatchMapper insertBatchMapper;
 
 
     /**
@@ -80,12 +86,16 @@ public class VoiceAnnotationServiceImpl implements IVoiceAnnotationService
             VoiceAnnotation voiceAnnotation = voiceAnnotationMapper.selectVoiceAnnotationById(id);
             voiceAnnotation.setDynamicTags(allTags);
             voiceAnnotation.setSelectTags(stringArray);
+            InsertBatch insertBatch = insertBatchMapper.selectInsertBatchById(Long.valueOf(voiceAnnotation.getInsertBatchId()!=null?voiceAnnotation.getInsertBatchId():0));
+            voiceAnnotation.setFolder(insertBatch.getFolder());
             return voiceAnnotation;
         }else {
 
             VoiceAnnotation voiceAnnotation = voiceAnnotationMapper.selectVoiceAnnotationById(id);
             voiceAnnotation.setDynamicTags(allTags);
             voiceAnnotation.setSelectTags(stringArray);
+            InsertBatch insertBatch = insertBatchMapper.selectInsertBatchById(Long.valueOf(voiceAnnotation.getInsertBatchId()!=null?voiceAnnotation.getInsertBatchId():0));
+            voiceAnnotation.setFolder(insertBatch.getFolder());
             return voiceAnnotation;
         }
 

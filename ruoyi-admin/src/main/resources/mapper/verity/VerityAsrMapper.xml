@@ -30,10 +30,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="accuracy"    column="accuracy"    />
         <result property="verityText"    column="verity_text"    />
         <result property="verityClazzId"    column="verity_clazz_id"    />
+        <result property="insertBatchId"    column="insert_batch_id"    />
     </resultMap>
 
     <sql id="selectVoiceAnnotationVo">
-        select id, audio_path, audio_name, pre_text, after_text, is_use, task_owner, is_mask, cer, tags, create_time, update_time, audio_time, audio_lenth, clazz_id, task_id, label_user, verity_user, label_time, verity_time, is_pass, verity, accuracy, verity_text,verity_clazz_id from voice_annotation
+        select id, audio_path, audio_name, pre_text, after_text, is_use, task_owner, is_mask, cer, tags, create_time, update_time, audio_time, audio_lenth, clazz_id, task_id, label_user, verity_user, label_time, verity_time, is_pass, verity, accuracy, verity_text,verity_clazz_id,insert_batch_id from voice_annotation
     </sql>
 
     <select id="selectVoiceAnnotationList" parameterType="VoiceAnnotation" resultMap="VoiceAnnotationResult">

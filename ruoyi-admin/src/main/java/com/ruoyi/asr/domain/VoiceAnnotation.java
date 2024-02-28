@@ -107,4 +107,6 @@ public class VoiceAnnotation extends BaseEntity
     private Long verityClazzId;
 
     private Integer insertBatchId;
+
+    private String folder;
 }

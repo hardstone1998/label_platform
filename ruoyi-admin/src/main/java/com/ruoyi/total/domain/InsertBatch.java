@@ -31,4 +31,6 @@ public class InsertBatch extends BaseEntity
     /** 任务类型，0-asr，关联voice_annotation，1-qa管理asr_result_1 */
     @Excel(name = "任务类型，0-asr，关联voice_annotation，1-qa管理asr_result_1")
     private Long taskType;
+
+    private String folder;
 }

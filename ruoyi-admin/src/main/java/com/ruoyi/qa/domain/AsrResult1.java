@@ -149,4 +149,6 @@ public class AsrResult1 extends BaseEntity
 
     private Integer insertBatchId;
 
+    private String folder;
+
 }

@@ -10,10 +10,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="projectName"    column="project_name"    />
         <result property="taskType"    column="task_type"    />
+        <result property="folder"    column="folder"    />
     </resultMap>
 
     <sql id="selectInsertBatchVo">
-        select id, name, create_time, project_name, task_type from insert_batch
+        select id, name, create_time, project_name, task_type,folder from insert_batch
     </sql>
 
     <select id="selectInsertBatchList" parameterType="InsertBatch" resultMap="InsertBatchResult">

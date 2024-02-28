@@ -37,7 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectAsrResult1Vo">
-        select id, audio_path, result, cuda, audio_time, exec_time, create_time, qa_extract, qa_mark, qa_1,qa_2,qa_3,qa_4,qa_5,qa_6,qa_sum,update_time, is_delete,is_mark,task_owner,task_id,clazz_id,label_user,verity_user,label_time,verity_time,is_pass,verity_feedback,accuracy,verity_clazz_id from asr_result_1
+        select id, audio_path, result, cuda, audio_time, exec_time, create_time, qa_extract, qa_mark, qa_1,qa_2,qa_3,qa_4,qa_5,qa_6,qa_sum,update_time, is_delete,is_mark,task_owner,task_id,clazz_id,label_user,verity_user,label_time,verity_time,is_pass,verity_feedback,accuracy,verity_clazz_id,insert_batch_id from asr_result_1
     </sql>
 
     <select id="selectAsrResult1List" parameterType="AsrResult1" resultMap="AsrResult1Result">

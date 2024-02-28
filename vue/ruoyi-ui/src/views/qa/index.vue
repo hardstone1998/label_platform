@@ -862,14 +862,15 @@ export default {
 
         this.form = response.data;
         this.sevalue = response.data.clazzId;
-       console.log(response.data)
-        console.log(this.sevalue)
+      //  console.log(response.data)
+      //   console.log(this.sevalue)
        // this.options=response.data.options;
         const parts = this.form.audioPath.split("/");
         this.audioName = parts[parts.length - 1];
         this.formatCurrentTime = this.formatTime(this.currentTime);
         this.formatTotalTime = this.formatTime(this.totalTime);
-        this.audioURL = "audio/" + this.audioName;
+        this.audioURL = "audio/" +this.form.folder+"/"+ this.audioName;
+        console.log( this.audioURL);
         this.isPlay = false;
 
         setTimeout(() => {

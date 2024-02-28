@@ -93,7 +93,6 @@ public class VoiceAnnotationController extends BaseController
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
-
         return success(voiceAnnotationService.selectVoiceAnnotationById(id));
     }
 

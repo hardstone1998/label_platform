@@ -11,6 +11,8 @@ import com.ruoyi.qa.service.IAsrResult1Service;
 import com.ruoyi.system.mapper.SysUserMapper;
 import com.ruoyi.system.service.ISysUserService;
 import com.ruoyi.task.service.IVerityTaskSysUserService;
+import com.ruoyi.total.domain.InsertBatch;
+import com.ruoyi.total.mapper.InsertBatchMapper;
 import com.ruoyi.verity.mapper.VerityQaMapper;
 import com.ruoyi.verity.service.IVerityQaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +50,9 @@ public class VerityQaServiceImpl implements IVerityQaService
     @Autowired
     private ISysUserService sysUserService;
 
+    @Autowired
+    private InsertBatchMapper insertBatchMapper;
+
     /**
      * 查询extract
      *
@@ -57,8 +62,10 @@ public class VerityQaServiceImpl implements IVerityQaService
     @Override
     public AsrResult1 selectVerityQaById(Long id)
     {
-        System.out.println("extract被调用"+id);
         AsrResult1 asrResult1 = verityQaMapper.selectAsrResult1ById(id);
+        InsertBatch insertBatch = insertBatchMapper.selectInsertBatchById(Long.valueOf(asrResult1.getInsertBatchId()!=null?asrResult1.getInsertBatchId():0));
+        asrResult1.setFolder(insertBatch.getFolder());
+
         QaRelation qaRelation = qaRelationMapper.selectQaRelationByASRId(asrResult1.getId());
         if (qaRelation!=null){
             String s = JSONObject.toJSONString(qaRelation);

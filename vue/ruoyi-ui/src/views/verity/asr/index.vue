@@ -686,7 +686,7 @@ export default {
       const id = row.id || this.ids;
       getVerityAsr(id).then((response) => {
         this.form = response.data;
-        this.form.audioName ="../audio/" +this.form.audioName;
+        this.form.audioName ="../audio/" +this.form.folder +"/"+this.form.audioName;
         console.log(response.data);
         // this.checkedCities=response.data.selectTags;
         this.verityForm.afterText = this.form.afterText;

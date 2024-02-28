@@ -787,9 +787,8 @@ export default {
       // console.log("---------------------")
       // console.log( this.audio_name_1)
       getAnnotation(id).then((response) => {
-        
         this.form = response.data;
-        this.form.audioName  = "audio/" + this.form.audioName
+        this.form.audioName  = "audio/" +this.form.folder+"/"+ this.form.audioName
         // this.cities = response.data.dynamicTags;
         // this.checkedCities=response.data.selectTags;
         this.audioName = this.form.audioName;

@@ -8,6 +8,8 @@ import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.system.mapper.SysUserMapper;
 import com.ruoyi.tool.LevenshteinDistance;
+import com.ruoyi.total.domain.InsertBatch;
+import com.ruoyi.total.mapper.InsertBatchMapper;
 import com.ruoyi.verity.mapper.VerityAsrMapper;
 import com.ruoyi.verity.service.IVerityAsrService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,9 @@ public class VerityAsrServiceImpl implements IVerityAsrService
     @Autowired
     private SysUserMapper sysUserMapper;
 
+    @Autowired
+    private InsertBatchMapper insertBatchMapper;
+
     @Value("${label.verity.asr-error-rate}")
     public double errorRate;
 
@@ -42,7 +47,10 @@ public class VerityAsrServiceImpl implements IVerityAsrService
     @Override
     public VoiceAnnotation selectVerityAsrById(Long id)
     {
-        return verityAsrMapper.selectVoiceAnnotationById(id);
+        VoiceAnnotation voiceAnnotation = verityAsrMapper.selectVoiceAnnotationById(id);
+        InsertBatch insertBatch = insertBatchMapper.selectInsertBatchById(Long.valueOf(voiceAnnotation.getInsertBatchId()!=null?voiceAnnotation.getInsertBatchId():0));
+        voiceAnnotation.setFolder(insertBatch.getFolder());
+        return voiceAnnotation;
     }
 
     /**

@@ -17,6 +17,8 @@ import com.ruoyi.qa.mapper.QaRelationMapper;
 import com.ruoyi.system.mapper.SysUserMapper;
 import com.ruoyi.task.domain.AddVerityUser;
 import com.ruoyi.tool.domain.LabelStatistics;
+import com.ruoyi.total.domain.InsertBatch;
+import com.ruoyi.total.mapper.InsertBatchMapper;
 import org.apache.poi.ss.usermodel.IconMultiStateFormatting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,6 +47,9 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
     @Autowired
     private SysUserMapper sysUserMapper;
 
+    @Autowired
+    private InsertBatchMapper insertBatchMapper;
+
     /**
      * 查询extract
      *
@@ -56,6 +61,9 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
     {
         System.out.println("extract被调用"+id);
         AsrResult1 asrResult1 = asrResult1Mapper.selectAsrResult1ById(id);
+        InsertBatch insertBatch = insertBatchMapper.selectInsertBatchById(Long.valueOf(asrResult1.getInsertBatchId()!=null?asrResult1.getInsertBatchId():0));
+        asrResult1.setFolder(insertBatch.getFolder());
+
         QaRelation qaRelation = qaRelationMapper.selectQaRelationByASRId(asrResult1.getId());
         if (qaRelation!=null){
             String s = JSONObject.toJSONString(qaRelation);
