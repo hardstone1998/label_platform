@@ -221,10 +221,7 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
 
             Long reqNum = verityTaskAllocationReq.getVerityNum();
             int verityNum1 = voiceAnnotationService.selectVoiceAnnotationCount(voiceAnnotation).getRecallNum();
-            System.out.println("---------");
-            System.out.println(verityNum1);
-            System.out.println(reqNum);
-            if (verityTaskSysUser1.getVerityUserId() != verityTaskSysUser.getVerityUserId()){
+            if (verityTaskSysUser.getVerityUserId()!=null && verityTaskSysUser1.getVerityUserId() != verityTaskSysUser.getVerityUserId()){
                 VoiceAnnotation v = new VoiceAnnotation();
                 v.setVerityUser(verityTaskSysUser.getVerityUserId());
                 v.setTaskId(verityTaskAllocationReq.getTaskId());

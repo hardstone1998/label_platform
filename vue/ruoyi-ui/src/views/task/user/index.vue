@@ -181,40 +181,7 @@ export default {
           name: "QA"
       }
       ],
-      userList: [
-        
-        {
-          id: 106,
-          nickname: '王达'
-        },
-        {
-          id: 130,
-          nickname: 'user25'
-        },
-        {
-          id: 131,
-          nickname: 'user26'
-        },
-        {
-          id: 132,
-          nickname: 'user27'
-        }
-        ,
-        {
-          id: 133,
-          nickname: 'user28'
-        }
-        ,
-        {
-          id: 134,
-          nickname: 'user29'
-        }
-        ,
-        {
-          id: 135,
-          nickname: 'user30'
-        }
-      ],
+      userList: [],
       clearable:false,
       clearTime: false,
       // 遮罩层
@@ -265,7 +232,7 @@ export default {
   created() {
     this.getTask();
     this.getList();
-    // this.getUsers();
+    this.getUsers();
   },
   methods: {
     getTask(){
@@ -289,11 +256,11 @@ export default {
       this.resetForm("queryForm");
       this.handleQuery();
     },
-    // getUsers() {
-    //   totalUser().then((response) => {
-    //    this.userList = response.rows.map(row => ({ id: row.userId, nickname: row.nickName }));
-    //   });
-    // },
+    getUsers() {
+      totalUser().then((response) => {
+       this.userList = response.rows.map(row => ({ id: row.userId, nickname: row.nickName }));
+      });
+    },
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)

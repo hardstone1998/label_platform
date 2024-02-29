@@ -140,7 +140,7 @@ public class TaskUserTaskAllocationController extends BaseController
     @PostMapping("/verityAllocation")
     public AjaxResult verityAllocation(@RequestBody VerityTaskAllocationReq verityTaskAllocationReq)
     {
-        System.out.println(verityTaskAllocationReq);
+//        System.out.println(verityTaskAllocationReq);
         int i = taskUserTaskAllocationService.verityAllocation(verityTaskAllocationReq);
         if (i == -1)return toAjax(false);
         return toAjax(1);
