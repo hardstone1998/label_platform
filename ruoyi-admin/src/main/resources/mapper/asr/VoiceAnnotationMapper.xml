@@ -30,9 +30,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="accuracy"    column="accuracy"    />
         <result property="verityText"    column="verity_text"    />
         <result property="insertBatchId"    column="insert_batch_id"    />
+        <result property="folder"    column="folder"    />
     </resultMap>
-    <sql id="selectVoiceAnnotationVo">
+    <sql id="selectVoiceAnnotationVoBak">
         select id, audio_path, audio_name, pre_text, after_text, is_use, task_owner, is_mask, cer, tags, create_time, update_time, audio_time, audio_lenth, clazz_id, task_id, label_user, verity_user, label_time, verity_time, is_pass, verity, accuracy, verity_text,insert_batch_id from voice_annotation
+    </sql>
+
+    <sql id="selectVoiceAnnotationVo">
+        select v.id, audio_path, audio_name, pre_text, after_text, is_use, task_owner, is_mask, cer, tags, v.create_time, update_time, audio_time, audio_lenth, clazz_id, task_id, label_user, verity_user, label_time, verity_time, is_pass, verity, accuracy, verity_text,insert_batch_id,i.folder from voice_annotation v join insert_batch i on v.insert_batch_id = i.id
     </sql>
 
     <select id="selectVoiceAnnotationList" parameterType="com.ruoyi.asr.domain.VoiceAnnotation" resultMap="VoiceAnnotationResult">
@@ -52,7 +57,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectVoiceAnnotationById" parameterType="Long" resultMap="VoiceAnnotationResult">
-        <include refid="selectVoiceAnnotationVo"/>
+        <include refid="selectVoiceAnnotationVoBak"/>
         where id = #{id}
     </select>
     <select id="selectVoiceAnnotationListByOwner" parameterType="com.ruoyi.asr.domain.VoiceAnnotation" resultMap="VoiceAnnotationResult">

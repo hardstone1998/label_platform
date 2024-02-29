@@ -676,6 +676,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.canChange = true;
+      this.audio_name_1 ="audio/" +row.folder+"/"+  row.audioName;
       
       //发送一个请求，根据id查对应的标签名字
       this.sevalue = []
@@ -686,7 +687,7 @@ export default {
       const id = row.id || this.ids;
       getVerityAsr(id).then((response) => {
         this.form = response.data;
-        this.audio_name_1 ="../audio/" + this.form.folder+"/" + row.audioName;
+        // this.audio_name_1 ="../audio/" + this.form.folder+"/" + this.form.audioName;
         this.form.audioName ="../audio/" +this.form.folder +"/"+this.form.audioName;
         console.log(response.data);
         // this.checkedCities=response.data.selectTags;
