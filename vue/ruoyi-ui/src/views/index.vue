@@ -775,7 +775,7 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.audio_name_1 ="audio/" + row.audioName;
+      
       //发送一个请求，根据id查对应的标签名字
       // this.sevalue = []
       // this.dynamicTags = [];
@@ -788,6 +788,7 @@ export default {
       // console.log( this.audio_name_1)
       getAnnotation(id).then((response) => {
         this.form = response.data;
+        this.audio_name_1 ="audio/" + this.form.folder+"/" + row.audioName;
         this.form.audioName  = "audio/" +this.form.folder+"/"+ this.form.audioName
         // this.cities = response.data.dynamicTags;
         // this.checkedCities=response.data.selectTags;
