@@ -676,7 +676,8 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.canChange = true;
-      this.audio_name_1 ="audio/" +row.folder+"/"+  row.audioName;
+      this.audio_name_1 ="../audio/" +row.folder+"/"+  row.audioName;
+      console.log(this.audio_name_1);
       
       //发送一个请求，根据id查对应的标签名字
       this.sevalue = []

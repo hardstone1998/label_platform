@@ -289,17 +289,18 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
                 verityTaskSysUser2.setExtractNum(verityNum);
                 verityTaskSysUserService.insertVerityTaskSysUser(verityTaskSysUser2);
             }
-
-
-            if (verityTaskSysUser1.getVerityUserId() != verityTaskSysUser.getVerityUserId()){
+//            如果本次请求的审核人和之前的不同，则更改审核用户
+            if (verityTaskSysUser.getVerityUserId() !=null && verityTaskSysUser1.getVerityUserId() != verityTaskSysUser.getVerityUserId()){
                 AsrResult1 a = new AsrResult1();
                 a.setVerityUser(verityTaskSysUser.getVerityUserId());
                 a.setTaskId(verityTaskAllocationReq.getTaskId());
                 a.setLabelUser(verityTaskAllocationReq.getLabelUserId());
+
                 asrResult1Service.updateAsrResult1VerityUser(a);
             }
             Long reqNum = verityTaskAllocationReq.getVerityNum();
             int verityNum1 = asrResult1Service.selectAsrResult1Count(asrResult1).getRecallNum();
+//            添加或者减少审核数量
             System.out.println("---------");
             System.out.println(verityNum1);
             System.out.println(reqNum);

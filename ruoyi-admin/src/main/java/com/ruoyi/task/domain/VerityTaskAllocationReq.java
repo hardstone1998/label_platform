@@ -4,6 +4,8 @@ import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * 【请填写功能名称】对象 verity_task_sys_user
  *
@@ -25,6 +27,7 @@ public class VerityTaskAllocationReq extends BaseEntity
     private Integer taskClazz;
 
     /** 标注用户 */
+    @NotBlank
     private Long labelUserId;
 
 
@@ -34,10 +37,12 @@ public class VerityTaskAllocationReq extends BaseEntity
 
     /** 审核用户 */
     @Excel(name = "审核用户")
+    @NotBlank
     private Long verityUserId;
 
     /** 审核数量 */
-    @Excel(name = "审核用户名")
+    @Excel(name = "审核数量")
+    @NotBlank
     private Long verityNum;
 
     /** 审核百分比 */
