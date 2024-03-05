@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.total.mapper.AnswerMapper">
+
+    <resultMap type="Answer" id="AnswerResult">
+        <result property="id"    column="id"    />
+        <result property="type"    column="type"    />
+        <result property="question"    column="question"    />
+        <result property="content"    column="content"    />
+        <result property="clazzId"    column="clazz_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectAnswerVo">
+        select id, type, question, content, clazz_id, create_time, update_time from answer
+    </sql>
+
+    <select id="selectAnswerList" parameterType="Answer" resultMap="AnswerResult">
+        <include refid="selectAnswerVo"/>
+        <where>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="question != null  and question != ''"> and question = #{question}</if>
+            <if test="content != null  and content != ''"> and content like concat('%',#{content},'%')</if>
+            <if test="clazzId != null "> and clazz_id = #{clazzId}</if>
+        </where>
+    </select>
+
+    <select id="selectAnswerById" parameterType="Long" resultMap="AnswerResult">
+        <include refid="selectAnswerVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertAnswer" parameterType="Answer" useGeneratedKeys="true" keyProperty="id">
+        insert into answer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="type != null">type,</if>
+            <if test="question != null">question,</if>
+            <if test="content != null">content,</if>
+            <if test="clazzId != null">clazz_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="type != null">#{type},</if>
+            <if test="question != null">#{question},</if>
+            <if test="content != null">#{content},</if>
+            <if test="clazzId != null">#{clazzId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAnswer" parameterType="Answer">
+        update answer
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="type != null">type = #{type},</if>
+            <if test="question != null">question = #{question},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="clazzId != null">clazz_id = #{clazzId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAnswerById" parameterType="Long">
+        delete from answer where id = #{id}
+    </delete>
+
+    <delete id="deleteAnswerByIds" parameterType="String">
+        delete from answer where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

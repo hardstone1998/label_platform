@@ -68,6 +68,19 @@ spring:
       # 热部署开关
       enabled: true
   # redis 配置
+  security:
+    user:
+      name: admin
+      password: ctcc@2017
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 
 
 # token配置

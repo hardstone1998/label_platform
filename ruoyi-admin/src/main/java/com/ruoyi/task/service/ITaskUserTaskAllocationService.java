@@ -22,12 +22,20 @@ public interface ITaskUserTaskAllocationService
     public TaskUserTaskAllocation selectTaskUserTaskAllocationById(Long id);
 
     /**
-     * 查询【请填写功能名称】列表
+     * 查询用户任务列表
      *
      * @param taskUserTaskAllocation 【请填写功能名称】
      * @return 【请填写功能名称】集合
      */
     public List<TaskUserTaskAllocation> selectTaskUserTaskAllocationList(TaskUserTaskAllocation taskUserTaskAllocation);
+
+    /**
+     * 查询用户审核任务列表
+     *
+     * @param taskUserTaskAllocation 【请填写功能名称】
+     * @return 【请填写功能名称】集合
+     */
+    public List<TaskUserTaskAllocation> selectTaskUserVerityTaskAllocationList(TaskUserTaskAllocation taskUserTaskAllocation);
 
     /**
      * 新增【请填写功能名称】

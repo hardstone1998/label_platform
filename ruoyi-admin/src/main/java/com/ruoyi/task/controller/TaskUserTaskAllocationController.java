@@ -77,6 +77,23 @@ public class TaskUserTaskAllocationController extends BaseController
     }
 
     /**
+     * 查询用户全部审核任务
+     */
+    @GetMapping("/allVerityByUser")
+    public TableDataInfo allVerityByUser(String userName,Integer qaOrAsr)
+    {
+        TaskUserTaskAllocation taskUserTaskAllocation = new TaskUserTaskAllocation();
+        if (!"admin".equals(userName)){
+            taskUserTaskAllocation.setUserName(userName);
+        }
+        taskUserTaskAllocation.setClazz(qaOrAsr);
+        List<TaskUserTaskAllocation> list = taskUserTaskAllocationService.selectTaskUserVerityTaskAllocationList(taskUserTaskAllocation);
+        System.out.println(list);
+        return getDataTable(list);
+    }
+
+
+    /**
      * 导出【请填写功能名称】列表
      */
     @PreAuthorize("@ss.hasPermi('task:user:export')")

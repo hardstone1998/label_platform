@@ -8,7 +8,7 @@
       v-show="showSearch"
       label-width="68px"
     >
-      <el-form-item label="模糊分类" prop="audioPath">
+      <el-form-item label="模糊搜索" prop="audioPath">
         <el-input
           v-model="queryParams.result"
           placeholder="请输入关键字（如：预约）"
@@ -222,19 +222,20 @@
       append-to-body
     >
       <!-- 新增播放音频按钮 -->
-
       <div class="container">
+      <div class="left">
+
+      <div class="audio-container-all">
         <div class="audio-container">
-          <div class="left">
+          <div class="audio-left">
             <span class="icon" v-if="isPlay == false" @click="play">
               <i class="el-icon-video-play" aria-hidden="true"></i>
-              <!-- <i class="fa fa-play play-icon" aria-hidden="true"></i> -->
             </span>
             <span class="icon" v-if="isPlay == true" @click="pause">
               <i class="el-icon-video-pause"></i>
             </span>
           </div>
-          <div class="right">
+          <div class="audio-right">
             <div class="words flex-between">
               <div class="name">
                 {{ audioName == null ? "未知" : audioName }}
@@ -312,6 +313,104 @@
 
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
+      </div>
+      </div>
+      <div class="spacer"></div>
+        <div class="right">
+          <!-- 右侧内容 -->
+          <el-form
+            :model="answerForm"
+            ref="answerForm"
+            size="small"
+            :inline="true"
+            v-show="showSearch"
+            label-width="68px"
+            style="display: block;"
+          >
+            <el-form-item label="关键字" prop="content">
+              <el-input
+                v-model="answerForm.content"
+                placeholder="请输入关键字（如：预约）"
+                @keyup.enter.native="handleQuery"
+              />
+            </el-form-item>
+            <el-form-item label="分类">
+              <el-cascader
+                v-model="getvalue"
+                placeholder="选择分类"
+                :options="options"
+                :props="props"
+                @change="answerChange"
+              ></el-cascader>
+            </el-form-item>
+
+            <el-form-item label="类型" prop="type">
+              <el-select v-model="answerForm.type" placeholder="请选择类型">
+                <el-option
+                  v-for="type in typeList"
+                  :key="type"
+                  :label="type"
+                  :value="type"
+                />
+              </el-select>
+            </el-form-item>
+
+            <el-form-item style="display: block;">
+              <el-button
+                type="primary"
+                icon="el-icon-search"
+                size="mini"
+                @click="getAnswerList"
+                >搜索</el-button
+              >
+              <el-button icon="el-icon-refresh" size="mini" @click="resetAnswerList"
+                >重置</el-button
+              >
+            </el-form-item>
+          </el-form>
+
+          <el-form ref="form" :model="answers" :rules="rules" label-width="70px">
+            <el-form-item label="答案列表" prop="type">
+              <el-select v-model="answer" placeholder="请选择标准答案" >
+                <el-option
+                  v-for="answer in answerList"
+                  :key="answer.content"
+                  :label="answer.content"
+                  :value="answer.content"
+                  style="width:100px"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="标准答案" prop="answer">
+              <el-input
+                v-model="answer"
+                type="textarea"
+                :rows="5"
+                :readonly="true"
+              />
+            </el-form-item>
+            <el-form-item label="单元格" prop="qaInput">
+              <el-select v-model="qaInput" placeholder="请选择标准答案">
+                <el-option
+                  v-for="qaInput in qaInputList"
+                  :key="qaInput.id"
+                  :label="qaInput.content"
+                  :value="qaInput.id"
+                />
+              </el-select>
+            </el-form-item>
+
+            <el-form-item style="display: block;">
+              <el-button
+                type="primary"
+                icon="el-icon-search"
+                size="mini"
+                @click="replace"
+                >替换</el-button
+              >
+            </el-form-item>
+          </el-form>
+        </div>
       </div>
     </el-dialog>
 
@@ -432,12 +531,37 @@ import {
   updateRelation,
 } from "@/api/qa/relation";
 import {allByUser} from "@/api/task/user";
+import {listAnswer} from "@/api/total/answer";
 export default {
   name: "Extract",
   data() {
     return {
+      qaInput: null,
+      typeList:[],
+      answerList:[],
+      qaInputList:[
+        {
+          id:0,
+          content:"qa1"
+        },
+        {
+          id:1,
+          content:"qa2"
+        },
+        {
+          id:2,
+          content:"qa3"
+        }
+      ],
+      answers: {},
+      answer: "",
       insertBatch: [],
       clazzList: [],
+      answerForm: {
+        content : null,
+        clazzId : null,
+        type : null
+      },
       isPass: [
         {
           id : 0,
@@ -524,6 +648,52 @@ export default {
   },
 
   methods: {
+
+    replace(){
+      var qa = "";
+      if(0==this.qaInput){
+        qa=this.form.qa1;
+      }else if(1==this.qaInput){
+        qa=this.form.qa2;
+      }else if(2==this.qaInput){
+        qa=this.form.qa3;
+      }else{
+        return;
+      }
+      console.log(qa);
+      if(qa.indexOf('客服答：')!==-1){
+        qa = qa.substring(0,qa.indexOf('客服答：')+4);
+      }else if(qa.indexOf('客服：')!==-1){
+        qa = qa.substring(0,qa.indexOf('客服：')+3);
+      }else if(qa.indexOf('客服回答：')!==-1){
+        qa = qa.substring(0,qa.indexOf('客服回答：')+5);
+      }else{
+        return;
+      }
+      console.log(qa);
+      if (this.answer!=null){
+        qa = qa+this.answer;
+      }else{
+        return;
+      }
+      if(0==this.qaInput){
+        this.form.qa1 = qa;
+      }else if(1==this.qaInput){
+        this.form.qa2 = qa;
+      }else if(2==this.qaInput){
+        this.form.qa3 = qa;
+      }
+      
+    },
+
+     /** 查询标准答案列表 */
+     getAnswerList() {
+      listAnswer(this.answerForm).then(response => {
+        this.answerList = response.rows.map((row) => { return { content: row.content }; });
+      });
+      
+    },
+
     //查询全部批次
     searchAllBatches(){
       listBatch().then((response) => {
@@ -598,6 +768,13 @@ export default {
       });
       
     },
+
+    answerChange(value) {
+      this.answerForm.clazzId=value[value.length-1]
+      // this.getvalue=value[value.length-1]
+      // this.queryParams.cuda=this.getvalue
+     // console.log("查询的分类id：",this.getvalue);
+      },
 
     handleChange2(value) {
       this.queryParams.clazzId=value[value.length-1]
@@ -798,6 +975,7 @@ export default {
       this.sevalue = [];
       this.open = false;
       this.reset();
+      this.resetAnswerList();
     },
     // 表单重置
     reset() {
@@ -820,6 +998,17 @@ export default {
     handleQuery() {
       this.queryParams.pageNum = 1;
       this.getList();
+    },
+    /** 重置答案操作 */
+    resetAnswerList() {
+      this.answerForm = {
+        content : null,
+        clazzId : null,
+        type : null,
+      };
+      this.answerList = [];
+      this.answer = null;
+      this.qaInput = null;
     },
     /** 重置按钮操作 */
     resetQuery() {
@@ -908,6 +1097,7 @@ export default {
           }
         }
       });
+      this.resetAnswerList();
     },
     /** 删除按钮操作 */
     handleDelete(row) {
@@ -972,7 +1162,7 @@ export default {
   border-radius: 2px;
   display: flex;
 }
-.left {
+.audio-left {
   margin-right: 16px;
 }
 
@@ -1000,7 +1190,7 @@ export default {
   justify-content: space-between;
   align-content: center;
 }
-.right {
+.audio-right {
   flex: 1;
 }
 .words {
@@ -1031,5 +1221,30 @@ input[type="range"]::-webkit-slider-thumb {
   height: 10px; /*拖动块高度*/
   width: 3px; /*拖动块宽度*/
   background: #10a9ff; /*拖动块背景*/
+}
+
+.container {
+  display: flex;
+  width: 100%;
+}
+.left {
+  width: 60%;
+  padding: 10px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+}
+
+.right {
+  width: 30%;
+  padding: 10px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+}
+
+.spacer {
+  width: 0%;
+}
+#sx .el-row .el-select ::v-deep .popper-class {
+  width: 500px;
 }
 </style>

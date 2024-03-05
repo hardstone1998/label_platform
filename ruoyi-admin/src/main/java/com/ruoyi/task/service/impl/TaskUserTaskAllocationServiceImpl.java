@@ -114,6 +114,59 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
     }
 
     /**
+     * 查询任务用户列表
+     * @param taskUserTaskAllocation 任务用户
+     * @return 任务用户
+     */
+    @Override
+    public List<TaskUserTaskAllocation> selectTaskUserVerityTaskAllocationList(TaskUserTaskAllocation taskUserTaskAllocation)
+    {
+        List<TaskUserTaskAllocation> taskUserTaskAllocations = taskUserTaskAllocationMapper.selectTaskUserTaskAllocationList(taskUserTaskAllocation);
+        for (TaskUserTaskAllocation t:taskUserTaskAllocations) {
+            VerityTaskSysUser verityTaskSysUser = new VerityTaskSysUser();
+            verityTaskSysUser.setTaskId(t.getTaskId());
+            verityTaskSysUser.setLabelUserId(t.getUserId());
+            List<VerityTaskSysUser> verityTaskSysUsers = verityTaskSysUserService.selectVerityTaskSysUserList(verityTaskSysUser);
+            if(verityTaskSysUsers.size()>0){
+                SysUser sysUser = sysUserService.selectUserById(verityTaskSysUsers.get(0).getVerityUserId());
+                t.setVerityUser(sysUser.getUserName());
+            }
+            Long taskClazz = t.getTaskClazz();
+            LabelStatistics labelStatistics = null;
+            if (0L == taskClazz){
+                VoiceAnnotation voiceAnnotation =new VoiceAnnotation();
+                voiceAnnotation.setLabelUser(t.getUserId());
+                voiceAnnotation.setTaskId(t.getTaskId());
+                labelStatistics = voiceAnnotationService.selectVoiceAnnotationCount(voiceAnnotation);
+                voiceAnnotation.setIsMark("是");
+//                labeledNum = voiceAnnotationService.selectVoiceAnnotationCount(voiceAnnotation);
+//                verityNum = voiceAnnotationService.selectVoiceAnnotationVerityCount(voiceAnnotation);
+//                wordAccuracy = voiceAnnotationService.selectVoiceAnnotationWordAccuracy(voiceAnnotation);
+                voiceAnnotation.setIsPass(1);
+//                passNum = voiceAnnotationService.selectVoiceAnnotationCount(voiceAnnotation);
+//                recall = voiceAnnotationService.selectVoiceAnnotationRecall(voiceAnnotation);
+            }else if(1L == taskClazz){
+                AsrResult1 asrResult1 = new AsrResult1();
+                asrResult1.setLabelUser(t.getUserId());
+                asrResult1.setTaskId(t.getTaskId());
+                labelStatistics = asrResult1Service.selectAsrResult1Count(asrResult1);
+            }
+
+            if (labelStatistics!=null){
+                t.setLabelNum(String.valueOf(labelStatistics.getLabelNum()));
+                t.setVerityNum(String.valueOf(labelStatistics.getVerityNum()));
+                t.setWordAccuracy(labelStatistics.getWordAccuracy());
+                if (labelStatistics.getLabelNum()>0)
+                    t.setNumberAccuracy(1.0*labelStatistics.getPassNum()/labelStatistics.getLabelNum());
+                t.setRecallNum(labelStatistics.getRecallNum());
+                t.setLabeledNum(String.valueOf(labelStatistics.getLabeledNum()));
+            }
+
+        }
+        return taskUserTaskAllocations;
+    }
+
+    /**
      * 新增【请填写功能名称】
      *
      * @param taskUserTaskAllocation 【请填写功能名称】

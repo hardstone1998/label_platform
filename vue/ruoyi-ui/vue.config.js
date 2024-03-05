@@ -15,6 +15,7 @@ const port = process.env.port || process.env.npm_config_port || 80 // 端口
 //官方vue.config.js 参考文档 https://cli.vuejs.org/zh/config/#css-loaderoptions
 // 这里只列一部分，具体配置参考文档
 module.exports = {
+
   // 部署生产环境和开发环境下的URL。
   // 默认情况下，Vue CLI 会假设你的应用是被部署在一个域名的根路径上
   // 例如 https://www.ruoyi.vip/。如果应用被部署在一个子路径上，你就需要用这个选项指定这个子路径。例如，如果你的应用被部署在 https://www.ruoyi.vip/admin/，则设置 baseUrl 为 /admin/。
@@ -41,6 +42,13 @@ module.exports = {
         changeOrigin: true,
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: ''
+        }
+      },
+      '/gugongModels': { // 新添加的代理配置，只匹配 '/gugong/models' 开头的请求
+        target: 'http://localhost:7905',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/gugongModels': ''
         }
       }
     },
