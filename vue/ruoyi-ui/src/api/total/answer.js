@@ -17,6 +17,14 @@ export function getAnswer(id) {
   })
 }
 
+// 查询全部类型
+export function getType() {
+  return request({
+    url: '/total/answer/type',
+    method: 'get'
+  })
+}
+
 // 新增【请填写功能名称】
 export function addAnswer(data) {
   return request({

@@ -36,12 +36,23 @@ public class AnswerController extends BaseController
     private IAnswerService answerService;
 
     /**
-     * 查询【请填写功能名称】列表
+     * 查询标准答案列表
      */
     @GetMapping("/list")
     public TableDataInfo list(Answer answer)
     {
+        System.out.println(answer);
         List<Answer> list = answerService.selectAnswerList(answer);
+        return getDataTable(list);
+    }
+
+    /**
+     * 查询全部类型
+     */
+    @GetMapping("/type")
+    public TableDataInfo typeAll()
+    {
+        List<String> list = answerService.selectTypeAll();
         return getDataTable(list);
     }
 

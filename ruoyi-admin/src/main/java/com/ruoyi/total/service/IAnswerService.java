@@ -29,6 +29,13 @@ public interface IAnswerService
     public List<Answer> selectAnswerList(Answer answer);
 
     /**
+     * 查询全部类型
+     *
+     * @return type集合
+     */
+    public List<String> selectTypeAll();
+
+    /**
      * 新增【请填写功能名称】
      *
      * @param answer 【请填写功能名称】

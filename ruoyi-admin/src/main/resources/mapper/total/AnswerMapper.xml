@@ -28,6 +28,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
+    <select id="selectTypeAll"  resultType="String">
+        select type from answer group by type
+    </select>
+
     <select id="selectAnswerById" parameterType="Long" resultMap="AnswerResult">
         <include refid="selectAnswerVo"/>
         where id = #{id}

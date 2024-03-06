@@ -336,7 +336,7 @@
             </el-form-item>
             <el-form-item label="分类">
               <el-cascader
-                v-model="getvalue"
+                v-model="answerForm.clazzId"
                 placeholder="选择分类"
                 :options="options"
                 :props="props"
@@ -370,7 +370,7 @@
           </el-form>
 
           <el-form ref="form" :model="answers" :rules="rules" label-width="70px">
-            <el-form-item label="答案列表" prop="type">
+            <el-form-item label="答案列表" prop="answerList">
               <el-select v-model="answer" placeholder="请选择标准答案" >
                 <el-option
                   v-for="answer in answerList"
@@ -378,7 +378,7 @@
                   :label="answer.content"
                   :value="answer.content"
                   style="width:100px"
-                />
+                  ></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="标准答案" prop="answer">
@@ -531,7 +531,7 @@ import {
   updateRelation,
 } from "@/api/qa/relation";
 import {allByUser} from "@/api/task/user";
-import {listAnswer} from "@/api/total/answer";
+import {listAnswer,getType} from "@/api/total/answer";
 export default {
   name: "Extract",
   data() {
@@ -771,9 +771,6 @@ export default {
 
     answerChange(value) {
       this.answerForm.clazzId=value[value.length-1]
-      // this.getvalue=value[value.length-1]
-      // this.queryParams.cuda=this.getvalue
-     // console.log("查询的分类id：",this.getvalue);
       },
 
     handleChange2(value) {
@@ -1069,6 +1066,11 @@ export default {
         this.open = true;
         this.title = "修改extract";
       });
+        if(this.typeList.length == 0){
+          getType().then((response) => {
+            this.typeList = response.rows;
+        });
+        }
     },
 
     /** 提交按钮 */
