@@ -139,7 +139,6 @@ public class VerityQaServiceImpl implements IVerityQaService
     @Override
     public int updateVerityQa(AsrResult1 asrResult1)
     {
-        System.out.println(asrResult1);
         AsrResult1 asrResult11 = new AsrResult1();
         asrResult11.setUpdateTime(DateUtils.getNowDate());
         asrResult11.setQa4(asrResult1.getQa1());

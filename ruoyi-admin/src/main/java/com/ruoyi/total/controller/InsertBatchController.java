@@ -43,7 +43,6 @@ public class InsertBatchController extends BaseController
     public TableDataInfo list(InsertBatch insertBatch)
     {
         List<InsertBatch> list = insertBatchService.selectInsertBatchList(insertBatch);
-        System.out.println("接口被调用："+list);
         return getDataTable(list);
     }
 

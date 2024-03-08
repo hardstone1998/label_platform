@@ -7,6 +7,7 @@ import java.util.List;
 import com.ruoyi.asr.domain.VoiceAnnotation;
 import com.ruoyi.asr.mapper.VoiceAnnotationMapper;
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.qa.domain.AsrResult1;
 import com.ruoyi.qa.domain.Class1;
@@ -86,7 +87,7 @@ public class TaskServiceImpl implements ITaskService
     }
 
     /**
-     * 新增【请填写功能名称】
+     * 任务分配
      *
      * @param task 【请填写功能名称】
      * @return 结果
@@ -101,7 +102,7 @@ public class TaskServiceImpl implements ITaskService
         task1.setClazz(clazz);
         String task_name = task.getName();
         if (task_name ==null || task_name.length()==0){
-            throw new RuntimeException("任务名为空");
+            throw new ServiceException("任务名为空");
         }
         task1.setName(task_name);
         task1.setDesc(task.getDesc());
@@ -110,7 +111,7 @@ public class TaskServiceImpl implements ITaskService
         task1.setResponsiblePersonId(task.getResponsiblePersonId());
 
         int i = taskMapper.insertTask(task1);
-        if (i<=0)throw new RuntimeException("任务插入失败");
+        if (i<=0)throw new ServiceException("任务插入失败");
         List<TaskAllocationUser> taskAllocationUserRows = task.getTaskAllocationUser();
         int num = 0;
         for (TaskAllocationUser taskAllocationUser : taskAllocationUserRows){
@@ -143,7 +144,7 @@ public class TaskServiceImpl implements ITaskService
                     asrResult1.setClazzId(class1Id);
                     asrResult1Mapper.updateAsrResult1ByClazzId(asrResult1);
                 }else {
-                    throw new RuntimeException("类型错误");
+                    throw new ServiceException("类型错误");
                 }
                 TaskUserTaskAllocation taskUserTaskAllocation = new TaskUserTaskAllocation();
                 taskUserTaskAllocation.setTaskId((long)taskId);
@@ -155,7 +156,6 @@ public class TaskServiceImpl implements ITaskService
             }
 
         }
-        log.info("任务分配完成");
         return num;
     }
 
@@ -174,7 +174,8 @@ public class TaskServiceImpl implements ITaskService
         Long clazz =task.getClazz();
         task1.setClazz(clazz);
         String task_name = task.getName();
-        if (task_name ==null || task_name.length()==0)throw new RuntimeException("任务名为空");
+        if (task_name ==null || task_name.length()==0)
+            throw new ServiceException("任务名为空");
         task1.setName(task_name);
         task1.setDesc(task.getDesc());
         task1.setCreateTime(DateUtils.getNowDate());
@@ -184,9 +185,11 @@ public class TaskServiceImpl implements ITaskService
         int i = taskMapper.insertTask(task1);
         int taskId = task1.getId();
         List<TaskAllocationUser> taskAllocationUser = task.getTaskAllocationUser();
-        if (taskAllocationUser.isEmpty()) throw new RuntimeException("不存在用户信息");
+        if (taskAllocationUser.isEmpty())
+            throw new ServiceException("不存在用户信息");
         TaskAllocationUser taskAllocationUser1 = taskAllocationUser.get(0);
-        if (i<=0)throw new RuntimeException("不存在用户信息");
+        if (i<=0)
+            throw new ServiceException("不存在用户信息");
 //        添加任务用户关联标
         List<Long> selectedUsers = taskAllocationUser1.getSelectedUsers();
         for (Long user :selectedUsers){
@@ -201,7 +204,7 @@ public class TaskServiceImpl implements ITaskService
         }else if(1L == id){
             sequenceAllocation(clazz,taskId,taskAllocationUser1);
         }else {
-            throw new RuntimeException("任务类型错误");
+            throw new ServiceException("任务类型错误");
         }
         return 1;
     }
@@ -217,7 +220,7 @@ public class TaskServiceImpl implements ITaskService
         Collections.sort(unallocations, new Comparator<Unallocation>() {
             @Override
             public int compare(Unallocation o1, Unallocation o2) {
-                return (int) (o1.getNum() -o2.getNum());
+                return (int) (o1.getNum() - o2.getNum());
             }
         });
         long clazzNum = unallocations.size();
@@ -239,7 +242,6 @@ public class TaskServiceImpl implements ITaskService
                     voiceAnnotation.setTaskId((long) taskId);
                     voiceAnnotation.setTaskOwner(user.getUserName());
                     voiceAnnotation.setClazzId(unallocation.getClazzId());
-                    System.out.println(voiceAnnotation);
                     voiceAnnotationMapper.updateVoiceAnnotationByClazzId(voiceAnnotation);
                 }
             }
@@ -262,7 +264,7 @@ public class TaskServiceImpl implements ITaskService
                 }
             }
         }else {
-            throw new RuntimeException("类型错误");
+            throw new ServiceException("类型错误");
         }
         return 1;
     }
@@ -313,7 +315,7 @@ public class TaskServiceImpl implements ITaskService
                 }
             }
         }else {
-            throw new RuntimeException("类型错误");
+            throw new ServiceException("类型错误");
         }
         return 1;
     }

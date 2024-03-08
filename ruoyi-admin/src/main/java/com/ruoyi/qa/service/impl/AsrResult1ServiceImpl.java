@@ -19,6 +19,7 @@ import com.ruoyi.task.domain.AddVerityUser;
 import com.ruoyi.tool.domain.LabelStatistics;
 import com.ruoyi.total.domain.InsertBatch;
 import com.ruoyi.total.mapper.InsertBatchMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.IconMultiStateFormatting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @date 2023-07-13
  */
 @Service
+@Slf4j
 public class AsrResult1ServiceImpl implements IAsrResult1Service
 {
     @Autowired
@@ -59,7 +61,6 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
     @Override
     public AsrResult1 selectAsrResult1ById(Long id)
     {
-        System.out.println("extract被调用"+id);
         AsrResult1 asrResult1 = asrResult1Mapper.selectAsrResult1ById(id);
         InsertBatch insertBatch = insertBatchMapper.selectInsertBatchById(Long.valueOf(asrResult1.getInsertBatchId()!=null?asrResult1.getInsertBatchId():0));
         asrResult1.setFolder(insertBatch.getFolder());
@@ -169,7 +170,6 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
         asrResult1.setLabelTime(DateUtils.getNowDate());
         if (asrResult1.getClazzId()!=null) asrResult1.setCuda(asrResult1.getClazzId().toString());
         asrResult1.setLabelTime(DateUtils.getNowDate());
-        System.out.println("cuda结果是----------》"+asrResult1.getCuda());
         return asrResult1Mapper.updateAsrResult1(asrResult1);
     }
 
@@ -264,11 +264,9 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
                     exportResJsonQ1.setInput("");
                     exportResJsonQ1.setHistory(new ArrayList<>());
                     exportResJsonQ1.setOutput(serviceReply);
-                    System.out.println("exportResJsonQ1::"+exportResJsonQ1);
                     exportResJsons.add(exportResJsonQ1);
-
                 } else {
-                    System.out.println("---------未找到有效的客户问和客服回答内容。" + "当前id" + a.getId());
+                    log.error("qa1未找到有效的客户问和客服回答内容。当前id:{}",a.getId() );
                 }
             }
 //            添加qa2
@@ -281,7 +279,6 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
                 if (customerAskIndex != -1 && customerServiceReplyIndex != -1) {
                     String customerQuestion = qa2.substring(customerAskIndex + 4, customerServiceReplyIndex).trim();
                     String serviceReply = qa2.substring(customerServiceReplyIndex + 5).trim();
-
                     exportResJsonQ2.setInstruction(customerQuestion);
                     exportResJsonQ2.setOutput(serviceReply);
                     exportResJsonQ2.setInput("");
@@ -300,7 +297,7 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
                         exportResJsons.add(exportResJsonQ2);
                     }
                 } else {
-                    System.out.println("未找到有效的客户问和客服回答内容。");
+                    log.error("qa2未找到有效的客户问和客服回答内容。当前id:{}",a.getId() );
                 }
             }
 
@@ -341,7 +338,7 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
                         exportResJsons.add(exportResJsonQ3);
                     }
                 } else {
-                    System.out.println("未找到有效的客户问和客服回答内容。");
+                    log.error("qa3未找到有效的客户问和客服回答内容。当前id:{}",a.getId() );
                 }
             }
         }
@@ -381,7 +378,7 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
                     exportResJsons.add(exportResJsonQ1);
 
                 } else {
-                    System.out.println("---------未找到有效的客户问和客服回答内容。"+"当前id"+ asrResult1s.get(i).getId());
+                    log.error("qa1未找到有效的客户问和客服回答内容。当前id:{}" );
                 }
             }
             if (qa2 !=null && !qa2.equals("")){
@@ -431,7 +428,7 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
                     }
 
                 } else {
-                    System.out.println("未找到有效的客户问和客服回答内容。");
+                    log.error("qa2未找到有效的客户问和客服回答内容。当前id:{}");
                 }
             }
             if (qa3 !=null && !qa3.equals("")){
@@ -495,19 +492,13 @@ public class AsrResult1ServiceImpl implements IAsrResult1Service
 
 
                 } else {
-                    System.out.println("未找到有效的客户问和客服回答内容。");
+                    log.error("qa3未找到有效的客户问和客服回答内容。当前id:{}" );
                 }
             }
         }
-
-
         //String s = JSON.toJSONString(exportResJsons);
-
         String s = JSONObject.toJSONString(exportResJsons);
-
         return s;
-
-
         //return null;
     }
 

@@ -6,6 +6,7 @@ import com.ruoyi.asr.domain.VoiceAnnotation;
 import com.ruoyi.asr.mapper.VoiceAnnotationMapper;
 import com.ruoyi.asr.service.IVoiceAnnotationService;
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.qa.domain.AsrResult1;
 import com.ruoyi.qa.service.IAsrResult1Service;
@@ -231,13 +232,14 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
             Long verityNum = verityTaskAllocationReq.getVerityNum();
             if (verityNum==null || verityNum == 0){
                 Double verityPercentage = verityTaskAllocationReq.getVerityPercentage();
-                if (verityPercentage == null ||verityPercentage==0)throw new RuntimeException("审核数量为空");
+                if (verityPercentage == null ||verityPercentage==0)
+                    throw new ServiceException("审核数量为空");
                 verityTaskAllocationReq.setVerityNum((long) (num*verityPercentage));
             }
             if (num<verityNum)throw new RuntimeException("分配审核数量大于实际标注数量");
 
             VerityTaskSysUser verityTaskSysUser = new VerityTaskSysUser();
-            long id = verityTaskAllocationReq.getId();
+//            long id = verityTaskAllocationReq.getId();
             VerityTaskSysUser verityTaskSysUserSearch =new VerityTaskSysUser();
             verityTaskSysUserSearch.setTaskId(verityTaskAllocationReq.getTaskId());
             verityTaskSysUserSearch.setLabelUserId(verityTaskAllocationReq.getLabelUserId());
@@ -306,10 +308,12 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
             Long verityNum = verityTaskAllocationReq.getVerityNum();
             if (verityNum==null || verityNum == 0){
                 Double verityPercentage = verityTaskAllocationReq.getVerityPercentage();
-                if (verityPercentage == null ||verityPercentage==0)throw new RuntimeException("审核数量为空");
+                if (verityPercentage == null ||verityPercentage==0)
+                    throw new ServiceException("审核数量为空");
                 verityTaskAllocationReq.setVerityNum((long) (num*verityPercentage));
             }
-            if (num<verityNum)throw new RuntimeException("分配审核数量大于实际标注数量");
+            if (num<verityNum)
+                throw new ServiceException("分配审核数量大于实际标注数量");
 
             VerityTaskSysUser verityTaskSysUser = new VerityTaskSysUser();
             long id = verityTaskAllocationReq.getId();
@@ -354,16 +358,12 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
             Long reqNum = verityTaskAllocationReq.getVerityNum();
             int verityNum1 = asrResult1Service.selectAsrResult1Count(asrResult1).getRecallNum();
 //            添加或者减少审核数量
-            System.out.println("---------");
-            System.out.println(verityNum1);
-            System.out.println(reqNum);
             if (reqNum >verityNum1){
                 AddVerityUser addVerityUser = new AddVerityUser();
                 addVerityUser.setLabelUser(verityTaskAllocationReq.getLabelUserId());
                 addVerityUser.setTaskId(verityTaskAllocationReq.getTaskId());
                 addVerityUser.setVerityUser(verityTaskAllocationReq.getVerityUserId());
                 addVerityUser.setVerityNum(reqNum-verityNum1);
-                System.out.println("增加："+addVerityUser);
                 asrResult1Service.addVerity(addVerityUser);
             }else if (reqNum < verityNum1&&reqNum>=0){
                 AddVerityUser addVerityUser = new AddVerityUser();
@@ -371,7 +371,6 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
                 addVerityUser.setTaskId(verityTaskAllocationReq.getTaskId());
                 addVerityUser.setVerityUser(verityTaskAllocationReq.getVerityUserId());
                 addVerityUser.setVerityNum(verityNum1-reqNum);
-                System.out.println("减少："+addVerityUser);
                 asrResult1Service.subtractVerity(addVerityUser);
             }
             return 1;

@@ -44,12 +44,10 @@ public class ASR2ChannelService implements IASR2ChannelService {
         int i1 = result.indexOf("\"text_sum\":\"");
         int i2 = result.indexOf("\"}]");
         String result1 = result.substring(i1+12,i2).replace(" ","");
-        System.out.println("result1"+result1);
         return result1;
     }
 
     public static String callWhisper(String audioFilePath) throws IOException {
-        System.out.println("callwhisper被调用");
         File audioFile = new File(audioFilePath);
         String whisperUrl = "http://36.112.150.185:8805/recognition";
         HttpClient httpClient = HttpClients.createDefault();

@@ -41,7 +41,6 @@ public class AnswerController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(Answer answer)
     {
-        System.out.println(answer);
         List<Answer> list = answerService.selectAnswerList(answer);
         return getDataTable(list);
     }

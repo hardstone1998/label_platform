@@ -88,9 +88,7 @@ public class QaRelationController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody QaRelation qaRelation)
     {
-
         AjaxResult ajaxResult = toAjax(qaRelationService.updateQaRelation(qaRelation));
-
         return ajaxResult;
     }
 

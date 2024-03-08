@@ -39,7 +39,6 @@ public class VerityQaController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(AsrResult1 asrResult1)
     {
-        System.out.println("审核查询list：："+asrResult1);
         String taskOwner = asrResult1.getTaskOwner();
         SysUser sysUser = sysUserMapper.selectUserByUserName(taskOwner);
         asrResult1.setVerityUser(sysUser.getUserId());

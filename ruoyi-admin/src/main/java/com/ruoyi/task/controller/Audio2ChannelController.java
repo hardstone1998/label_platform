@@ -1,5 +1,6 @@
 package com.ruoyi.task.controller;
 
+import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.task.service.IASR2ChannelService;
 import com.ruoyi.task.service.IQA2ChannelService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.rmi.ServerException;
 import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -65,9 +67,10 @@ public class Audio2ChannelController {
                 // 如果不存在，创建文件夹
                 try {
                     Files.createDirectory(folderPath);
-                    System.out.println("文件夹已创建");
+                    log.info("文件夹已创建");
                 } catch (IOException e) {
-                    System.err.println("无法创建文件夹: " + e.getMessage());
+                    log.error("无法创建文件夹: " + e.getMessage());
+                    throw new ServiceException("无法创建文件夹");
                 }
             }
 

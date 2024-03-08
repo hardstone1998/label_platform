@@ -148,8 +148,6 @@ public class VoiceAnnotationServiceImpl implements IVoiceAnnotationService
     @Override
     public int insertVoiceAnnotation(VoiceAnnotation voiceAnnotation)
     {
-
-
         return voiceAnnotationMapper.insertVoiceAnnotation(voiceAnnotation);
     }
 

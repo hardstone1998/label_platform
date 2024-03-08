@@ -4,6 +4,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.system.service.ISysUserService;
 import com.ruoyi.task.domain.TaskUserTaskAllocation;
 import com.ruoyi.task.domain.VerityTaskAllocationReq;
@@ -56,7 +57,6 @@ public class TaskUserTaskAllocationController extends BaseController
         }
         startPage();
         List<TaskUserTaskAllocation> list = taskUserTaskAllocationService.selectTaskUserTaskAllocationList(taskUserTaskAllocation);
-        System.out.println(list);
         return getDataTable(list);
     }
 
@@ -72,7 +72,6 @@ public class TaskUserTaskAllocationController extends BaseController
         }
         taskUserTaskAllocation.setClazz(qaOrAsr);
         List<TaskUserTaskAllocation> list = taskUserTaskAllocationService.selectTaskUserTaskAllocationList(taskUserTaskAllocation);
-        System.out.println(list);
         return getDataTable(list);
     }
 
@@ -88,7 +87,6 @@ public class TaskUserTaskAllocationController extends BaseController
         }
         taskUserTaskAllocation.setClazz(qaOrAsr);
         List<TaskUserTaskAllocation> list = taskUserTaskAllocationService.selectTaskUserVerityTaskAllocationList(taskUserTaskAllocation);
-        System.out.println(list);
         return getDataTable(list);
     }
 
@@ -157,9 +155,8 @@ public class TaskUserTaskAllocationController extends BaseController
     @PostMapping("/verityAllocation")
     public AjaxResult verityAllocation(@RequestBody VerityTaskAllocationReq verityTaskAllocationReq)
     {
-//        System.out.println(verityTaskAllocationReq);
         int i = taskUserTaskAllocationService.verityAllocation(verityTaskAllocationReq);
-        if (i == -1)return toAjax(false);
+        if (i == -1)throw new ServiceException("审核任务分配失败");
         return toAjax(1);
     }
 }

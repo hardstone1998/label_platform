@@ -60,7 +60,6 @@ public class AsrResult1Controller extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(AsrResult1 asrResult1)
     {
-        System.out.println("asrResult1::"+asrResult1);
         startPage();
         List<AsrResult1> list = asrResult1Service.selectAsrResult1List(asrResult1);
         return getDataTable(list);
@@ -89,6 +88,7 @@ public class AsrResult1Controller extends BaseController
             fileWriter.write(formattedJsonData);
         } catch (IOException e) {
             e.printStackTrace();
+            throw new RuntimeException("导出异常");
         }
         response.setContentType("application/octet-stream");
         response.setCharacterEncoding("UTF-8");
@@ -98,6 +98,7 @@ public class AsrResult1Controller extends BaseController
             response.flushBuffer();
         } catch (IOException e) {
             e.printStackTrace();
+            throw new RuntimeException("导出异常");
         }
     }
     private String formatJson(String jsonData) {

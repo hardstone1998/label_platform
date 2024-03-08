@@ -4,6 +4,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.system.service.ISysUserService;
 import com.ruoyi.task.domain.RequestTask;
 import com.ruoyi.task.domain.Task;
@@ -106,7 +107,7 @@ public class TaskController extends BaseController
     public AjaxResult add(@RequestBody RequestTask task)
     {
         int i = taskService.insertTask(task);
-        if (i<=0)return toAjax(false);
+        if (i<=0)throw new ServiceException("分配任务失败");
         return toAjax(i);
     }
 
@@ -123,7 +124,7 @@ public class TaskController extends BaseController
     public AjaxResult allocation(@PathVariable("id") Long id,@RequestBody RequestTask task)
     {
         int i = taskService.allocationTask(id,task);
-        if (i<=0)return toAjax(false);
+        if (i<=0)throw new ServiceException("分配任务失败");
         return toAjax(i);
     }
 
