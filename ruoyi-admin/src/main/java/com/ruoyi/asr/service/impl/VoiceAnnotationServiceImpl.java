@@ -130,7 +130,6 @@ public class VoiceAnnotationServiceImpl implements IVoiceAnnotationService
 //        String[] strings = tags.toArray(new String[tags.size()]);
 //
         if ("admin".equals(voiceAnnotation.getTaskOwner())){
-
             return voiceAnnotationMapper.selectVoiceAnnotationList(voiceAnnotation);
         }else {
 

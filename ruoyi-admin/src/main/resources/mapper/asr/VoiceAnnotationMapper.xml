@@ -37,7 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <sql id="selectVoiceAnnotationVo">
-        select v.id, audio_path, audio_name, pre_text, after_text, is_use, task_owner, is_mask, cer, tags, v.create_time, update_time, audio_time, audio_lenth, clazz_id, task_id, label_user, verity_user, label_time, verity_time, is_pass, verity, accuracy, verity_text,insert_batch_id,i.folder from voice_annotation v join insert_batch i on v.insert_batch_id = i.id
+        select v.id, audio_path, audio_name, pre_text, after_text, is_use, task_owner, is_mask, cer, tags, v.create_time, update_time, audio_time, audio_lenth, clazz_id, task_id, label_user, verity_user, label_time, verity_time, is_pass, verity, accuracy, verity_text,insert_batch_id,i.folder from voice_annotation v left join insert_batch i on v.insert_batch_id = i.id
     </sql>
 
     <select id="selectVoiceAnnotationList" parameterType="com.ruoyi.asr.domain.VoiceAnnotation" resultMap="VoiceAnnotationResult">

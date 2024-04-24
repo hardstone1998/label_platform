@@ -47,6 +47,18 @@
         
       </el-form-item>
 
+      <el-form-item label="是否删除" prop="isDelete">
+        <el-select  v-model="queryParams.isDelete" placeholder="是否已删除">
+          <el-option
+            v-for="isDelete in isDeletes"
+            :key="isDelete.id"
+            :label="isDelete.name"
+            :value="isDelete.id"
+          />
+        </el-select>
+        
+      </el-form-item>
+
       <el-form-item label="任务查询" prop="taskList">
         <el-select v-model="queryParams.taskId" placeholder="请选择任务">
           <el-option
@@ -582,6 +594,16 @@ export default {
           name: "是"
       }
       ],
+      isDeletes: [
+        {
+          id:"否",
+          name: "否"
+      },
+      {
+          id:"是",
+          name: "是"
+      }
+      ],
       taskList: [],
       props:{
         value:"id"
@@ -1016,7 +1038,8 @@ export default {
         result: null,
         qaExtract: null,
         taskOwner: null,
-        isDelete: "否",
+        isMark: null,
+        isDeletes: null,
         cuda:"",
         insertBatchId :null
       };

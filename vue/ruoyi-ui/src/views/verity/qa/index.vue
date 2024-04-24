@@ -47,6 +47,17 @@
         
       </el-form-item>
 
+      <el-form-item label="是否删除" prop="isDelete">
+        <el-select  v-model="queryParams.isDelete" placeholder="是否已删除">
+          <el-option
+            v-for="isDelete in isDeletes"
+            :key="isDelete.id"
+            :label="isDelete.name"
+            :value="isDelete.id"
+          />
+        </el-select>
+      </el-form-item>
+
       <el-form-item label="任务查询" prop="taskList">
         <el-select v-model="queryParams.taskId" placeholder="请选择任务">
           <el-option
@@ -367,6 +378,16 @@ export default {
           name: "是"
       }
       ],
+      isDeletes: [
+        {
+          id:"否",
+          name: "否"
+      },
+      {
+          id:"是",
+          name: "是"
+      }
+      ],
       isUse: [
         {
           id:"否",
@@ -432,7 +453,8 @@ export default {
         pageSize: 10,
         audioPath: null,
         qaSum : null,
-        isMark: null,
+        isMark: "是",
+        isDelete: "否",
         clazzId: null,
         isPass: null,
         taskId :null,
@@ -476,7 +498,7 @@ export default {
   created() {
     this.getList();
     this.getOptions();
-    this.getClazz();
+    this.getTask();
   },
 
   methods: {
@@ -587,7 +609,7 @@ export default {
       //console.log(this.sevalue);
       },
 
-    getClazz(){
+    getTask(){
       var userName = this.$store.state.user.name;
       var qa = 1;
       allByUser(userName,qa).then((response) => {
@@ -729,8 +751,8 @@ export default {
         pageSize: 10,
         audioName: null,
         afterText : null,
-        isUse: null,
         isMark: null,
+        isDeletes: null,
         clazzId: null,
         selectedTask: null,
         isPass: null,

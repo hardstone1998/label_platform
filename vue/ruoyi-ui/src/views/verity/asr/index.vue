@@ -37,17 +37,18 @@
       </el-form-item>
 
 
-      <!-- <el-form-item label="是否使用" prop="isUse">
-          <el-select v-model="queryParams.isUse"  placeholder="是否使用">
+      <el-form-item label="是否删除" prop="isUse">
+          <el-select v-model="queryParams.isUse"  placeholder="是否删除">
           <el-option
             v-for="use in isUse"
             :key="use.id"
             :label="use.name"
             :value="use.id"
           />
-        </el-select>     
-      </el-form-item> -->
-
+        </el-select>
+        <!-- </el-dropdown> -->
+        
+      </el-form-item>
       <el-form-item label="是否标注" prop="isMark">
         <!-- <el-dropdown @command="handleCommandMark">
           <span class="el-dropdown-link">
@@ -358,11 +359,11 @@ export default {
       ],
       isUse: [
         {
-          id:"否",
+          id:"是",
           name: "否"
       },
       {
-          id:"是",
+          id:"否",
           name: "是"
       }
       ],
@@ -421,8 +422,8 @@ export default {
         pageSize: 10,
         audioName: null,
         afterText : null,
-        isUse: null,
-        isMark: null,
+        isUse: "是",
+        isMark: "是",
         clazzId: null,
         selectedTask: null,
         isPass: null,
