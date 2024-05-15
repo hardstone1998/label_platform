@@ -23,6 +23,7 @@
           :options="options"
           :props="props"
           @change="handleChange2"
+
         ></el-cascader>
       </el-form-item>
 
@@ -329,8 +330,41 @@
       </div>
       <div class="spacer"></div>
         <div class="right">
+          <!-- 添加分类 -->
+          <h1>创建分类</h1>
+              <el-form
+              :model="addClazzForm"
+              ref="addClazzForm"
+              size="small"
+              :inline="true"
+              v-show="showSearch"
+              label-width="68px"
+              style="display: block;"
+            >
+              <el-form-item label="缩写" prop="value">
+                <el-input v-model="addClazzForm.value" placeholder="请输入拼音缩写" />
+              </el-form-item>
+              <el-form-item label="类型名" prop="label">
+                <el-input v-model="addClazzForm.label" placeholder="请输入类型名" />
+              </el-form-item>
+              <el-form-item label="父分类">
+              <el-cascader
+                v-model="addClazzForm.class1Id"
+                placeholder="选择父分类"
+                :options="options"
+                :props="props"
+                @change="class1Change"
+                
+              ></el-cascader>
+            </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+              <el-button type="primary" @click="addClazz">确 定</el-button>
+              <el-button @click="emptyAddClazz">清 空</el-button>
+            </div>
           <!-- 右侧内容 -->
-          <el-form
+          <!-- 故宫辅助标注工具， -->
+          <!-- <el-form
             :model="answerForm"
             ref="answerForm"
             size="small"
@@ -421,7 +455,10 @@
                 >替换</el-button
               >
             </el-form-item>
-          </el-form>
+          </el-form> -->
+
+
+          
         </div>
       </div>
     </el-dialog>
@@ -526,6 +563,7 @@
 </template>
 
 <script>
+import { list1, get1, del1, add1, update1 } from "@/api/clazz/clazz";
 import {
   listExtract,
   getExtract,
@@ -548,6 +586,7 @@ export default {
   name: "Extract",
   data() {
     return {
+      addClazzForm:{},
       qaInput: null,
       typeList:[],
       answerList:[],
@@ -606,7 +645,8 @@ export default {
       ],
       taskList: [],
       props:{
-        value:"id"
+        value:"id",
+        checkStrictly: true
       },
       getvalue:"",
       audioURL: "",
@@ -670,6 +710,22 @@ export default {
   },
 
   methods: {
+    /**添加分类 */
+    addClazz() {
+      this.$refs["addClazzForm"].validate(valid => {
+        if (valid) {
+          console.log(this.addClazzForm);
+          add1(this.addClazzForm).then(response => {
+            this.$modal.msgSuccess("新增成功");
+            this.open = false;
+            this.getList();
+            this.clazzList = [];
+            this.options = [];
+            this.getOptions();
+            });
+        }
+      });
+    },
 
     replace(){
       var qa = "";
@@ -726,11 +782,11 @@ export default {
     
 
     formatClazzList(clazzList) { 
-  // 将 clazzList 格式化为适用于 el-cascader 的 options 数据 
-  return clazzList.map(clazz => ({ 
-      value: clazz.id, 
-      label: clazz.label, // 可根据实际情况调整 label 属性 
-      children: formatChildren(clazz.children)
+      // 将 clazzList 格式化为适用于 el-cascader 的 options 数据 
+      return clazzList.map(clazz => ({ 
+          value: clazz.id, 
+          label: clazz.label, // 可根据实际情况调整 label 属性 
+          children: formatChildren(clazz.children)
   }));
   
   function formatChildren(children) { 
@@ -791,9 +847,16 @@ export default {
       
     },
 
+    class1Change(value) {
+      this.addClazzForm.class1Id=value[value.length-1]
+    },
+    emptyAddClazz(){
+      this.addClazzForm = {}
+    },
+
     answerChange(value) {
       this.answerForm.clazzId=value[value.length-1]
-      },
+    },
 
     handleChange2(value) {
       this.queryParams.clazzId=value[value.length-1]
