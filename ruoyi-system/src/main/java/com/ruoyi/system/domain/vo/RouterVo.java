@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * 路由配置信息
- * 
+ *
  * @author ruoyi
  */
 @JsonInclude(JsonInclude.Include.NON_EMPTY)

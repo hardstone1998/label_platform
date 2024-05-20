@@ -126,6 +126,8 @@
       v-loading="loading"
       :data="verityQaList"
       @selection-change="handleSelectionChange"
+      @row-click="handleRowClick"
+      :row-class-name="highlightRow"
       ref="filterTable"
     >
       <el-table-column
@@ -352,6 +354,7 @@ export default {
   components: { markAsr },
   data() {
     return {
+      currentRowId: null,
       selectvalue: "",
       sevalue: [], //标签选择值
       getvalue:"",
@@ -502,6 +505,17 @@ export default {
   },
 
   methods: {
+    handleRowClick(row, event, column) {
+      // 设置当前点击的行ID
+      this.currentRowId = row.id; // 假设每行数据有一个id字段
+    },
+    // 用于动态添加高亮样式的函数
+    highlightRow({ row }) {
+      if (row.id === this.currentRowId) {
+        return 'highlighted-row';
+      }
+      return '';
+    },
     formatClazzList(clazzList) { 
     // 将 clazzList 格式化为适用于 el-cascader 的 options 数据 
     return clazzList.map(clazz => ({ 
@@ -888,6 +902,10 @@ export default {
 };
 </script>
 <style>
+.highlighted-row {
+  background-color: #1ae70f !important;
+  color: #ffffff !important;
+}
 .el-tooltip__popper {
   max-width: 30%;
 }

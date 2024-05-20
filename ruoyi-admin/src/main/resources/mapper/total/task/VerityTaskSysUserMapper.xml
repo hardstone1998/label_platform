@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.total.task.mapper.VerityTaskSysUserMapper">
+
+    <resultMap type="VerityTaskSysUser" id="VerityTaskSysUserResult">
+        <result property="taskId"    column="task_id"    />
+        <result property="extractNum"    column="extract_num"    />
+        <result property="taskId"    column="verity_task_id"    />
+        <result property="labelUserId"    column="label_user_id"    />
+        <result property="verityUserId"    column="verity_user_id"    />
+        <result property="verityUserName"    column="verity_user_name"    />
+        <result property="reqUser"    column="req_user"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectVerityTaskSysUserVo">
+        select
+            vu.id, vu.task_id, vu.label_user_id,
+            vu.verity_user_id, vu.create_time, vu.update_time,
+            vu.extract_num,vu.task_id,u.user_name,vu.req_user
+        from verity_task_sys_user vu join
+             sys_user u on vu.verity_user_id = u.user_id
+    </sql>
+
+    <select id="selectVerityTaskSysUserList" parameterType="VerityTaskSysUser" resultMap="VerityTaskSysUserResult">
+        <include refid="selectVerityTaskSysUserVo"/>
+        <where>
+            <if test="taskId != null "> and vu.task_id = #{taskId}</if>
+            <if test="labelUserId != null "> and vu.label_user_id = #{labelUserId}</if>
+            <if test="verityUserId != null "> and vu.verity_user_id = #{verityUserId}</if>
+        </where>
+    </select>
+
+    <select id="selectVerityTaskSysUserById" parameterType="Long" resultMap="VerityTaskSysUserResult">
+        <include refid="selectVerityTaskSysUserVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertVerityTaskSysUser" parameterType="VerityTaskSysUser" useGeneratedKeys="true" keyProperty="id">
+        insert into verity_task_sys_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="taskId != null">task_id,</if>
+            <if test="labelUserId != null">label_user_id,</if>
+            <if test="verityUserId != null">verity_user_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="reqUser != null">req_user,</if>
+            <if test="extractNum != null">extract_num,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="taskId != null">#{taskId},</if>
+            <if test="labelUserId != null">#{labelUserId},</if>
+            <if test="verityUserId != null">#{verityUserId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="reqUser != null">#{reqUser},</if>
+            <if test="extractNum != null">#{extractNum},</if>
+        </trim>
+    </insert>
+
+    <update id="updateVerityTaskSysUser" parameterType="VerityTaskSysUser">
+        update verity_task_sys_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="labelUserId != null and labelUserId !=''">label_user_id = #{labelUserId},</if>
+            <if test="verityUserId != null">verity_user_id = #{verityUserId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="reqUser != null">req_user = #{reqUser},</if>
+            <if test="extractNum != null">extract_num = #{extractNum},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="updateVerityTaskSysUserByTaskIdAndLabelUserId" parameterType="VerityTaskSysUser">
+        update verity_task_sys_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="labelUserId != null and labelUserId !=''">label_user_id = #{labelUserId},</if>
+            <if test="verityUserId != null">verity_user_id = #{verityUserId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="reqUser != null">req_user = #{reqUser},</if>
+            <if test="extractNum != null">extract_num = #{extractNum},</if>
+        </trim>
+        <where>
+            <if test="labelUserId != null and labelUserId !=''"> and label_user_id = #{labelUserId}</if>
+            <if test="taskId != null"> and task_id = #{taskId}</if>
+        </where>
+    </update>
+
+    <delete id="deleteVerityTaskSysUserById" parameterType="Long">
+        delete from verity_task_sys_user where id = #{id}
+    </delete>
+
+    <delete id="deleteVerityTaskSysUserByIds" parameterType="String">
+        delete from verity_task_sys_user where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

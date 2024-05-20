@@ -2,16 +2,17 @@ package com.ruoyi.common.core.domain.entity;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+
+import com.ruoyi.common.core.domain.BaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.annotation.Excel.ColumnType;
 import com.ruoyi.common.constant.UserConstants;
-import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
  * 字典数据表 sys_dict_data
- * 
+ *
  * @author ruoyi
  */
 public class SysDictData extends BaseEntity
@@ -153,7 +154,7 @@ public class SysDictData extends BaseEntity
     {
         this.status = status;
     }
-    
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)

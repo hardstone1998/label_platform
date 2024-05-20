@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 /**
  * 自定义xss校验注解
- * 
+ *
  * @author ruoyi
  */
 @Retention(RetentionPolicy.RUNTIME)

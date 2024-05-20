@@ -1,5 +1,6 @@
 package com.ruoyi.quartz.util;
 
+import com.ruoyi.quartz.domain.SysJob;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
 import org.quartz.Job;
@@ -16,11 +17,10 @@ import com.ruoyi.common.exception.job.TaskException;
 import com.ruoyi.common.exception.job.TaskException.Code;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
-import com.ruoyi.quartz.domain.SysJob;
 
 /**
  * 定时任务工具类
- * 
+ *
  * @author ruoyi
  *
  */
@@ -121,7 +121,7 @@ public class ScheduleUtils
 
     /**
      * 检查包名是否为白名单配置
-     * 
+     *
      * @param invokeTarget 目标字符串
      * @return 结果
      */

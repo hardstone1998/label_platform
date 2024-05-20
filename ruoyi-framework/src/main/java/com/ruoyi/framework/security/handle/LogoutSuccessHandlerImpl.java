@@ -4,6 +4,8 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.framework.web.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
@@ -16,11 +18,10 @@ import com.ruoyi.common.utils.ServletUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.manager.AsyncManager;
 import com.ruoyi.framework.manager.factory.AsyncFactory;
-import com.ruoyi.framework.web.service.TokenService;
 
 /**
  * 自定义退出处理类 返回成功
- * 
+ *
  * @author ruoyi
  */
 @Configuration
@@ -31,7 +32,7 @@ public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler
 
     /**
      * 退出处理
-     * 
+     *
      * @return
      */
     @Override

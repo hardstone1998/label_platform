@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.geo.qa.mapper.GeoBookQaMapper">
+
+    <resultMap type="GeoBookQa" id="GeoBookQaResult">
+        <result property="id"    column="id"    />
+        <result property="bookClassId"    column="book_class_id"    />
+        <result property="titleContent"    column="title_content"    />
+        <result property="qa1"    column="qa1"    />
+        <result property="qa2"    column="qa2"    />
+        <result property="qa3"    column="qa3"    />
+        <result property="verityQa1"    column="verity_qa1"    />
+        <result property="verityQa2"    column="verity_qa2"    />
+        <result property="verityQa3"    column="verity_qa3"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="isDelete"    column="is_delete"    />
+        <result property="isMark"    column="is_mark"    />
+        <result property="taskOwner"    column="task_owner"    />
+        <result property="taskId"    column="task_id"    />
+        <result property="clazzId"    column="clazz_id"    />
+        <result property="labelUser"    column="label_user"    />
+        <result property="labelTime"    column="label_time"    />
+        <result property="verityUser"    column="verity_user"    />
+        <result property="verityTime"    column="verity_time"    />
+        <result property="isPass"    column="is_pass"    />
+        <result property="verityFeedback"    column="verity_feedback"    />
+        <result property="accuracy"    column="accuracy"    />
+        <result property="verityClazzId"    column="verity_clazz_id"    />
+        <result property="insertBatchId"    column="insert_batch_id"    />
+    </resultMap>
+
+    <sql id="selectGeoBookQaVo">
+        select id, book_class_id, title_content, qa1, qa2, qa3, verity_qa1, verity_qa2, verity_qa3, create_time, update_time, is_delete, is_mark, task_owner, task_id, clazz_id, label_user, label_time, verity_user, verity_time, is_pass, verity_feedback, accuracy, verity_clazz_id, insert_batch_id from geo_book_qa
+    </sql>
+
+    <select id="selectGeoBookQaList" parameterType="GeoBookQa" resultMap="GeoBookQaResult">
+        <include refid="selectGeoBookQaVo"/>
+        <where>
+            <if test="bookClassId != null "> and book_class_id = #{bookClassId}</if>
+            <if test="titleContent != null  and titleContent != ''"> and title_content = #{titleContent}</if>
+            <if test="qa1 != null  and qa1 != ''"> and qa1 = #{qa1}</if>
+            <if test="qa2 != null  and qa2 != ''"> and qa2 = #{qa2}</if>
+            <if test="qa3 != null  and qa3 != ''"> and qa3 = #{qa3}</if>
+            <if test="verityQa1 != null  and verityQa1 != ''"> and verity_qa1 = #{verityQa1}</if>
+            <if test="verityQa2 != null  and verityQa2 != ''"> and verity_qa2 = #{verityQa2}</if>
+            <if test="verityQa3 != null  and verityQa3 != ''"> and verity_qa3 = #{verityQa3}</if>
+            <if test="updateTime != null "> and update_time = #{updateTime}</if>
+            <if test="isDelete != null  and isDelete != ''"> and is_delete = #{isDelete}</if>
+            <if test="isMark != null  and isMark != ''"> and is_mark = #{isMark}</if>
+            <if test="taskOwner != null  and taskOwner != ''"> and task_owner = #{taskOwner}</if>
+            <if test="taskId != null "> and task_id = #{taskId}</if>
+            <if test="clazzId != null "> and clazz_id = #{clazzId}</if>
+            <if test="labelUser != null  and labelUser != ''"> and label_user = #{labelUser}</if>
+            <if test="labelTime != null "> and label_time = #{labelTime}</if>
+            <if test="verityUser != null  and verityUser != ''"> and verity_user = #{verityUser}</if>
+            <if test="verityTime != null "> and verity_time = #{verityTime}</if>
+            <if test="isPass != null "> and is_pass = #{isPass}</if>
+            <if test="verityFeedback != null  and verityFeedback != ''"> and verity_feedback = #{verityFeedback}</if>
+            <if test="accuracy != null "> and accuracy = #{accuracy}</if>
+            <if test="verityClazzId != null "> and verity_clazz_id = #{verityClazzId}</if>
+            <if test="insertBatchId != null "> and insert_batch_id = #{insertBatchId}</if>
+        </where>
+    </select>
+
+    <select id="selectGeoBookQaById" parameterType="Long" resultMap="GeoBookQaResult">
+        <include refid="selectGeoBookQaVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertGeoBookQa" parameterType="GeoBookQa" useGeneratedKeys="true" keyProperty="id">
+        insert into geo_book_qa
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bookClassId != null">book_class_id,</if>
+            <if test="titleContent != null">title_content,</if>
+            <if test="qa1 != null">qa1,</if>
+            <if test="qa2 != null">qa2,</if>
+            <if test="qa3 != null">qa3,</if>
+            <if test="verityQa1 != null">verity_qa1,</if>
+            <if test="verityQa2 != null">verity_qa2,</if>
+            <if test="verityQa3 != null">verity_qa3,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="isDelete != null">is_delete,</if>
+            <if test="isMark != null">is_mark,</if>
+            <if test="taskOwner != null">task_owner,</if>
+            <if test="taskId != null">task_id,</if>
+            <if test="clazzId != null">clazz_id,</if>
+            <if test="labelUser != null">label_user,</if>
+            <if test="labelTime != null">label_time,</if>
+            <if test="verityUser != null">verity_user,</if>
+            <if test="verityTime != null">verity_time,</if>
+            <if test="isPass != null">is_pass,</if>
+            <if test="verityFeedback != null">verity_feedback,</if>
+            <if test="accuracy != null">accuracy,</if>
+            <if test="verityClazzId != null">verity_clazz_id,</if>
+            <if test="insertBatchId != null">insert_batch_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bookClassId != null">#{bookClassId},</if>
+            <if test="titleContent != null">#{titleContent},</if>
+            <if test="qa1 != null">#{qa1},</if>
+            <if test="qa2 != null">#{qa2},</if>
+            <if test="qa3 != null">#{qa3},</if>
+            <if test="verityQa1 != null">#{verityQa1},</if>
+            <if test="verityQa2 != null">#{verityQa2},</if>
+            <if test="verityQa3 != null">#{verityQa3},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="isDelete != null">#{isDelete},</if>
+            <if test="isMark != null">#{isMark},</if>
+            <if test="taskOwner != null">#{taskOwner},</if>
+            <if test="taskId != null">#{taskId},</if>
+            <if test="clazzId != null">#{clazzId},</if>
+            <if test="labelUser != null">#{labelUser},</if>
+            <if test="labelTime != null">#{labelTime},</if>
+            <if test="verityUser != null">#{verityUser},</if>
+            <if test="verityTime != null">#{verityTime},</if>
+            <if test="isPass != null">#{isPass},</if>
+            <if test="verityFeedback != null">#{verityFeedback},</if>
+            <if test="accuracy != null">#{accuracy},</if>
+            <if test="verityClazzId != null">#{verityClazzId},</if>
+            <if test="insertBatchId != null">#{insertBatchId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGeoBookQa" parameterType="GeoBookQa">
+        update geo_book_qa
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="bookClassId != null">book_class_id = #{bookClassId},</if>
+            <if test="titleContent != null">title_content = #{titleContent},</if>
+            <if test="qa1 != null">qa1 = #{qa1},</if>
+            <if test="qa2 != null">qa2 = #{qa2},</if>
+            <if test="qa3 != null">qa3 = #{qa3},</if>
+            <if test="verityQa1 != null">verity_qa1 = #{verityQa1},</if>
+            <if test="verityQa2 != null">verity_qa2 = #{verityQa2},</if>
+            <if test="verityQa3 != null">verity_qa3 = #{verityQa3},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="isMark != null">is_mark = #{isMark},</if>
+            <if test="taskOwner != null">task_owner = #{taskOwner},</if>
+            <if test="taskId != null">task_id = #{taskId},</if>
+            <if test="clazzId != null">clazz_id = #{clazzId},</if>
+            <if test="labelUser != null">label_user = #{labelUser},</if>
+            <if test="labelTime != null">label_time = #{labelTime},</if>
+            <if test="verityUser != null">verity_user = #{verityUser},</if>
+            <if test="verityTime != null">verity_time = #{verityTime},</if>
+            <if test="isPass != null">is_pass = #{isPass},</if>
+            <if test="verityFeedback != null">verity_feedback = #{verityFeedback},</if>
+            <if test="accuracy != null">accuracy = #{accuracy},</if>
+            <if test="verityClazzId != null">verity_clazz_id = #{verityClazzId},</if>
+            <if test="insertBatchId != null">insert_batch_id = #{insertBatchId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGeoBookQaById" parameterType="Long">
+        delete from geo_book_qa where id = #{id}
+    </delete>
+
+    <delete id="deleteGeoBookQaByIds" parameterType="String">
+        update geo_book_qa set is_delete = "是"  where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

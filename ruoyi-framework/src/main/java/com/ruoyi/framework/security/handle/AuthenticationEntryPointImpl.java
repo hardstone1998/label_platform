@@ -15,7 +15,7 @@ import com.ruoyi.common.utils.StringUtils;
 
 /**
  * 认证失败处理类 返回未授权
- * 
+ *
  * @author ruoyi
  */
 @Component

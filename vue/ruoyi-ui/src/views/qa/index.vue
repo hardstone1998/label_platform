@@ -129,6 +129,8 @@
       v-loading="loading"
       :data="extractList"
       @selection-change="handleSelectionChange"
+      @row-click="handleRowClick"
+      :row-class-name="highlightRow"
       ref="filterTable"
     >
       <!-- <el-table-column type="selection" width="55" align="center" /> -->
@@ -586,6 +588,7 @@ export default {
   name: "Extract",
   data() {
     return {
+      currentRowId: null,
       addClazzForm:{},
       qaInput: null,
       typeList:[],
@@ -710,6 +713,18 @@ export default {
   },
 
   methods: {
+    handleRowClick(row, event, column) {
+      // 设置当前点击的行ID
+      this.currentRowId = row.id; // 假设每行数据有一个id字段
+    },
+    // 用于动态添加高亮样式的函数
+    highlightRow({ row }) {
+      if (row.id === this.currentRowId) {
+        return 'highlighted-row';
+      }
+      return '';
+    },
+
     /**添加分类 */
     addClazz() {
       this.$refs["addClazzForm"].validate(valid => {
@@ -955,6 +970,7 @@ export default {
           this.open = false;
         })
         .catch(() => {});
+        console.log("this.currentRowId:::"+this.currentRowId);
     },
 
     handleRelUpdate() {
@@ -1142,7 +1158,6 @@ export default {
         this.formatCurrentTime = this.formatTime(this.currentTime);
         this.formatTotalTime = this.formatTime(this.totalTime);
         this.audioURL = "audio/" +this.form.folder+"/"+ this.audioName;
-        console.log( this.audioURL);
         this.isPlay = false;
 
         setTimeout(() => {
@@ -1214,7 +1229,13 @@ export default {
   },
 };
 </script>
-<style scoped>
+<style >
+/* 定义高亮行的样式 */
+
+.highlighted-row {
+  background-color: #1ae70f !important;
+  color: #ffffff !important;
+}
 .el-col {
   border-radius: 4px;
 }

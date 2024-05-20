@@ -1,15 +1,15 @@
 package com.ruoyi.common.utils;
 
+import com.ruoyi.common.core.domain.model.LoginUser;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.ruoyi.common.constant.HttpStatus;
-import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.exception.ServiceException;
 
 /**
  * 安全服务工具类
- * 
+ *
  * @author ruoyi
  */
 public class SecurityUtils
@@ -43,7 +43,7 @@ public class SecurityUtils
             throw new ServiceException("获取部门ID异常", HttpStatus.UNAUTHORIZED);
         }
     }
-    
+
     /**
      * 获取用户账户
      **/
@@ -109,7 +109,7 @@ public class SecurityUtils
 
     /**
      * 是否为管理员
-     * 
+     *
      * @param userId 用户ID
      * @return 结果
      */

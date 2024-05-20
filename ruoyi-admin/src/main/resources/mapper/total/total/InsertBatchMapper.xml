@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.total.total.mapper.InsertBatchMapper">
+
+    <resultMap type="InsertBatch" id="InsertBatchResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="taskType"    column="task_type"    />
+        <result property="folder"    column="folder"    />
+    </resultMap>
+
+    <sql id="selectInsertBatchVo">
+        select id, name, create_time, project_name, task_type,folder from insert_batch
+    </sql>
+
+    <select id="selectInsertBatchList" parameterType="InsertBatch" resultMap="InsertBatchResult">
+        <include refid="selectInsertBatchVo"/>
+        <where>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            <if test="taskType != null "> and task_type = #{taskType}</if>
+        </where>
+    </select>
+
+    <select id="selectInsertBatchById" parameterType="Long" resultMap="InsertBatchResult">
+        <include refid="selectInsertBatchVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertInsertBatch" parameterType="InsertBatch" useGeneratedKeys="true" keyProperty="id">
+        insert into insert_batch
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="projectName != null">project_name,</if>
+            <if test="taskType != null">task_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="projectName != null">#{projectName},</if>
+            <if test="taskType != null">#{taskType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateInsertBatch" parameterType="InsertBatch">
+        update insert_batch
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="projectName != null">project_name = #{projectName},</if>
+            <if test="taskType != null">task_type = #{taskType},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteInsertBatchById" parameterType="Long">
+        delete from insert_batch where id = #{id}
+    </delete>
+
+    <delete id="deleteInsertBatchByIds" parameterType="String">
+        delete from insert_batch where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

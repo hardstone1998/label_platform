@@ -1,6 +1,6 @@
 package com.ruoyi.test;
 
-import com.ruoyi.tool.LevenshteinDistance;
+import com.ruoyi.total.tool.LevenshteinDistance;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 

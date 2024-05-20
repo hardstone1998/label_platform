@@ -138,6 +138,8 @@
       v-loading="loading"
       :data="verityAsrList"
       @selection-change="handleSelectionChange"
+      @row-click="handleRowClick"
+      :row-class-name="highlightRow"
       ref="filterTable"
     >
       <!-- <el-table-column type="selection" width="55" align="center" /> -->
@@ -346,6 +348,7 @@ export default {
   components: { markAsr },
   data() {
     return {
+      currentRowId: null,
       canChange: true,//是否能更改
       isMark: [
         {
@@ -472,7 +475,17 @@ export default {
   },
 
   methods: {
-
+    handleRowClick(row, event, column) {
+      // 设置当前点击的行ID
+      this.currentRowId = row.id; // 假设每行数据有一个id字段
+    },
+    // 用于动态添加高亮样式的函数
+    highlightRow({ row }) {
+      if (row.id === this.currentRowId) {
+        return 'highlighted-row';
+      }
+      return '';
+    },
     pass(){
       this.submitForm();
     },
@@ -776,6 +789,10 @@ export default {
 };
 </script>
 <style>
+.highlighted-row {
+  background-color: #1ae70f !important;
+  color: #ffffff !important;
+}
 .el-tooltip__popper {
   max-width: 30%;
 }

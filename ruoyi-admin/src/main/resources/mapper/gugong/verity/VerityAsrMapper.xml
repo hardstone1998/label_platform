@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.gugong.verity.mapper.VerityAsrMapper">
+
+    <resultMap type="VoiceAnnotation" id="VoiceAnnotationResult">
+        <result property="id"    column="id"    />
+        <result property="audioPath"    column="audio_path"    />
+        <result property="audioName"    column="audio_name"    />
+        <result property="preText"    column="pre_text"    />
+        <result property="afterText"    column="after_text"    />
+        <result property="isUse"    column="is_use"    />
+        <result property="taskOwner"    column="task_owner"    />
+        <result property="isMark"    column="is_mask"    />
+        <result property="cer"    column="cer"    />
+        <result property="tags"    column="tags"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="audioTime"    column="audio_time"    />
+        <result property="audioLenth"    column="audio_lenth"    />
+        <result property="clazzId"    column="clazz_id"    />
+        <result property="taskId"    column="task_id"    />
+        <result property="labelUser"    column="label_user"    />
+        <result property="verityUser"    column="verity_user"    />
+        <result property="labelTime"    column="label_time"    />
+        <result property="verityTime"    column="verity_time"    />
+        <result property="isPass"    column="is_pass"    />
+        <result property="verity"    column="verity"    />
+        <result property="accuracy"    column="accuracy"    />
+        <result property="verityText"    column="verity_text"    />
+        <result property="verityClazzId"    column="verity_clazz_id"    />
+        <result property="insertBatchId"    column="insert_batch_id"    />
+        <result property="folder"    column="folder"    />
+    </resultMap>
+
+    <sql id="selectVoiceAnnotationVoBak">
+        select id, audio_path, audio_name, pre_text, after_text, is_use, task_owner, is_mask, cer, tags, create_time, update_time, audio_time, audio_lenth, clazz_id, task_id, label_user, verity_user, label_time, verity_time, is_pass, verity, accuracy, verity_text,verity_clazz_id,insert_batch_id from voice_annotation
+    </sql>
+
+    <sql id="selectVoiceAnnotationVo">
+        select v.id, audio_path, audio_name, pre_text, after_text, is_use, task_owner, is_mask, cer, tags, v.create_time, update_time, audio_time, audio_lenth, clazz_id, task_id, label_user, verity_user, label_time, verity_time, is_pass, verity, accuracy, verity_text,insert_batch_id,i.folder from voice_annotation v join insert_batch i on v.insert_batch_id = i.id
+    </sql>
+
+    <select id="selectVoiceAnnotationList" parameterType="VoiceAnnotation" resultMap="VoiceAnnotationResult">
+        <include refid="selectVoiceAnnotationVo"/>
+        <where>
+            <if test="audioPath != null  and audioPath != ''"> and audio_path = #{audioPath}</if>
+            <if test="audioName != null  and audioName != ''"> and audio_name like concat('%', #{audioName}, '%')</if>
+            <if test="preText != null  and preText != ''"> and pre_text like concat('%', #{preText}, '%')</if>
+            <if test="afterText != null  and afterText != ''"> and after_text like concat('%', #{afterText}, '%')</if>
+            <if test="isUse != null  and isUse != ''"> and is_use = #{isUse}</if>
+            <if test="isMark != null  and isMark != ''"> and is_mask = #{isMark}</if>
+            <if test="cer != null  and cer != ''"> and cer = #{cer}</if>
+            <if test="tags != null  and tags != ''"> and tags = #{tags}</if>
+            <if test="audioTime != null  and audioTime != ''"> and audio_time = #{audioTime}</if>
+            <if test="audioLenth != null  and audioLenth != ''"> and audio_lenth = #{audioLenth}</if>
+            <if test="clazzId != null "> and clazz_id = #{clazzId}</if>
+            <if test="taskId != null "> and task_id = #{taskId}</if>
+            <if test="labelUser != null "> and label_user = #{labelUser}</if>
+            <if test="verityUser != null "> and verity_user = #{verityUser}</if>
+            <if test="labelTime != null "> and label_time = #{labelTime}</if>
+            <if test="verityTime != null "> and verity_time = #{verityTime}</if>
+            <if test="isPass != null "> and is_pass = #{isPass}</if>
+            <if test="verity != null  and verity != ''"> and verity = #{verity}</if>
+            <if test="accuracy != null "> and accuracy = #{accuracy}</if>
+            <if test="verityText != null  and verityText != ''"> and verity_text = #{verityText}</if>
+            <if test="verityClazzId != null "> and verity_clazz_id = #{verityClazzId}</if>
+        </where>
+    </select>
+
+    <select id="selectVoiceAnnotationById" parameterType="Long" resultMap="VoiceAnnotationResult">
+        <include refid="selectVoiceAnnotationVoBak"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectVoiceAnnotationListByOwner" parameterType="com.ruoyi.gugong.asr.domain.VoiceAnnotation" resultMap="VoiceAnnotationResult">
+        <include refid="selectVoiceAnnotationVo"/>
+        <where>
+            <if test="audioName != null  and audioName != ''"> and audio_name like concat('%', #{audioName}, '%')</if>
+            <if test="afterText != null  and afterText != ''"> and after_text like concat('%', #{afterText}, '%')</if>
+            <if test="isUse != null  and isUse != ''"> and is_use = #{isUse}</if>
+            <if test="isMark != null  and isMark != ''"> and is_mask = #{isMark}</if>
+            <if test="taskOwner != null  and taskOwner != ''"> and task_owner = #{taskOwner}</if>
+            <if test="clazzId != null "> and clazz_id = #{clazzId}</if>
+            <if test="taskId != null "> and task_id = #{taskId}</if>
+            <if test="labelUser != null "> and label_user = #{labelUser}</if>
+            <if test="verityUser != null "> and verity_user = #{verityUser}</if>
+            <if test="isPass != null "> and is_pass = #{isPass}</if>
+        </where>
+    </select>
+
+    <insert id="insertVoiceAnnotation" parameterType="VoiceAnnotation" useGeneratedKeys="true" keyProperty="id">
+        insert into voice_annotation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="audioPath != null">audio_path,</if>
+            <if test="audioName != null">audio_name,</if>
+            <if test="preText != null">pre_text,</if>
+            <if test="afterText != null">after_text,</if>
+            <if test="isUse != null">is_use,</if>
+            <if test="taskOwner != null">task_owner,</if>
+            <if test="isMark != null">is_mask,</if>
+            <if test="cer != null">cer,</if>
+            <if test="tags != null">tags,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="audioTime != null">audio_time,</if>
+            <if test="audioLenth != null">audio_lenth,</if>
+            <if test="clazzId != null">clazz_id,</if>
+            <if test="taskId != null">task_id,</if>
+            <if test="labelUser != null">label_user,</if>
+            <if test="verityUser != null">verity_user,</if>
+            <if test="labelTime != null">label_time,</if>
+            <if test="verityTime != null">verity_time,</if>
+            <if test="isPass != null">is_pass,</if>
+            <if test="verity != null">verity,</if>
+            <if test="accuracy != null">accuracy,</if>
+            <if test="verityText != null">verity_text,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="audioPath != null">#{audioPath},</if>
+            <if test="audioName != null">#{audioName},</if>
+            <if test="preText != null">#{preText},</if>
+            <if test="afterText != null">#{afterText},</if>
+            <if test="isUse != null">#{isUse},</if>
+            <if test="taskOwner != null">#{taskOwner},</if>
+            <if test="isMark != null">#{isMark},</if>
+            <if test="cer != null">#{cer},</if>
+            <if test="tags != null">#{tags},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="audioTime != null">#{audioTime},</if>
+            <if test="audioLenth != null">#{audioLenth},</if>
+            <if test="clazzId != null">#{clazzId},</if>
+            <if test="taskId != null">#{taskId},</if>
+            <if test="labelUser != null">#{labelUser},</if>
+            <if test="verityUser != null">#{verityUser},</if>
+            <if test="labelTime != null">#{labelTime},</if>
+            <if test="verityTime != null">#{verityTime},</if>
+            <if test="isPass != null">#{isPass},</if>
+            <if test="verity != null">#{verity},</if>
+            <if test="accuracy != null">#{accuracy},</if>
+            <if test="verityText != null">#{verityText},</if>
+         </trim>
+    </insert>
+
+    <update id="updateVoiceAnnotation" parameterType="VoiceAnnotation">
+        update voice_annotation
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="verityUser != null">verity_user = #{verityUser},</if>
+            <if test="verityTime != null">verity_time = #{verityTime},</if>
+            <if test="isPass != null">is_pass = #{isPass},</if>
+            <if test="verity != null">verity = #{verity},</if>
+            <if test="accuracy != null">accuracy = #{accuracy},</if>
+            <if test="verityText != null">verity_text = #{verityText},</if>
+            <if test="verityClazzId != null">verity_clazz_id = #{verityClazzId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteVoiceAnnotationById" parameterType="Long">
+        delete from voice_annotation where id = #{id}
+    </delete>
+
+    <delete id="deleteVoiceAnnotationByIds" parameterType="String">
+        delete from voice_annotation where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

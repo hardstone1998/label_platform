@@ -17,7 +17,7 @@ import com.ruoyi.common.utils.StringUtils;
 
 /**
  * 全局异常处理器
- * 
+ *
  * @author ruoyi
  */
 @RestControllerAdvice

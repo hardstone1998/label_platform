@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form">
-      <h3 class="title">ASR-故宫标注系统</h3>
+      <h3 class="title">标注系统</h3>
       <el-form-item prop="username">
         <el-input
           v-model="loginForm.username"

@@ -11,7 +11,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
  * 岗位表 sys_post
- * 
+ *
  * @author ruoyi
  */
 public class SysPost extends BaseEntity
@@ -105,7 +105,7 @@ public class SysPost extends BaseEntity
     {
         this.flag = flag;
     }
-    
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)

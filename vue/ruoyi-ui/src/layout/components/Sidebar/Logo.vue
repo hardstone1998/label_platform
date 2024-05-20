@@ -35,7 +35,7 @@ export default {
   },
   data() {
     return {
-      title: 'ASR-故宫标注系统',
+      title: '标注系统',
       logo: logoImg
     }
   }
