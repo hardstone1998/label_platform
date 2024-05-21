@@ -3,8 +3,10 @@ package com.ruoyi.geo.qa.service.impl;
 import java.util.Date;
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.geo.qa.domain.GeoBookClass;
 import com.ruoyi.geo.qa.domain.GeoBookQa;
 import com.ruoyi.geo.qa.mapper.GeoBookQaMapper;
+import com.ruoyi.geo.qa.service.IGeoBookClassService;
 import com.ruoyi.geo.qa.service.IGeoBookQaService;
 import com.ruoyi.gugong.qa.domain.AsrResult1;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,9 @@ public class GeoBookQaServiceImpl implements IGeoBookQaService
     @Autowired
     private GeoBookQaMapper geoBookQaMapper;
 
+    @Autowired
+    private IGeoBookClassService geoBookClassService;
+
     /**
      * 查询【请填写功能名称】
      *
@@ -31,7 +36,22 @@ public class GeoBookQaServiceImpl implements IGeoBookQaService
     @Override
     public GeoBookQa selectGeoBookQaById(Long id)
     {
-        return geoBookQaMapper.selectGeoBookQaById(id);
+        GeoBookQa geoBookQa = geoBookQaMapper.selectGeoBookQaById(id);
+        Long bookClassId = geoBookQa.getBookClassId();
+        GeoBookClass geoBookClass = geoBookClassService.selectGeoBookClassById(bookClassId);
+        StringBuilder bookClazzNameBuilder = new StringBuilder();
+        bookClazzNameBuilder.append(geoBookClass.getBookName());
+
+        String[] classLevels = {geoBookClass.getClass1(), geoBookClass.getClass2(), geoBookClass.getClass3(), geoBookClass.getClass4()};
+        for (String clazzLevel : classLevels) {
+            if (clazzLevel != null && !clazzLevel.isEmpty()) {
+                bookClazzNameBuilder.append(">>>>>>").append(clazzLevel);
+            }
+        }
+
+        String bookClazzName = bookClazzNameBuilder.toString();
+        geoBookQa.setBookClazz(bookClazzName);
+        return geoBookQa;
     }
 
     /**

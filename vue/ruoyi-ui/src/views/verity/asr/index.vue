@@ -790,8 +790,7 @@ export default {
 </script>
 <style>
 .highlighted-row {
-  background-color: #1ae70f !important;
-  color: #ffffff !important;
+  background-color: #d1ffbd  !important;
 }
 .el-tooltip__popper {
   max-width: 30%;

@@ -1233,8 +1233,7 @@ export default {
 /* 定义高亮行的样式 */
 
 .highlighted-row {
-  background-color: #1ae70f !important;
-  color: #ffffff !important;
+  background-color: #d1ffbd  !important;
 }
 .el-col {
   border-radius: 4px;

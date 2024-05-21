@@ -129,6 +129,8 @@
       v-loading="loading"
       :data="extractList"
       @selection-change="handleSelectionChange"
+      @row-click="handleRowClick"
+      :row-class-name="highlightRow"
       ref="filterTable"
     >
       <!-- <el-table-column type="selection" width="55" align="center" /> -->
@@ -219,7 +221,7 @@
 
     <!-- 添加或修改extract对话框 -->
     <el-dialog
-      title="Q&A标注"
+      :title="form.bookClazz"
       :visible.sync="open"
       width="100%"
       higth="100%"
@@ -535,6 +537,7 @@ export default {
   name: "Extract",
   data() {
     return {
+      currentRowId: null,
       addClazzForm:{},
       qaInput: null,
       typeList:[],
@@ -659,6 +662,18 @@ export default {
   },
 
   methods: {
+    handleRowClick(row, event, column) {
+      // 设置当前点击的行ID
+      this.currentRowId = row.id; // 假设每行数据有一个id字段
+    },
+    // 用于动态添加高亮样式的函数
+    highlightRow({ row }) {
+      if (row.id === this.currentRowId) {
+        return 'highlighted-row';
+      }
+      return '';
+    },
+
     /**添加分类 */
     addClazz() {
       this.$refs["addClazzForm"].validate(valid => {
@@ -1137,7 +1152,10 @@ export default {
   },
 };
 </script>
-<style scoped>
+<style >
+.highlighted-row {
+  background-color: #d1ffbd  !important;
+}
 .el-col {
   border-radius: 4px;
 }

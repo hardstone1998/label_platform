@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.geo.qa.mapper.GeoBookClassMapper">
+
+    <resultMap type="GeoBookClass" id="GeoBookClassResult">
+        <result property="id"    column="id"    />
+        <result property="bookName"    column="book_name"    />
+        <result property="class1"    column="class1"    />
+        <result property="class2"    column="class2"    />
+        <result property="class3"    column="class3"    />
+        <result property="class4"    column="class4"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updataTime"    column="updata_time"    />
+        <result property="description"    column="description"    />
+    </resultMap>
+
+    <sql id="selectGeoBookClassVo">
+        select id, book_name, class1, class2, class3, class4, create_time, updata_time, description from geo_book_class
+    </sql>
+
+    <select id="selectGeoBookClassList" parameterType="GeoBookClass" resultMap="GeoBookClassResult">
+        <include refid="selectGeoBookClassVo"/>
+        <where>
+            <if test="bookName != null  and bookName != ''"> and book_name like concat('%', #{bookName}, '%')</if>
+            <if test="class1 != null  and class1 != ''"> and class1 = #{class1}</if>
+            <if test="class2 != null  and class2 != ''"> and class2 = #{class2}</if>
+            <if test="class3 != null  and class3 != ''"> and class3 = #{class3}</if>
+            <if test="class4 != null  and class4 != ''"> and class4 = #{class4}</if>
+            <if test="updataTime != null "> and updata_time = #{updataTime}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+        </where>
+    </select>
+
+    <select id="selectGeoBookClassById" parameterType="Long" resultMap="GeoBookClassResult">
+        <include refid="selectGeoBookClassVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertGeoBookClass" parameterType="GeoBookClass" useGeneratedKeys="true" keyProperty="id">
+        insert into geo_book_class
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bookName != null">book_name,</if>
+            <if test="class1 != null">class1,</if>
+            <if test="class2 != null">class2,</if>
+            <if test="class3 != null">class3,</if>
+            <if test="class4 != null">class4,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updataTime != null">updata_time,</if>
+            <if test="description != null">description,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bookName != null">#{bookName},</if>
+            <if test="class1 != null">#{class1},</if>
+            <if test="class2 != null">#{class2},</if>
+            <if test="class3 != null">#{class3},</if>
+            <if test="class4 != null">#{class4},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updataTime != null">#{updataTime},</if>
+            <if test="description != null">#{description},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGeoBookClass" parameterType="GeoBookClass">
+        update geo_book_class
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="bookName != null">book_name = #{bookName},</if>
+            <if test="class1 != null">class1 = #{class1},</if>
+            <if test="class2 != null">class2 = #{class2},</if>
+            <if test="class3 != null">class3 = #{class3},</if>
+            <if test="class4 != null">class4 = #{class4},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updataTime != null">updata_time = #{updataTime},</if>
+            <if test="description != null">desc = #{description},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGeoBookClassById" parameterType="Long">
+        delete from geo_book_class where id = #{id}
+    </delete>
+
+    <delete id="deleteGeoBookClassByIds" parameterType="String">
+        delete from geo_book_class where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
