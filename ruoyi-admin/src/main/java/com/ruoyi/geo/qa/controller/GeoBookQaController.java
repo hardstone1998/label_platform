@@ -42,7 +42,6 @@ public class GeoBookQaController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(GeoBookQa geoBookQa)
     {
-
         startPage();
         List<GeoBookQa> list = geoBookQaService.selectGeoBookQaList(geoBookQa);
         return getDataTable(list);

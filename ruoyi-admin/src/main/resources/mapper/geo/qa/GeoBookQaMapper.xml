@@ -40,7 +40,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectGeoBookQaVo"/>
         <where>
             <if test="bookClassId != null "> and book_class_id = #{bookClassId}</if>
-            <if test="titleContent != null  and titleContent != ''"> and title_content = #{titleContent}</if>
+            <if test="titleContent != null  and titleContent != ''"> and title_content like concat('%', #{titleContent}, '%')</if>
             <if test="qa1 != null  and qa1 != ''"> and qa1 = #{qa1}</if>
             <if test="qa2 != null  and qa2 != ''"> and qa2 = #{qa2}</if>
             <if test="qa3 != null  and qa3 != ''"> and qa3 = #{qa3}</if>

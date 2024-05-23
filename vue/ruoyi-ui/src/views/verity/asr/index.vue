@@ -526,7 +526,7 @@ export default {
     getClazz(){
       var userName = this.$store.state.user.name;
       var asr = 0
-      allByUser(userName,asr).then((response) => {
+      allByUser(userName,asr,"gugong").then((response) => {
         this.taskList = response.rows.map((row) => { return { taskId: row.taskId, taskName: row.taskName }; }); 
       });
       

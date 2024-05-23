@@ -10,7 +10,7 @@
     >
       <el-form-item label="模糊搜索" prop="audioPath">
         <el-input
-          v-model="queryParams.result"
+          v-model="queryParams.titleContent"
           placeholder="请输入关键字（如：预约）"
           @keyup.enter.native="handleQuery"
         />
@@ -637,13 +637,14 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        audioPath: null,
-        result: null,
-        qaExtract: null,
-        taskOwner: null,
+        titleContent: null,
+        clazzId: null,
+        isMark: null,
         isDelete: "否",
-        cuda:"",
-        insertBatchId :null
+        taskId: null,
+        is_pass: null,
+        insertBatchId :null,
+        taskOwner: null
       },
       // 表单参数
       form: {},
@@ -655,10 +656,10 @@ export default {
     };
   },
   created() {
-    this.getList();
-    this.getOptions();
     this.getTaskList();
+    this.getList();
     this.searchAllBatches();
+    // this.getOptions();
   },
 
   methods: {
@@ -738,7 +739,9 @@ export default {
 
     //查询全部批次
     searchAllBatches(){
+      console.log("searchAllBatches");
       listBatch().then((response) => {
+        console.log("listBatch");
         this.insertBatch = response.rows;
       });
     },
@@ -804,7 +807,7 @@ export default {
     getTaskList(){
       var userName = this.$store.state.user.name;
       var qa = 1;
-      allByUser(userName,qa).then((response) => {
+      allByUser(userName,qa,"geo").then((response) => {
         this.taskList = response.rows.map((row) => { return { taskId: row.taskId, taskName: row.taskName }; }); 
         console.log(this.taskList);
       });

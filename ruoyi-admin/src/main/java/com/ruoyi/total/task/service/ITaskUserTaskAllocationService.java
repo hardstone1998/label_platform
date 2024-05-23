@@ -21,6 +21,8 @@ public interface ITaskUserTaskAllocationService
      */
     public TaskUserTaskAllocation selectTaskUserTaskAllocationById(Long id);
 
+    public List<TaskUserTaskAllocation> selectTaskAllocationListByUserAndProject(TaskUserTaskAllocation taskUserTaskAllocation);
+
     /**
      * 查询用户任务列表
      *

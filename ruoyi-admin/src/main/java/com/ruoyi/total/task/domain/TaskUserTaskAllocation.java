@@ -71,4 +71,6 @@ public class TaskUserTaskAllocation extends BaseEntity
 
     private Integer clazz;
 
+    private String project;
+
 }

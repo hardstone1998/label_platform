@@ -64,14 +64,17 @@ public class TaskUserTaskAllocationController extends BaseController
      * 查询用户全部任务
      */
     @GetMapping("/allByUser")
-    public TableDataInfo allByUser(String userName,Integer qaOrAsr)
+    public TableDataInfo allByUser(String userName,Integer qaOrAsr,String project)
     {
+        System.out.println("allByUser被调用：："+userName+qaOrAsr+project);
         TaskUserTaskAllocation taskUserTaskAllocation = new TaskUserTaskAllocation();
         if (!"admin".equals(userName)){
             taskUserTaskAllocation.setUserName(userName);
         }
         taskUserTaskAllocation.setClazz(qaOrAsr);
-        List<TaskUserTaskAllocation> list = taskUserTaskAllocationService.selectTaskUserTaskAllocationList(taskUserTaskAllocation);
+        taskUserTaskAllocation.setProject(project);
+//        List<TaskUserTaskAllocation> list = taskUserTaskAllocationService.selectTaskUserTaskAllocationList(taskUserTaskAllocation);
+        List<TaskUserTaskAllocation> list = taskUserTaskAllocationService.selectTaskAllocationListByUserAndProject(taskUserTaskAllocation);
         return getDataTable(list);
     }
 

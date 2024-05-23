@@ -17,6 +17,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="recallNum"    column="recall_num"    />
         <result property="createTime"    column="create_time"    />
         <result property="clazz"    column="clazz"    />
+        <result property="project"    column="project"    />
     </resultMap>
 
 <!--    <sql id="selectTaskUserTaskAllocationVo">-->
@@ -37,6 +38,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="numberAccuracy != null "> and tu.number_accuracy = #{numberAccuracy}</if>
             <if test="responsiblePersonId != null "> and t.responsible_person_id = #{responsiblePersonId}</if>
             <if test="taskClazz != null "> and t.clazz = #{taskClazz}</if>
+            <if test="project != null "> and t.project = #{project}</if>
         </where>
     </select>
 

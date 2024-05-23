@@ -855,7 +855,7 @@ export default {
     getTaskList(){
       var userName = this.$store.state.user.name;
       var qa = 1;
-      allByUser(userName,qa).then((response) => {
+      allByUser(userName,qa,"gugong").then((response) => {
         this.taskList = response.rows.map((row) => { return { taskId: row.taskId, taskName: row.taskName }; }); 
         console.log(this.taskList);
       });

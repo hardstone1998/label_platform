@@ -59,6 +59,20 @@ public class TaskUserTaskAllocationServiceImpl implements ITaskUserTaskAllocatio
         return taskUserTaskAllocationMapper.selectTaskUserTaskAllocationById(id);
     }
 
+
+    /**
+     * 查询任务用户列表
+     *
+     * @param taskUserTaskAllocation 任务用户
+     * @return 任务用户
+     */
+    @Override
+    public List<TaskUserTaskAllocation> selectTaskAllocationListByUserAndProject(TaskUserTaskAllocation taskUserTaskAllocation)
+    {
+        List<TaskUserTaskAllocation> taskUserTaskAllocations = taskUserTaskAllocationMapper.selectTaskUserTaskAllocationList(taskUserTaskAllocation);
+        return taskUserTaskAllocations;
+    }
+
     /**
      * 查询任务用户列表
      *
