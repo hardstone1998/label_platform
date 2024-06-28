@@ -6,16 +6,16 @@ spring:
         druid:
             # 主库数据源
             master:
-                url: jdbc:mysql://36.112.150.185:3305/asr-identify?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+                url: jdbc:mysql://localhost:3306/asr-identify?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
                 username: root
-                password: ctcc@2017
+                password: 0lLJYNqE
             # 从库数据源
             slave:
                 # 从数据源开关/默认关闭
                 enabled: false
-                url: 
-                username: 
-                password: 
+                url:
+                username:
+                password:
             # 初始连接数
             initialSize: 5
             # 最小连接池数量
@@ -39,7 +39,7 @@ spring:
             testWhileIdle: true
             testOnBorrow: false
             testOnReturn: false
-            webStatFilter: 
+            webStatFilter:
                 enabled: true
             statViewServlet:
                 enabled: true
@@ -61,13 +61,13 @@ spring:
                         multi-statement-allow: true
     redis:
         # 地址
-        host: 36.112.150.185
+        host: localhost
         # 端口，默认为6379
         port: 6305
         # 数据库索引
         database: 0
         # 密码
-        password: ctcc@2017
+        password: 0lLJYNqE
         # 连接超时时间
         timeout: 10s
         lettuce:

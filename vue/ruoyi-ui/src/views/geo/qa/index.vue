@@ -739,9 +739,7 @@ export default {
 
     //查询全部批次
     searchAllBatches(){
-      console.log("searchAllBatches");
       listBatch().then((response) => {
-        console.log("listBatch");
         this.insertBatch = response.rows;
       });
     },
